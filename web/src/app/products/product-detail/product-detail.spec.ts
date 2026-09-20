@@ -103,6 +103,19 @@ describe('ProductDetail', () => {
     );
   });
 
+  it('lets a member write to the seller, unless the seller is the store', async () => {
+    signedIn = true;
+    answer = of({ ...fan, seller: 'nadia' });
+    await open('4');
+    expect(root().querySelector('[data-testid="message"]')?.getAttribute('href')).toBe(
+      '/messages/new/nadia?subject=About%20Desk%20fan,%20chrome',
+    );
+
+    answer = of(fan);
+    await open('4');
+    expect(root().querySelector('[data-testid="message"]')).toBeNull();
+  });
+
   it('gives the seller edit and remove, and removing goes to my products', async () => {
     signedIn = true;
     answer = of({ ...fan, mine: true });

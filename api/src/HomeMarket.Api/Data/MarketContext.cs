@@ -11,6 +11,7 @@ namespace HomeMarket.Api.Data
 
         public DbSet<Account> Accounts => Set<Account>();
         public DbSet<Product> Products => Set<Product>();
+        public DbSet<Message> Messages => Set<Message>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -39,6 +40,20 @@ namespace HomeMarket.Api.Data
                 product.Property(p => p.UpdatedAt).HasConversion(asUtc);
                 product.HasOne(p => p.Seller).WithMany(a => a.Listings).HasForeignKey(p => p.SellerId).OnDelete(DeleteBehavior.Cascade);
                 product.HasMany(p => p.LikedBy).WithMany(a => a.Liked).UsingEntity(join => join.ToTable("Likes"));
+            });
+
+            modelBuilder.Entity<Message>(message =>
+            {
+                message.Property(m => m.Subject).HasMaxLength(120);
+                message.Property(m => m.Body).HasMaxLength(4000);
+                message.Property(m => m.SentAt).HasConversion(asUtc);
+                message.Property(m => m.ReadAt).HasConversion(new ValueConverter<DateTime?, DateTime?>(
+                    toDb => toDb,
+                    fromDb => fromDb == null ? null : DateTime.SpecifyKind(fromDb.Value, DateTimeKind.Utc)));
+                message.HasIndex(m => new { m.RecipientId, m.SentAt });
+                message.HasIndex(m => new { m.SenderId, m.SentAt });
+                message.HasOne(m => m.Sender).WithMany().HasForeignKey(m => m.SenderId).OnDelete(DeleteBehavior.Cascade);
+                message.HasOne(m => m.Recipient).WithMany().HasForeignKey(m => m.RecipientId).OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

@@ -36,6 +36,7 @@ namespace HomeMarket.Api
             builder.Services.AddSingleton<IPhotoStore, PhotoStore>();
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<IMessageService, MessageService>();
             builder.Services.AddSingleton<ITokenService, JwtTokenService>();
 
             // The signing key comes from configuration (user secrets or the
