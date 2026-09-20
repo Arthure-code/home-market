@@ -37,6 +37,12 @@ namespace HomeMarket.Api
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IMessageService, MessageService>();
+            builder.Services.AddScoped<ICartService, CartService>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
+            // The payment provider. A real one (Stripe, Square, Moneris...)
+            // is another IPaymentGateway registered here in its place, with
+            // its keys in configuration; nothing else changes.
+            builder.Services.AddSingleton<IPaymentGateway, SimulatedPayments>();
             builder.Services.AddSingleton<ITokenService, JwtTokenService>();
 
             // The signing key comes from configuration (user secrets or the

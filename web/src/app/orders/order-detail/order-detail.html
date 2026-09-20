@@ -1,0 +1,79 @@
+<p class="mb-3">
+  <a routerLink="/orders" class="link-secondary">&larr; My orders</a>
+</p>
+
+@if (order(); as item) {
+  <div class="d-flex flex-wrap justify-content-between align-items-baseline mb-3">
+    <h1 class="h3 mb-0">Order #{{ item.id }}</h1>
+    <span class="text-secondary" data-testid="placed"
+      >Placed {{ item.placedAt | date: 'MMM d, y, h:mm a' }}</span
+    >
+  </div>
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="card">
+        <table class="table mb-0 align-middle" data-testid="lines">
+          <thead>
+            <tr>
+              <th scope="col">Item</th>
+              <th scope="col" class="text-end">Price</th>
+              <th scope="col" class="text-end">Qty</th>
+              <th scope="col" class="text-end">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (line of item.lines; track $index) {
+              <tr>
+                <td>
+                  @if (line.productId !== null) {
+                    <a [routerLink]="['/products', line.productId]" class="link-dark">{{
+                      line.title
+                    }}</a>
+                  } @else {
+                    {{ line.title }}
+                  }
+                  <span class="d-block small text-secondary">Sold by {{ line.seller }}</span>
+                </td>
+                <td class="text-end">{{ line.unitPrice | currency: 'CAD' : 'symbol-narrow' }}</td>
+                <td class="text-end">{{ line.quantity }}</td>
+                <td class="text-end">{{ line.lineTotal | currency: 'CAD' : 'symbol-narrow' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card mb-4">
+        <div class="card-body">
+          <dl class="row mb-0">
+            <dt class="col-7 fw-normal">Subtotal ({{ item.itemCount }} items)</dt>
+            <dd class="col-5 text-end">{{ item.subtotal | currency: 'CAD' : 'symbol-narrow' }}</dd>
+            <dt class="col-7 fw-normal">GST</dt>
+            <dd class="col-5 text-end">{{ item.gst | currency: 'CAD' : 'symbol-narrow' }}</dd>
+            <dt class="col-7 fw-normal">QST</dt>
+            <dd class="col-5 text-end">{{ item.qst | currency: 'CAD' : 'symbol-narrow' }}</dd>
+            <dt class="col-7 h5 border-top pt-2">Total</dt>
+            <dd class="col-5 text-end h5 border-top pt-2" data-testid="total">
+              {{ item.total | currency: 'CAD' : 'symbol-narrow' }}
+            </dd>
+          </dl>
+          <p class="small text-secondary mb-0" data-testid="card">
+            Paid with {{ item.cardBrand }} ending in {{ item.cardLast4 }}
+          </p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header fw-semibold">Delivers to</div>
+        <div class="card-body" data-testid="address">
+          {{ item.fullName }}<br />
+          {{ item.street }}<br />
+          {{ item.city }}, {{ item.province }} {{ item.postalCode }}<br />
+          {{ item.country }}
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+  <output class="text-secondary">Loading...</output>
+}

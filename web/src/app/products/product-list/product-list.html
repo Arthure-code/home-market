@@ -13,6 +13,7 @@
         <app-product-card
           [product]="product"
           (toggleLike)="toggleLike($event)"
+          (addToCart)="addToCart($event)"
           (quickView)="viewing.set($event)"
         />
       </div>
@@ -22,5 +23,6 @@
     [product]="viewing()"
     (closed)="viewing.set(null)"
     (toggleLike)="toggleLike($event)"
+    (addToCart)="addToCart($event)"
   />
 }

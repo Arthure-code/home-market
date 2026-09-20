@@ -77,6 +77,15 @@
                     <span class="ms-1">{{ item.likes }}</span>
                   }
                 </button>
+                <button
+                  type="button"
+                  class="btn btn-warning btn-sm"
+                  (click)="addToCart.emit(item)"
+                  [disabled]="item.stock === 0"
+                  data-testid="add-to-cart"
+                >
+                  <i class="fa fa-shopping-cart" aria-hidden="true"></i> Add to cart
+                </button>
               }
               <a
                 [routerLink]="['/products', item.id]"

@@ -5,11 +5,15 @@ import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
 import { Nav } from './nav';
 import { SessionService } from '../auth/session.service';
+import { EMPTY_CART } from '../cart/cart';
+import { CartService } from '../cart/cart.service';
 import { ProductService } from '../products/product.service';
 
 describe('Nav', () => {
   let fixture: ComponentFixture<Nav>;
   let signedIn: ReturnType<typeof signal<boolean>>;
+  let cartCalls: string[];
+  let count: ReturnType<typeof signal<number>>;
 
   const root = () => fixture.nativeElement as HTMLElement;
   const show = async () => {
@@ -20,6 +24,8 @@ describe('Nav', () => {
 
   beforeEach(async () => {
     signedIn = signal(false);
+    cartCalls = [];
+    count = signal(0);
     await TestBed.configureTestingModule({
       imports: [Nav],
       providers: [
@@ -27,6 +33,21 @@ describe('Nav', () => {
         {
           provide: SessionService,
           useValue: { signedIn, userName: () => 'nadia', signOut: () => signedIn.set(false) },
+        },
+        {
+          provide: CartService,
+          useValue: {
+            count,
+            load: () => {
+              cartCalls.push('load');
+              count.set(3);
+              return of(EMPTY_CART);
+            },
+            clear: () => {
+              cartCalls.push('clear');
+              count.set(0);
+            },
+          },
         },
         {
           provide: ProductService,
@@ -48,24 +69,44 @@ describe('Nav', () => {
 
     expect(root().querySelector('[data-testid="search"]')).not.toBeNull();
     expect(root().querySelector('[data-testid="sign-in"]')).not.toBeNull();
+    expect(root().querySelector('[data-testid="cart-link"]')).toBeNull();
     const links = Array.from(root().querySelectorAll('.categories a')).map((a) =>
       a.textContent?.trim(),
     );
     expect(links).toEqual(['All', 'Electronics', 'Kitchen']);
     expect(root().querySelector('.categories a[href="/products?category=Kitchen"]')).not.toBeNull();
+    expect(cartCalls).toEqual(['clear']);
   });
 
-  it('gives a member the account menu and Sell, and signs out', async () => {
+  it('gives a member the account menu, the cart with its count, and Sell', async () => {
     signedIn.set(true);
     await show();
 
     expect(root().querySelector('[data-testid="sign-in"]')).toBeNull();
     expect(root().querySelector('[data-testid="account"]')?.textContent).toContain('nadia');
+    expect(cartCalls).toEqual(['load']);
+    expect(root().querySelector('[data-testid="cart-link"]')?.classList.contains('cart-pill')).toBe(
+      true,
+    );
+    expect(root().querySelector('[data-testid="cart-count"]')?.textContent?.trim()).toBe('3');
     expect(root().querySelector('.categories a[href="/products/new"]')).not.toBeNull();
 
     root().querySelector<HTMLButtonElement>('[data-testid="sign-out"]')?.click();
     await fixture.whenStable();
-    expect(root().querySelector('[data-testid="sign-in"]')).not.toBeNull();
+    expect(cartCalls).toEqual(['load', 'clear']);
+    expect(root().querySelector('[data-testid="cart-link"]')).toBeNull();
+  });
+
+  it('shows the cart as a plain icon while it is empty', async () => {
+    signedIn.set(true);
+    count.set(0);
+    vi.spyOn(TestBed.inject(CartService), 'load').mockReturnValue(of(EMPTY_CART));
+    await show();
+
+    expect(root().querySelector('[data-testid="cart-link"]')?.classList.contains('cart-pill')).toBe(
+      false,
+    );
+    expect(root().querySelector('[data-testid="cart-count"]')).toBeNull();
   });
 
   it('searches by going to the catalogue with the text in the address', async () => {

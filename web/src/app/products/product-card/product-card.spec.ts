@@ -82,12 +82,26 @@ describe('ProductCard', () => {
     expect(emitted).toEqual([mug]);
   });
 
-  it('says how many are left', async () => {
+  it('gives a member a cart button that emits the product, greyed when sold out', async () => {
+    signedIn = true;
     await show(mug);
+    const emitted: Product[] = [];
+    fixture.componentInstance.addToCart.subscribe((p) => emitted.push(p));
+
+    expect(root().querySelectorAll('.list-inline-item').length).toBe(3);
     expect(root().querySelector('[data-testid="stock"]')?.textContent?.trim()).toBe('In stock');
+    root().querySelector<HTMLButtonElement>('[data-testid="add-to-cart"]')?.click();
+    expect(emitted).toEqual([mug]);
 
     await show({ ...mug, stock: 0 });
     expect(root().querySelector('[data-testid="stock"]')?.textContent?.trim()).toBe('Out of stock');
+    expect(root().querySelector<HTMLButtonElement>('[data-testid="add-to-cart"]')?.disabled).toBe(
+      true,
+    );
+
+    signedIn = false;
+    await show(mug);
+    expect(root().querySelector('[data-testid="add-to-cart"]')).toBeNull();
   });
 
   it('gives the seller an edit link instead of a like', async () => {
@@ -95,6 +109,7 @@ describe('ProductCard', () => {
     await show({ ...mug, mine: true });
 
     expect(root().querySelector('[data-testid="like"]')).toBeNull();
+    expect(root().querySelector('[data-testid="add-to-cart"]')).toBeNull();
     expect(root().querySelector('a[href="/products/23/edit"]')).not.toBeNull();
   });
 

@@ -5,8 +5,8 @@ import { SessionService } from '../../auth/session.service';
 import { Product } from '../product';
 
 // A look at one product without leaving the grid: the photo, the price,
-// the stock, the description, and the same like button as the card, in
-// a native dialog. A link opens the full page.
+// the stock, the description, and the same like and cart buttons as the
+// card, in a native dialog. A link opens the full page.
 @Component({
   selector: 'app-quick-view',
   imports: [CurrencyPipe, RouterLink],
@@ -17,6 +17,7 @@ export class QuickView {
   readonly product = input<Product | null>(null);
   readonly closed = output<void>();
   readonly toggleLike = output<Product>();
+  readonly addToCart = output<Product>();
   readonly signedIn = inject(SessionService).signedIn;
 
   private readonly dialog = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
