@@ -5,6 +5,12 @@ import { Category, Product, ProductDraft, ProductFilter, UploadedPhoto } from '.
 
 export const PRODUCTS_URL = 'http://localhost:5130/api/products';
 
+// The account that owns the opening catalogue cannot sign in, so it
+// cannot read messages either: no Message the seller button for it.
+export function canBeMessaged(seller: string): boolean {
+  return seller !== 'homemarket';
+}
+
 // No account name travels with these calls: the API reads it from the
 // token the interceptor attaches, when there is one.
 @Injectable({ providedIn: 'root' })

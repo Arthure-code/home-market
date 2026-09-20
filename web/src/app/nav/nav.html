@@ -26,6 +26,16 @@
 
       <div class="d-flex align-items-center column-gap-3 ms-auto order-2 order-md-3">
         @if (signedIn()) {
+          <a
+            class="nav-link text-light"
+            routerLink="/messages"
+            routerLinkActive="active"
+            aria-label="Messages"
+            title="Messages"
+          >
+            <i class="fa fa-envelope" aria-hidden="true"></i>
+            <span class="d-none d-lg-inline ms-1">Messages</span>
+          </a>
           <div class="dropdown">
             <a
               class="nav-link dropdown-toggle text-light"
