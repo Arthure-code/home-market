@@ -1,0 +1,42 @@
+// Only the parts of Bootstrap the pages use, Font Awesome 4 for the
+// icons, and the toast styles.
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+@import 'bootstrap/scss/variables-dark';
+@import 'bootstrap/scss/maps';
+@import 'bootstrap/scss/mixins';
+@import 'bootstrap/scss/utilities';
+@import 'bootstrap/scss/root';
+@import 'bootstrap/scss/reboot';
+@import 'bootstrap/scss/type';
+@import 'bootstrap/scss/images';
+@import 'bootstrap/scss/containers';
+@import 'bootstrap/scss/grid';
+@import 'bootstrap/scss/forms';
+@import 'bootstrap/scss/buttons';
+@import 'bootstrap/scss/dropdown';
+@import 'bootstrap/scss/button-group';
+@import 'bootstrap/scss/nav';
+@import 'bootstrap/scss/navbar';
+@import 'bootstrap/scss/tables';
+@import 'bootstrap/scss/breadcrumb';
+@import 'bootstrap/scss/close';
+@import 'bootstrap/scss/card';
+@import 'bootstrap/scss/badge';
+@import 'bootstrap/scss/alert';
+@import 'bootstrap/scss/list-group';
+@import 'bootstrap/scss/spinners';
+@import 'bootstrap/scss/helpers';
+@import 'bootstrap/scss/utilities/api';
+@import 'font-awesome/css/font-awesome.min.css';
+@import 'ngx-toastr/toastr';
+
+// The bar sticks to the top whatever its height on a narrow screen; the
+// host element is see-through so that sticky works against the page.
+app-nav {
+  display: contents;
+}
+
+#main-wrapper {
+  margin-top: 32px;
+}

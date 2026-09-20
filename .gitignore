@@ -1,0 +1,27 @@
+# Node / Angular
+node_modules/
+dist/
+.angular/
+coverage/
+*.log
+
+# .NET
+bin/
+obj/
+.vs/
+*.user
+TestResults/
+
+# Local database and secrets
+*.db
+*.db-shm
+*.db-wal
+appsettings.*.local.json
+
+# Editors and system
+.claude/
+.DS_Store
+Thumbs.db
+
+# Uploaded photos
+api/HomeMarket.Api/images/
