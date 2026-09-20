@@ -1,0 +1,56 @@
+<div class="d-flex flex-wrap justify-content-between align-items-baseline mt-3 mb-4">
+  <h1 class="h3 mb-0">My sales</h1>
+  @if (sales().length > 0) {
+    <span class="text-secondary" data-testid="revenue"
+      >{{ revenue() | currency: 'CAD' : 'symbol-narrow' }} before taxes</span
+    >
+  }
+</div>
+
+@if (loading()) {
+  <div class="text-center py-5">
+    <output class="spinner-border text-primary"
+      ><span class="visually-hidden">Loading...</span></output
+    >
+  </div>
+} @else if (sales().length === 0) {
+  <p class="alert alert-info" data-testid="empty">
+    Nothing sold yet. <a routerLink="/products/new" class="alert-link">List a product</a>.
+  </p>
+} @else {
+  <div class="table-responsive">
+    <table class="table table-hover align-middle" data-testid="table">
+      <thead>
+        <tr>
+          <th scope="col">Sold</th>
+          <th scope="col">Item</th>
+          <th scope="col" class="text-end">Qty</th>
+          <th scope="col" class="text-end">Amount</th>
+          <th scope="col">Buyer</th>
+          <th scope="col">Ship to</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (sale of sales(); track $index) {
+          <tr>
+            <td class="text-nowrap">{{ sale.placedAt | date: 'MMM d, y' }}</td>
+            <td>
+              @if (sale.productId !== null) {
+                <a [routerLink]="['/products', sale.productId]" class="link-dark">{{
+                  sale.title
+                }}</a>
+              } @else {
+                {{ sale.title }}
+              }
+              <span class="d-block small text-secondary">Order #{{ sale.orderId }}</span>
+            </td>
+            <td class="text-end">{{ sale.quantity }}</td>
+            <td class="text-end">{{ sale.lineTotal | currency: 'CAD' : 'symbol-narrow' }}</td>
+            <td>{{ sale.buyer }}</td>
+            <td class="small">{{ sale.shipTo }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

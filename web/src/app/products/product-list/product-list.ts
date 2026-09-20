@@ -1,6 +1,8 @@
 import { Component, effect, inject, input, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { apiMessage } from '../../auth/api-message';
+import { CartService } from '../../cart/cart.service';
 import { Product } from '../product';
 import { ProductCard } from '../product-card/product-card';
 import { ProductService } from '../product.service';
@@ -17,6 +19,8 @@ import { QuickView } from '../quick-view/quick-view';
 export class ProductList {
   private readonly service = inject(ProductService);
   private readonly toastr = inject(ToastrService);
+  private readonly cart = inject(CartService);
+  private readonly router = inject(Router);
 
   // Which list to show: the whole catalogue, my listings, or my likes.
   readonly source = input<'all' | 'mine' | 'liked'>('all');
@@ -40,6 +44,17 @@ export class ProductList {
         this.products.update((list) => list.map((p) => (p.id === product.id ? changed : p)));
         if (this.viewing()?.id === product.id) this.viewing.set(changed);
         this.toastr.success(liked ? 'Added to your likes' : 'Removed from your likes');
+      },
+      error: (error: unknown) => this.toastr.error(apiMessage(error)),
+    });
+  }
+
+  // One of it goes in the cart, and the cart opens.
+  addToCart(product: Product): void {
+    this.cart.add(product.id).subscribe({
+      next: () => {
+        this.toastr.success('Added to your cart');
+        this.router.navigateByUrl('/cart');
       },
       error: (error: unknown) => this.toastr.error(apiMessage(error)),
     });

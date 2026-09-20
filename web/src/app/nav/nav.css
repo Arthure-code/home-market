@@ -40,6 +40,17 @@
   text-underline-offset: 0.3em;
 }
 
+/* With something in it, the cart is a filled pill with the count next to
+   the icon, never a badge over it. */
+.cart-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.85rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
 .dropdown-toggle,
 .dropdown-item {
   cursor: pointer;
