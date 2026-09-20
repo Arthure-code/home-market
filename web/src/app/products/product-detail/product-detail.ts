@@ -5,10 +5,11 @@ import { ToastrService } from 'ngx-toastr';
 import { apiMessage } from '../../auth/api-message';
 import { SessionService } from '../../auth/session.service';
 import { Product } from '../product';
-import { ProductService } from '../product.service';
+import { ProductService, canBeMessaged } from '../product.service';
 
 // One product on its own page, reached by its id, with its price and its
-// stock. A member can like it; its seller can edit or remove it.
+// stock. A member can like it and write to its seller; its seller can
+// edit or remove it.
 @Component({
   selector: 'app-product-detail',
   imports: [CurrencyPipe, DatePipe, RouterLink],
@@ -24,6 +25,7 @@ export class ProductDetail {
   readonly product = signal<Product | null>(null);
   readonly missing = signal(false);
   readonly signedIn = inject(SessionService).signedIn;
+  readonly canBeMessaged = canBeMessaged;
 
   constructor() {
     effect(() => this.load(Number(this.id())));
