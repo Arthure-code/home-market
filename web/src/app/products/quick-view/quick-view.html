@@ -1,0 +1,94 @@
+<dialog #dialog class="quick-view" closedby="any" (close)="onClosed()">
+  @if (product(); as item) {
+    <div class="card border-0" data-testid="quick-view-dialog">
+      <div class="card-header d-flex justify-content-between align-items-start gap-3">
+        <h2 class="h5 mb-0">{{ item.title }}</h2>
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Close"
+          (click)="close()"
+          data-testid="close"
+        ></button>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            @if (item.photoUrl) {
+              <img
+                [src]="item.photoUrl + '?auto=format&fit=crop&w=600&h=450&q=75'"
+                [alt]="item.title"
+                class="img-fluid rounded photo"
+                width="600"
+                height="450"
+              />
+            } @else {
+              <div
+                class="rounded no-photo"
+                role="img"
+                [attr.aria-label]="item.title + ', no photo'"
+              >
+                <i class="fa fa-camera" aria-hidden="true"></i>
+              </div>
+            }
+          </div>
+          <div class="col-md-6">
+            <p class="h3 mb-1" data-testid="price">
+              {{ item.price | currency: 'CAD' : 'symbol-narrow' : '1.0-0' }}
+            </p>
+            <p
+              class="fw-semibold mb-2"
+              [class.text-success]="item.stock > 3"
+              [class.text-warning-emphasis]="item.stock > 0 && item.stock <= 3"
+              [class.text-danger]="item.stock === 0"
+              data-testid="stock"
+            >
+              {{
+                item.stock === 0
+                  ? 'Out of stock'
+                  : item.stock <= 3
+                    ? 'Only ' + item.stock + ' left in stock'
+                    : 'In stock'
+              }}
+            </p>
+            <dl class="row small mb-2">
+              <dt class="col-4 fw-normal text-secondary">Brand</dt>
+              <dd class="col-8 mb-1">{{ item.brand || 'Not given' }}</dd>
+              <dt class="col-4 fw-normal text-secondary">Maker</dt>
+              <dd class="col-8 mb-1">{{ item.maker || 'Not given' }}</dd>
+              <dt class="col-4 fw-normal text-secondary">Category</dt>
+              <dd class="col-8 mb-1">{{ item.category }}</dd>
+              <dt class="col-4 fw-normal text-secondary">Sold by</dt>
+              <dd class="col-8 mb-1">{{ item.seller }}</dd>
+            </dl>
+            <p class="small description mb-3">{{ item.description || 'No description.' }}</p>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              @if (signedIn() && !item.mine) {
+                <button
+                  type="button"
+                  class="btn btn-success btn-sm"
+                  (click)="toggleLike.emit(item)"
+                  [attr.aria-pressed]="item.liked"
+                  [attr.aria-label]="(item.liked ? 'Unlike ' : 'Like ') + item.title"
+                  data-testid="like"
+                >
+                  <i class="fa fa-thumbs-up" [class.liked]="item.liked" aria-hidden="true"></i>
+                  @if (item.likes > 0) {
+                    <span class="ms-1">{{ item.likes }}</span>
+                  }
+                </button>
+              }
+              <a
+                [routerLink]="['/products', item.id]"
+                class="btn btn-link btn-sm"
+                (click)="close()"
+                data-testid="full-page"
+                >See the full page &rarr;</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</dialog>

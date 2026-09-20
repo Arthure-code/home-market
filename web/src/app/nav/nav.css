@@ -1,0 +1,46 @@
+/* The search box takes what is left of the first bar and drops to its
+   own line when there is not enough. */
+.search {
+  flex: 1 1 260px;
+}
+
+/* On a phone the search box takes its own line, the categories scroll
+   sideways like a strip, and the bars scroll away with the page. */
+@media (max-width: 767.98px) {
+  .search {
+    flex-basis: 100%;
+  }
+
+  header {
+    position: static;
+  }
+}
+
+.categories .navbar-nav {
+  scrollbar-width: none;
+}
+
+.categories .navbar-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.categories {
+  background-color: #343a40;
+}
+
+.categories .nav-link {
+  padding-top: 0.35rem;
+  padding-bottom: 0.35rem;
+  white-space: nowrap;
+}
+
+.navbar-dark .nav-link.active {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+
+.dropdown-toggle,
+.dropdown-item {
+  cursor: pointer;
+}

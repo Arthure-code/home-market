@@ -1,0 +1,27 @@
+/* The host is the flex item of its column: it fills it and may shrink
+   below the width of its buttons, which then wrap. */
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.card-img-wrapper > img,
+.card-img-wrapper > .no-photo {
+  height: 150px;
+  width: 100%;
+  object-fit: cover;
+}
+
+.no-photo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9ecef;
+  color: #6c757d;
+  font-size: 2rem;
+}
+
+.liked {
+  color: gold;
+}

@@ -1,0 +1,26 @@
+@if (loading()) {
+  <div class="text-center py-5">
+    <output class="spinner-border text-primary"
+      ><span class="visually-hidden">Loading...</span></output
+    >
+  </div>
+} @else if (products().length === 0) {
+  <p class="alert alert-info" data-testid="empty">Nothing here yet.</p>
+} @else {
+  <div class="row" data-testid="grid">
+    @for (product of products(); track product.id) {
+      <div class="col-6 col-md-4 col-lg-3 col-xl-2 d-flex mb-4">
+        <app-product-card
+          [product]="product"
+          (toggleLike)="toggleLike($event)"
+          (quickView)="viewing.set($event)"
+        />
+      </div>
+    }
+  </div>
+  <app-quick-view
+    [product]="viewing()"
+    (closed)="viewing.set(null)"
+    (toggleLike)="toggleLike($event)"
+  />
+}
