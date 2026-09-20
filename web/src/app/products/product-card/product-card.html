@@ -1,0 +1,89 @@
+@let item = product();
+<div class="card card-wrapper" [attr.data-testid]="'card-' + item.id">
+  <a
+    [routerLink]="['/products', item.id]"
+    class="card-link text-decoration-none"
+    [attr.aria-label]="item.title"
+    data-testid="open"
+  >
+    <div class="card-img-wrapper">
+      @if (item.photoUrl) {
+        <img
+          [src]="item.photoUrl + '?auto=format&fit=crop&w=400&h=300&q=70'"
+          [alt]="item.title"
+          class="card-img-top"
+          loading="lazy"
+          width="400"
+          height="300"
+        />
+      } @else {
+        <div class="card-img-top no-photo" role="img" [attr.aria-label]="item.title + ', no photo'">
+          <i class="fa fa-camera" aria-hidden="true"></i>
+        </div>
+      }
+    </div>
+    <div class="card-body p-1">
+      <h2
+        class="h6 card-text text-center text-secondary mb-1 text-truncate px-1"
+        [title]="item.title"
+      >
+        {{ item.title }}
+      </h2>
+      <p class="card-title text-secondary text-center mb-0">
+        {{ item.price | currency: 'CAD' : 'symbol-narrow' : '1.0-0' }}
+      </p>
+      <p class="text-center small mb-1" [class.text-danger]="item.stock === 0" data-testid="stock">
+        {{
+          item.stock === 0
+            ? 'Out of stock'
+            : item.stock <= 3
+              ? 'Only ' + item.stock + ' left'
+              : 'In stock'
+        }}
+      </p>
+    </div>
+  </a>
+  <div class="card-body text-center p-1 mt-auto">
+    <ul class="list-inline mb-1">
+      <li class="list-inline-item">
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="quickView.emit(item)"
+          [attr.aria-label]="'Quick view of ' + item.title"
+          data-testid="quick-view"
+        >
+          <i class="fa fa-info" aria-hidden="true"></i>
+        </button>
+      </li>
+      @if (signedIn()) {
+        @if (item.mine) {
+          <li class="list-inline-item">
+            <a
+              [routerLink]="['/products', item.id, 'edit']"
+              class="btn btn-success"
+              [attr.aria-label]="'Edit ' + item.title"
+              ><i class="fa fa-edit" aria-hidden="true"></i
+            ></a>
+          </li>
+        } @else {
+          <li class="list-inline-item">
+            <button
+              type="button"
+              class="btn btn-success"
+              (click)="toggleLike.emit(item)"
+              [attr.aria-pressed]="item.liked"
+              [attr.aria-label]="(item.liked ? 'Unlike ' : 'Like ') + item.title"
+              data-testid="like"
+            >
+              <i class="fa fa-thumbs-up" [class.liked]="item.liked" aria-hidden="true"></i>
+              @if (item.likes > 0) {
+                <span class="ms-1">{{ item.likes }}</span>
+              }
+            </button>
+          </li>
+        }
+      }
+    </ul>
+  </div>
+</div>
