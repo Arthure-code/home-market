@@ -95,6 +95,7 @@
           <p class="h2 mb-1" data-testid="price">
             {{ item.price | currency: 'CAD' : 'symbol-narrow' : '1.0-0' }}
           </p>
+          <p class="small text-secondary mb-3">Taxes added at checkout. Free delivery.</p>
           <p
             class="fw-semibold mb-3"
             [class.text-success]="item.stock > 3"
@@ -112,6 +113,30 @@
           </p>
           @if (item.mine) {
             <p class="text-secondary mb-0" data-testid="own">This is your listing.</p>
+          } @else if (!signedIn()) {
+            <p class="text-secondary mb-0" data-testid="visitor">Sign in to add it to your cart.</p>
+          } @else if (item.stock > 0) {
+            <label for="quantity" class="form-label mb-1">Quantity</label>
+            <select
+              id="quantity"
+              class="form-select mb-3"
+              [value]="quantity()"
+              (change)="quantity.set(+$any($event.target).value)"
+              data-testid="quantity"
+            >
+              @for (n of quantities(); track n) {
+                <option [value]="n" [selected]="n === quantity()">{{ n }}</option>
+              }
+            </select>
+            <button
+              type="button"
+              class="btn btn-warning w-100"
+              (click)="addToCart()"
+              [disabled]="adding()"
+              data-testid="add-to-cart"
+            >
+              <i class="fa fa-shopping-cart" aria-hidden="true"></i> Add to cart
+            </button>
           }
         </div>
         <div class="card-footer seller d-flex align-items-center justify-content-between gap-2">

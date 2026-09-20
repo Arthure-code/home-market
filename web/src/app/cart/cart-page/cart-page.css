@@ -1,0 +1,20 @@
+.thumb {
+  width: 120px;
+  height: 90px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.no-photo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9ecef;
+  color: #6c757d;
+  font-size: 1.5rem;
+}
+
+.summary {
+  position: sticky;
+  top: 110px;
+}

@@ -71,12 +71,16 @@ describe('QuickView', () => {
     );
   });
 
-  it('tells the parent when it closes, and offers the like to a member', async () => {
+  it('tells the parent when it closes, and offers like and cart to a member', async () => {
     signedIn = true;
     await show(lamp);
     const closed: number[] = [];
+    const carted: Product[] = [];
     fixture.componentInstance.closed.subscribe(() => closed.push(1));
+    fixture.componentInstance.addToCart.subscribe((p) => carted.push(p));
 
+    root().querySelector<HTMLButtonElement>('[data-testid="add-to-cart"]')?.click();
+    expect(carted).toEqual([lamp]);
     expect(root().querySelector('[data-testid="like"]')?.textContent?.trim()).toBe('2');
 
     root().querySelector<HTMLButtonElement>('[data-testid="close"]')?.click();
@@ -89,6 +93,7 @@ describe('QuickView', () => {
     signedIn = false;
     await show(lamp);
 
+    expect(root().querySelector('[data-testid="add-to-cart"]')).toBeNull();
     expect(root().querySelector('[data-testid="like"]')).toBeNull();
     expect(root().querySelector('[data-testid="full-page"]')).not.toBeNull();
   });

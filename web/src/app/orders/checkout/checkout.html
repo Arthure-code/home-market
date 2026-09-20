@@ -1,0 +1,211 @@
+@let items = cart();
+<h1 class="h3 mt-3 mb-4">Checkout</h1>
+
+@if (empty()) {
+  <p class="alert alert-info" data-testid="empty">
+    Your cart is empty. <a routerLink="/products" class="alert-link">Browse the catalogue</a>.
+  </p>
+} @else {
+  <form (ngSubmit)="placeOrder()" autocomplete="off">
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div class="card mb-4">
+          <div class="card-header fw-semibold">Shipping address</div>
+          <div class="card-body">
+            <div class="row g-2">
+              <div class="col-12">
+                <label for="fullName" class="form-label mb-0">Full name</label>
+                <input
+                  type="text"
+                  id="fullName"
+                  name="fullName"
+                  class="form-control"
+                  [(ngModel)]="draft.fullName"
+                  maxlength="80"
+                  autocomplete="name"
+                  required
+                />
+              </div>
+              <div class="col-12">
+                <label for="street" class="form-label mb-0">Address</label>
+                <input
+                  type="text"
+                  id="street"
+                  name="street"
+                  class="form-control"
+                  [(ngModel)]="draft.street"
+                  maxlength="120"
+                  autocomplete="street-address"
+                  required
+                />
+              </div>
+              <div class="col-md-5">
+                <label for="city" class="form-label mb-0">City</label>
+                <input
+                  type="text"
+                  id="city"
+                  name="city"
+                  class="form-control"
+                  [(ngModel)]="draft.city"
+                  maxlength="60"
+                  autocomplete="address-level2"
+                  required
+                />
+              </div>
+              <div class="col-md-3">
+                <label for="province" class="form-label mb-0">Province</label>
+                <input
+                  type="text"
+                  id="province"
+                  name="province"
+                  class="form-control"
+                  [(ngModel)]="draft.province"
+                  maxlength="40"
+                  autocomplete="address-level1"
+                  required
+                />
+              </div>
+              <div class="col-md-4">
+                <label for="postalCode" class="form-label mb-0">Postal code</label>
+                <input
+                  type="text"
+                  id="postalCode"
+                  name="postalCode"
+                  class="form-control"
+                  [(ngModel)]="draft.postalCode"
+                  maxlength="10"
+                  autocomplete="postal-code"
+                  required
+                />
+              </div>
+              <div class="col-12">
+                <label for="country" class="form-label mb-0">Country</label>
+                <input
+                  type="text"
+                  id="country"
+                  name="country"
+                  class="form-control"
+                  [(ngModel)]="draft.country"
+                  maxlength="60"
+                  autocomplete="country-name"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header fw-semibold">Payment method</div>
+          <div class="card-body">
+            <div class="row g-2">
+              <div class="col-12">
+                <label for="cardNumber" class="form-label mb-0">Card number</label>
+                <div class="input-group">
+                  <span class="input-group-text"
+                    ><i class="fa fa-credit-card" aria-hidden="true"></i
+                  ></span>
+                  <input
+                    type="text"
+                    id="cardNumber"
+                    name="cardNumber"
+                    class="form-control"
+                    [(ngModel)]="draft.cardNumber"
+                    inputmode="numeric"
+                    maxlength="23"
+                    placeholder="1234 5678 9012 3456"
+                    autocomplete="cc-number"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="col-12">
+                <label for="cardHolderName" class="form-label mb-0">Name on card</label>
+                <input
+                  type="text"
+                  id="cardHolderName"
+                  name="cardHolderName"
+                  class="form-control"
+                  [(ngModel)]="draft.cardHolderName"
+                  maxlength="80"
+                  autocomplete="cc-name"
+                  required
+                />
+              </div>
+              <div class="col-6 col-md-3">
+                <label for="expiry" class="form-label mb-0">Expiration</label>
+                <input
+                  type="text"
+                  id="expiry"
+                  name="expiry"
+                  class="form-control"
+                  [(ngModel)]="draft.expiry"
+                  maxlength="5"
+                  placeholder="MM/YY"
+                  autocomplete="cc-exp"
+                  required
+                />
+              </div>
+              <div class="col-6 col-md-3">
+                <label for="securityCode" class="form-label mb-0">Security code</label>
+                <input
+                  type="password"
+                  id="securityCode"
+                  name="securityCode"
+                  class="form-control"
+                  [(ngModel)]="draft.securityCode"
+                  inputmode="numeric"
+                  maxlength="4"
+                  placeholder="CVC"
+                  autocomplete="cc-csc"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card">
+          <div class="card-header fw-semibold">Order summary</div>
+          <ul class="list-group list-group-flush">
+            @for (line of items.lines; track line.productId) {
+              <li class="list-group-item d-flex justify-content-between small">
+                <span>{{ line.quantity }} &times; {{ line.title }}</span>
+                <span>{{ line.lineTotal | currency: 'CAD' : 'symbol-narrow' }}</span>
+              </li>
+            }
+          </ul>
+          <div class="card-body">
+            <dl class="row mb-0">
+              <dt class="col-7 fw-normal">Subtotal</dt>
+              <dd class="col-5 text-end">
+                {{ items.subtotal | currency: 'CAD' : 'symbol-narrow' }}
+              </dd>
+              <dt class="col-7 fw-normal">GST (5%)</dt>
+              <dd class="col-5 text-end">{{ items.gst | currency: 'CAD' : 'symbol-narrow' }}</dd>
+              <dt class="col-7 fw-normal">QST (9.975%)</dt>
+              <dd class="col-5 text-end">{{ items.qst | currency: 'CAD' : 'symbol-narrow' }}</dd>
+              <dt class="col-7 h5 border-top pt-2">Total</dt>
+              <dd class="col-5 text-end h5 border-top pt-2" data-testid="total">
+                {{ items.total | currency: 'CAD' : 'symbol-narrow' }}
+              </dd>
+            </dl>
+            <button
+              type="submit"
+              class="btn btn-warning w-100"
+              [disabled]="placing()"
+              data-testid="place-order"
+            >
+              Place order
+            </button>
+            <a routerLink="/cart" class="btn btn-link w-100 mt-1"
+              ><i class="fa fa-arrow-left" aria-hidden="true"></i> Back to the cart</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+}

@@ -82,6 +82,18 @@
               }
             </button>
           </li>
+          <li class="list-inline-item">
+            <button
+              type="button"
+              class="btn btn-warning"
+              (click)="addToCart.emit(item)"
+              [disabled]="item.stock === 0"
+              [attr.aria-label]="'Add ' + item.title + ' to cart'"
+              data-testid="add-to-cart"
+            >
+              <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+            </button>
+          </li>
         }
       }
     </ul>
