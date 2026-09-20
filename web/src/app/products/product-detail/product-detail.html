@@ -118,6 +118,15 @@
           <span class="small"
             >Sold by <strong>{{ item.seller }}</strong></span
           >
+          @if (signedIn() && !item.mine && canBeMessaged(item.seller)) {
+            <a
+              [routerLink]="['/messages/new', item.seller]"
+              [queryParams]="{ subject: 'About ' + item.title }"
+              class="btn btn-outline-secondary btn-sm rounded-pill"
+              data-testid="message"
+              ><i class="fa fa-envelope" aria-hidden="true"></i> Message</a
+            >
+          }
         </div>
       </div>
     </div>
