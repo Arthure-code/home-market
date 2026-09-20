@@ -35,11 +35,11 @@ with Bootstrap, Font Awesome and ngx-toastr.
 
 ![The My sales page of nadia: one line, Bicycle helmet, matte black, order 1, quantity 2, $90.00, bought by omar, with the delivery address, and $90.00 before taxes at the top right](preview-sales.png)
 
-![The Sell a product form: Title, Price, a Category dropdown reading Kitchen, In stock, Brand, Maker and Description filled for a cast iron skillet, a green List it button, and a Photo card with a dashed drop zone](preview-sell.png)
+![The Sell a product form: Title, Price, a Category dropdown reading Kitchen, In stock, Brand, Maker and Description filled for a cast iron skillet, a green List it button, and on the right the Photo card showing the uploaded skillet photo above the dashed drop zone, with a toast reading Photo uploaded, save the product to keep it](preview-sell.png)
 
-![The page of the skillet nadia just listed: the buy box reads This is your listing, and under the description a green Edit and a red Remove button](preview-detail-mine.png)
+![The page of the skillet nadia just listed, with its photo: the buy box reads This is your listing, and under the description a green Edit and a red Remove button](preview-detail-mine.png)
 
-![The My products page: My listings with the helmet and the skillet, then Products I like](preview-my-products.png)
+![The My products page: My listings with the skillet and the helmet, each with its photo and an edit button, then Products I like with a bottle and a lamp](preview-my-products.png)
 
 ![The New message form as omar sees it after clicking the envelope on nadia's helmet: To reads nadia, Subject reads About Bicycle helmet, matte black, and a short note asking whether it is still available](preview-compose.png)
 
