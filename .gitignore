@@ -24,4 +24,4 @@ appsettings.*.local.json
 Thumbs.db
 
 # Uploaded photos
-api/HomeMarket.Api/images/
+api/src/HomeMarket.Api/images/

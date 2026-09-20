@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeMarket.Api", "HomeMarket.Api\HomeMarket.Api.csproj", "{BBA3CABD-5F3C-4465-94CA-49892509AA62}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeMarket.Api", "src\HomeMarket.Api\HomeMarket.Api.csproj", "{BBA3CABD-5F3C-4465-94CA-49892509AA62}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeMarket.Api.Tests", "HomeMarket.Api.Tests\HomeMarket.Api.Tests.csproj", "{2746E54A-6CFD-4C2C-B5CB-83AF516E4021}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeMarket.Api.Tests", "tests\HomeMarket.Api.Tests\HomeMarket.Api.Tests.csproj", "{2746E54A-6CFD-4C2C-B5CB-83AF516E4021}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

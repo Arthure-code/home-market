@@ -2,7 +2,7 @@ namespace HomeMarket.Api
 {
     public class Program
     {
-        // Instantiated by the test host only, never by hand.
+        // Never instantiated: everything here is static.
         protected Program() { }
 
         public static void Main(string[] args)
