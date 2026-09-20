@@ -1,0 +1,32 @@
+<div
+  class="drop-zone"
+  (dragover)="onDragOver($event)"
+  (drop)="onDrop($event)"
+  (click)="fileInput.click()"
+  (keydown.enter)="fileInput.click()"
+  tabindex="0"
+  role="button"
+  aria-label="Choose a photo"
+>
+  <p class="mb-0">Drag and drop your photo here, or click to choose one</p>
+  <input type="file" #fileInput class="d-none" (change)="onFileSelected($event)" accept="image/*" />
+</div>
+@if (file(); as chosen) {
+  <div class="p-3">
+    <span data-testid="file-name">{{ chosen.name }}</span>
+  </div>
+  <div>
+    <button
+      type="button"
+      class="btn btn-warning me-1"
+      (click)="upload()"
+      [disabled]="busy()"
+      data-testid="upload"
+    >
+      Upload
+    </button>
+    <button type="button" class="btn btn-danger" (click)="clear()" [disabled]="busy()">
+      Cancel
+    </button>
+  </div>
+}

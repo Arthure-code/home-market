@@ -1,0 +1,28 @@
+<div class="mt-5">
+  @if (registering()) {
+    <div class="row justify-content-center mb-5">
+      <div class="col-md-5 col-lg-4">
+        <app-register (done)="registering.set(false)" />
+      </div>
+    </div>
+  } @else {
+    <div class="text-center mb-5">
+      <h1>Shop everyday things</h1>
+      <p class="lead">
+        Find and sell what a home needs. Browse freely, sign up to buy, like and sell.
+      </p>
+      @if (!signedIn()) {
+        <button
+          type="button"
+          class="btn btn-primary btn-lg me-2"
+          (click)="registering.set(true)"
+          data-testid="sign-up"
+        >
+          Sign up
+        </button>
+      }
+      <a routerLink="/products" class="btn btn-info btn-lg">See the catalogue</a>
+    </div>
+  }
+  <app-product-list />
+</div>

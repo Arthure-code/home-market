@@ -1,0 +1,114 @@
+<header class="sticky-top">
+  <nav class="navbar navbar-dark bg-dark py-2">
+    <div class="container d-flex flex-wrap align-items-center column-gap-3 row-gap-2">
+      <a class="navbar-brand m-0 order-1" routerLink="/">HOME MARKET</a>
+
+      <form
+        class="d-flex search order-3 order-md-2"
+        role="search"
+        (ngSubmit)="search()"
+        autocomplete="off"
+        data-testid="search"
+      >
+        <label for="nav-search" class="visually-hidden">Search the shop</label>
+        <input
+          class="form-control rounded-end-0"
+          type="search"
+          id="nav-search"
+          name="q"
+          placeholder="Search everyday things"
+          [(ngModel)]="query"
+        />
+        <button class="btn btn-warning rounded-start-0" type="submit" aria-label="Search">
+          <i class="fa fa-search" aria-hidden="true"></i>
+        </button>
+      </form>
+
+      <div class="d-flex align-items-center column-gap-3 ms-auto order-2 order-md-3">
+        @if (signedIn()) {
+          <div class="dropdown">
+            <a
+              class="nav-link dropdown-toggle text-light"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              data-testid="account"
+            >
+              <span class="d-none d-lg-inline">Welcome, </span>{{ userName() }}
+            </a>
+            <div class="dropdown-menu dropdown-menu-end">
+              <a class="dropdown-item" routerLink="/my-products">My products</a>
+              <a class="dropdown-item" routerLink="/products/new">Sell a product</a>
+              <div class="dropdown-divider"></div>
+              <button
+                type="button"
+                class="dropdown-item"
+                (click)="signOut()"
+                data-testid="sign-out"
+              >
+                Sign out
+              </button>
+            </div>
+          </div>
+        } @else {
+          <form class="d-flex" (ngSubmit)="signIn()" autocomplete="off" data-testid="sign-in">
+            <label for="nav-user-name" class="visually-hidden">User name</label>
+            <input
+              class="form-control me-2"
+              type="text"
+              id="nav-user-name"
+              name="userName"
+              placeholder="User name"
+              autocomplete="username"
+              [(ngModel)]="credentials.userName"
+            />
+            <label for="nav-password" class="visually-hidden">Password</label>
+            <input
+              class="form-control me-2"
+              type="password"
+              id="nav-password"
+              name="password"
+              placeholder="Password"
+              autocomplete="current-password"
+              [(ngModel)]="credentials.password"
+            />
+            <button class="btn btn-success text-nowrap" type="submit">Sign in</button>
+          </form>
+        }
+      </div>
+    </div>
+  </nav>
+
+  <nav class="navbar navbar-dark categories py-0" aria-label="Categories">
+    <div class="container">
+      <ul class="navbar-nav flex-row flex-nowrap column-gap-3 overflow-x-auto">
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="/products"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            >All</a
+          >
+        </li>
+        @for (category of categories(); track category.name) {
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              routerLink="/products"
+              [queryParams]="{ category: category.name }"
+              routerLinkActive="active"
+              >{{ category.name }}</a
+            >
+          </li>
+        }
+        @if (signedIn()) {
+          <li class="nav-item ms-auto">
+            <a class="nav-link fw-semibold" routerLink="/products/new" routerLinkActive="active"
+              >Sell</a
+            >
+          </li>
+        }
+      </ul>
+    </div>
+  </nav>
+</header>
