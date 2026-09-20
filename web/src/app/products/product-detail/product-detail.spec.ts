@@ -5,6 +5,8 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable, of, throwError } from 'rxjs';
 import { ProductDetail } from './product-detail';
 import { SessionService } from '../../auth/session.service';
+import { EMPTY_CART } from '../../cart/cart';
+import { CartService } from '../../cart/cart.service';
 import { Product } from '../product';
 import { ProductService } from '../product.service';
 
@@ -70,6 +72,15 @@ describe('ProductDetail', () => {
           },
         },
         { provide: SessionService, useValue: { signedIn: () => signedIn } },
+        {
+          provide: CartService,
+          useValue: {
+            add: (id: number, quantity: number) => {
+              calls.push(`cart ${id} ${quantity}`);
+              return of(EMPTY_CART);
+            },
+          },
+        },
         { provide: ToastrService, useValue: toastr },
       ],
     }).compileComponents();
@@ -132,19 +143,41 @@ describe('ProductDetail', () => {
     expect(navigate).toHaveBeenCalledWith('/my-products');
   });
 
-  it('says how many are left, and whose listing it is', async () => {
+  it('lets a member pick a quantity up to the stock and add to the cart', async () => {
+    signedIn = true;
     answer = of({ ...fan, stock: 2 });
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
     await open('4');
+
     expect(text('stock')).toBe('Only 2 left in stock');
+    const select = root().querySelector<HTMLSelectElement>('[data-testid="quantity"]')!;
+    expect(Array.from(select.options).map((o) => o.value)).toEqual(['1', '2']);
+    select.value = '2';
+    select.dispatchEvent(new Event('change'));
+    await fixture.whenStable();
+    root().querySelector<HTMLButtonElement>('[data-testid="add-to-cart"]')?.click();
+    await fixture.whenStable();
+
+    expect(calls).toEqual(['get 4', 'cart 4 2']);
+    expect(toastr.success).toHaveBeenCalledWith('Added to your cart');
+    expect(navigate).toHaveBeenCalledWith('/cart');
+  });
+
+  it('offers no cart to a visitor, to the seller, or when sold out', async () => {
+    await open('4');
+    expect(root().querySelector('[data-testid="visitor"]')).not.toBeNull();
+    expect(root().querySelector('[data-testid="add-to-cart"]')).toBeNull();
 
     signedIn = true;
     answer = of({ ...fan, mine: true });
     await open('4');
     expect(root().querySelector('[data-testid="own"]')).not.toBeNull();
+    expect(root().querySelector('[data-testid="add-to-cart"]')).toBeNull();
 
     answer = of({ ...fan, stock: 0 });
     await open('4');
     expect(text('stock')).toBe('Out of stock');
+    expect(root().querySelector('[data-testid="add-to-cart"]')).toBeNull();
   });
 
   it('says when there is no such product', async () => {
