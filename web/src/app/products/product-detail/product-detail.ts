@@ -1,15 +1,17 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { Component, effect, inject, input, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { apiMessage } from '../../auth/api-message';
 import { SessionService } from '../../auth/session.service';
+import { MAX_QUANTITY } from '../../cart/cart';
+import { CartService } from '../../cart/cart.service';
 import { Product } from '../product';
 import { ProductService, canBeMessaged } from '../product.service';
 
-// One product on its own page, reached by its id, with its price and its
-// stock. A member can like it and write to its seller; its seller can
-// edit or remove it.
+// One product on its own page, reached by its id, with its buy box. A
+// member can like it, write to its seller and put some in the cart; its
+// seller can edit or remove it.
 @Component({
   selector: 'app-product-detail',
   imports: [CurrencyPipe, DatePipe, RouterLink],
@@ -20,10 +22,18 @@ export class ProductDetail {
   private readonly service = inject(ProductService);
   private readonly router = inject(Router);
   private readonly toastr = inject(ToastrService);
+  private readonly cart = inject(CartService);
 
   readonly id = input.required<string>();
   readonly product = signal<Product | null>(null);
   readonly missing = signal(false);
+  readonly quantity = signal(1);
+  readonly adding = signal(false);
+  // One to ten, never more than the stock.
+  readonly quantities = computed(() => {
+    const most = Math.min(this.product()?.stock ?? 0, MAX_QUANTITY);
+    return Array.from({ length: most }, (_, i) => i + 1);
+  });
   readonly signedIn = inject(SessionService).signedIn;
   readonly canBeMessaged = canBeMessaged;
 
@@ -41,6 +51,22 @@ export class ProductDetail {
         this.toastr.success(liked ? 'Added to your likes' : 'Removed from your likes');
       },
       error: (error: unknown) => this.toastr.error(apiMessage(error)),
+    });
+  }
+
+  addToCart(): void {
+    const product = this.product();
+    if (!product) return;
+    this.adding.set(true);
+    this.cart.add(product.id, this.quantity()).subscribe({
+      next: () => {
+        this.toastr.success('Added to your cart');
+        this.router.navigateByUrl('/cart');
+      },
+      error: (error: unknown) => {
+        this.toastr.error(apiMessage(error));
+        this.adding.set(false);
+      },
     });
   }
 

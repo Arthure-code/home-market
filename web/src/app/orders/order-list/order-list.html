@@ -1,0 +1,46 @@
+<h1 class="h3 mt-3 mb-4">My orders</h1>
+
+@if (loading()) {
+  <div class="text-center py-5">
+    <output class="spinner-border text-primary"
+      ><span class="visually-hidden">Loading...</span></output
+    >
+  </div>
+} @else if (orders().length === 0) {
+  <p class="alert alert-info" data-testid="empty">
+    You have not ordered anything yet.
+    <a routerLink="/products" class="alert-link">Browse the catalogue</a>.
+  </p>
+} @else {
+  <div class="table-responsive">
+    <table class="table table-hover align-middle" data-testid="table">
+      <thead>
+        <tr>
+          <th scope="col">Order</th>
+          <th scope="col">Placed</th>
+          <th scope="col">Items</th>
+          <th scope="col" class="text-end">Total</th>
+          <th scope="col"><span class="visually-hidden">Open</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (order of orders(); track order.id) {
+          <tr [attr.data-testid]="'order-' + order.id">
+            <td>#{{ order.id }}</td>
+            <td>{{ order.placedAt | date: 'MMM d, y' }}</td>
+            <td>{{ summary(order) }}</td>
+            <td class="text-end">{{ order.total | currency: 'CAD' : 'symbol-narrow' }}</td>
+            <td class="text-end">
+              <a
+                [routerLink]="['/orders', order.id]"
+                class="btn btn-sm btn-primary"
+                [attr.aria-label]="'Open order ' + order.id"
+                >Details</a
+              >
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

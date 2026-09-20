@@ -8,6 +8,11 @@ import { MyProducts } from './products/my-products/my-products';
 import { MessageList } from './messages/message-list/message-list';
 import { MessageView } from './messages/message-view/message-view';
 import { Compose } from './messages/compose/compose';
+import { CartPage } from './cart/cart-page/cart-page';
+import { Checkout } from './orders/checkout/checkout';
+import { OrderList } from './orders/order-list/order-list';
+import { OrderDetail } from './orders/order-detail/order-detail';
+import { Sales } from './orders/sales/sales';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -20,5 +25,10 @@ export const routes: Routes = [
   { path: 'messages/new', component: Compose, canActivate: [authGuard] },
   { path: 'messages/new/:to', component: Compose, canActivate: [authGuard] },
   { path: 'messages/:id', component: MessageView, canActivate: [authGuard] },
+  { path: 'cart', component: CartPage, canActivate: [authGuard] },
+  { path: 'checkout', component: Checkout, canActivate: [authGuard] },
+  { path: 'orders', component: OrderList, canActivate: [authGuard] },
+  { path: 'orders/:id', component: OrderDetail, canActivate: [authGuard] },
+  { path: 'sales', component: Sales, canActivate: [authGuard] },
   { path: '**', redirectTo: '' },
 ];

@@ -1,0 +1,111 @@
+@let items = cart();
+<h1 class="h3 mt-3 mb-4">Your cart</h1>
+
+@if (empty()) {
+  <div class="card">
+    <div class="card-body text-center py-5">
+      <i class="fa fa-shopping-cart fa-3x text-secondary mb-3" aria-hidden="true"></i>
+      <p class="lead mb-3" data-testid="empty">Your cart is empty.</p>
+      <a routerLink="/products" class="btn btn-warning">Browse the catalogue</a>
+    </div>
+  </div>
+} @else {
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="card">
+        <ul class="list-group list-group-flush" data-testid="lines">
+          @for (line of items.lines; track line.productId) {
+            <li
+              class="list-group-item d-flex gap-3 align-items-center"
+              [attr.data-testid]="'line-' + line.productId"
+            >
+              @if (line.photoUrl) {
+                <img
+                  [src]="line.photoUrl + '?auto=format&fit=crop&w=160&h=120&q=70'"
+                  [alt]="line.title"
+                  class="thumb rounded"
+                  width="160"
+                  height="120"
+                />
+              } @else {
+                <div class="thumb rounded no-photo" aria-hidden="true">
+                  <i class="fa fa-camera" aria-hidden="true"></i>
+                </div>
+              }
+              <div class="flex-grow-1">
+                <a [routerLink]="['/products', line.productId]" class="fw-semibold link-dark">{{
+                  line.title
+                }}</a>
+                <p class="small text-secondary mb-2">
+                  Sold by {{ line.seller }}.
+                  {{ line.stock <= 3 ? 'Only ' + line.stock + ' left.' : 'In stock.' }}
+                </p>
+                <div class="d-flex align-items-center gap-3">
+                  <label class="d-flex align-items-center gap-2 mb-0">
+                    <span class="small">Qty</span>
+                    <select
+                      class="form-select form-select-sm w-auto"
+                      [value]="line.quantity"
+                      [disabled]="busy()"
+                      (change)="setQuantity(line, +$any($event.target).value)"
+                      data-testid="quantity"
+                    >
+                      @for (n of quantities(line); track n) {
+                        <option [value]="n" [selected]="n === line.quantity">{{ n }}</option>
+                      }
+                    </select>
+                  </label>
+                  <button
+                    type="button"
+                    class="btn btn-link btn-sm p-0 link-danger"
+                    (click)="remove(line)"
+                    [disabled]="busy()"
+                    data-testid="remove"
+                  >
+                    <i class="fa fa-trash" aria-hidden="true"></i> Remove
+                  </button>
+                </div>
+              </div>
+              <div class="text-end">
+                <p class="fw-bold mb-0" data-testid="line-total">
+                  {{ line.lineTotal | currency: 'CAD' : 'symbol-narrow' }}
+                </p>
+                @if (line.quantity > 1) {
+                  <p class="small text-secondary mb-0">
+                    {{ line.unitPrice | currency: 'CAD' : 'symbol-narrow' }} each
+                  </p>
+                }
+              </div>
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card summary">
+        <div class="card-body">
+          <dl class="row mb-0">
+            <dt class="col-7 fw-normal">Subtotal ({{ items.itemCount }} items)</dt>
+            <dd class="col-5 text-end" data-testid="subtotal">
+              {{ items.subtotal | currency: 'CAD' : 'symbol-narrow' }}
+            </dd>
+            <dt class="col-7 fw-normal">GST (5%)</dt>
+            <dd class="col-5 text-end">{{ items.gst | currency: 'CAD' : 'symbol-narrow' }}</dd>
+            <dt class="col-7 fw-normal">QST (9.975%)</dt>
+            <dd class="col-5 text-end">{{ items.qst | currency: 'CAD' : 'symbol-narrow' }}</dd>
+            <dt class="col-7 fw-normal">Delivery</dt>
+            <dd class="col-5 text-end">Free</dd>
+            <dt class="col-7 h5 border-top pt-2">Total</dt>
+            <dd class="col-5 text-end h5 border-top pt-2" data-testid="total">
+              {{ items.total | currency: 'CAD' : 'symbol-narrow' }}
+            </dd>
+          </dl>
+          <a routerLink="/checkout" class="btn btn-warning w-100" data-testid="checkout"
+            >Proceed to checkout</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+}

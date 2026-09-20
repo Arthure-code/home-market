@@ -47,6 +47,8 @@
             </a>
             <div class="dropdown-menu dropdown-menu-end">
               <a class="dropdown-item" routerLink="/my-products">My products</a>
+              <a class="dropdown-item" routerLink="/orders">My orders</a>
+              <a class="dropdown-item" routerLink="/sales">My sales</a>
               <a class="dropdown-item" routerLink="/products/new">Sell a product</a>
               <div class="dropdown-divider"></div>
               <button
@@ -59,6 +61,28 @@
               </button>
             </div>
           </div>
+          @if (cartCount() > 0) {
+            <a
+              class="btn btn-warning rounded-pill cart-pill"
+              routerLink="/cart"
+              [attr.aria-label]="'Cart, ' + cartCount() + (cartCount() === 1 ? ' item' : ' items')"
+              data-testid="cart-link"
+            >
+              <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+              <span data-testid="cart-count">{{ cartCount() }}</span>
+            </a>
+          } @else {
+            <a
+              class="nav-link text-light"
+              routerLink="/cart"
+              routerLinkActive="active"
+              aria-label="Cart"
+              data-testid="cart-link"
+            >
+              <i class="fa fa-shopping-cart fa-lg" aria-hidden="true"></i>
+              <span class="d-none d-lg-inline ms-1">Cart</span>
+            </a>
+          }
         } @else {
           <form class="d-flex" (ngSubmit)="signIn()" autocomplete="off" data-testid="sign-in">
             <label for="nav-user-name" class="visually-hidden">User name</label>
