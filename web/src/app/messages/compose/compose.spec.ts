@@ -91,7 +91,7 @@ describe('Compose', () => {
   it('shows the API message when the recipient does not exist', async () => {
     answer = throwError(
       () =>
-        new HttpErrorResponse({ status: 404, error: { message: 'No member has that user name.' } }),
+        new HttpErrorResponse({ status: 404, error: { detail: 'No member has that user name.' } }),
     );
     await open('nobody', 'Hi');
     await type('body', 'Hi');
@@ -100,6 +100,6 @@ describe('Compose', () => {
     await fixture.whenStable();
 
     expect(toastr.error).toHaveBeenCalledWith('No member has that user name.');
-    expect(fixture.componentInstance.sending()).toBe(false);
+    expect(root().querySelector<HTMLButtonElement>('[data-testid="send"]')?.disabled).toBe(false);
   });
 });

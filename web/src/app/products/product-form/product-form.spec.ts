@@ -1,8 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { Router, provideRouter } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of } from 'rxjs';
 import { ProductForm } from './product-form';
+import { PhotoUploader } from '../photo-uploader/photo-uploader';
 import { Product, ProductDraft } from '../product';
 import { ProductService } from '../product.service';
 
@@ -141,13 +143,19 @@ describe('ProductForm', () => {
   it('keeps the name of an uploaded photo in the draft', async () => {
     await open();
 
-    fixture.componentInstance.photoUploaded({
+    const uploader = fixture.debugElement.query(By.directive(PhotoUploader));
+    (uploader.componentInstance as PhotoUploader).uploaded.emit({
       photo: 'new.png',
       url: 'http://localhost:5130/images/new.png',
     });
     await fixture.whenStable();
+    await type('title', 'Bicycle helmet');
+    await type('price', '45');
+    await pick('category', 'Sports & outdoors');
+    root().querySelector('form')!.dispatchEvent(new Event('submit'));
+    await fixture.whenStable();
 
-    expect(fixture.componentInstance.draft().photo).toBe('new.png');
+    expect(calls[0].draft).toMatchObject({ title: 'Bicycle helmet', photo: 'new.png' });
     expect(root().querySelector('[data-testid="photo-preview"]')?.getAttribute('src')).toContain(
       'new.png',
     );

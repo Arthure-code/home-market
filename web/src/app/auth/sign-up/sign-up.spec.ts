@@ -83,7 +83,7 @@ describe('SignUp', () => {
 
   it('shows the API message when the name is taken', async () => {
     registered = throwError(
-      () => new HttpErrorResponse({ status: 409, error: { message: 'That user name is taken.' } }),
+      () => new HttpErrorResponse({ status: 409, error: { detail: 'That user name is taken.' } }),
     );
     await open();
     await type('userName', 'nadia');
@@ -93,6 +93,8 @@ describe('SignUp', () => {
 
     expect(calls).toEqual(['register nadia']);
     expect(toastr.error).toHaveBeenCalledWith('That user name is taken.');
-    expect(fixture.componentInstance.busy()).toBe(false);
+    expect(root().querySelector<HTMLButtonElement>('[data-testid="sign-up"]')?.disabled).toBe(
+      false,
+    );
   });
 });

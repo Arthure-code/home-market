@@ -5,7 +5,7 @@ describe('apiMessage', () => {
   const error = (status: number, body: unknown) => new HttpErrorResponse({ status, error: body });
 
   it('reads the message the API writes', () => {
-    expect(apiMessage(error(409, { message: 'That user name is taken.' }))).toBe(
+    expect(apiMessage(error(409, { detail: 'That user name is taken.' }))).toBe(
       'That user name is taken.',
     );
   });
