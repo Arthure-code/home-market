@@ -21,8 +21,8 @@ export class Compose {
 
   readonly to = input<string>();
   readonly subject = input<string>();
-  readonly draft = signal<MessageDraft>({ to: '', subject: '', body: '' });
-  readonly sending = signal(false);
+  protected readonly draft = signal<MessageDraft>({ to: '', subject: '', body: '' });
+  protected readonly sending = signal(false);
 
   constructor() {
     effect(() => {
@@ -30,7 +30,7 @@ export class Compose {
     });
   }
 
-  send(): void {
+  protected send(): void {
     const draft = this.draft();
     if (!draft.to.trim() || !draft.subject.trim() || !draft.body.trim()) {
       this.toastr.error('Please fill in the recipient, the subject and the message');

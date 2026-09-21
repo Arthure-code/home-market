@@ -22,11 +22,11 @@ export class Nav implements OnInit {
   private readonly cart = inject(CartService);
   private readonly router = inject(Router);
 
-  readonly signedIn = this.session.signedIn;
-  readonly userName = this.session.userName;
-  readonly cartCount = this.cart.count;
-  readonly categories = signal<Category[]>([]);
-  query = '';
+  protected readonly signedIn = this.session.signedIn;
+  protected readonly userName = this.session.userName;
+  protected readonly cartCount = this.cart.count;
+  protected readonly categories = signal<Category[]>([]);
+  protected query = '';
 
   constructor() {
     // The cart is fetched when a member arrives or signs in, and dropped
@@ -47,12 +47,12 @@ export class Nav implements OnInit {
     });
   }
 
-  search(): void {
+  protected search(): void {
     const q = this.query.trim();
     this.router.navigate(['/products'], { queryParams: q ? { q } : {} });
   }
 
-  signOut(): void {
+  protected signOut(): void {
     this.session.signOut();
     this.router.navigateByUrl('/');
   }

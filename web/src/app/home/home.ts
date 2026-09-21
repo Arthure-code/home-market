@@ -11,5 +11,5 @@ import { ProductList } from '../products/product-list/product-list';
   templateUrl: './home.html',
 })
 export class Home {
-  readonly signedIn = inject(SessionService).signedIn;
+  protected readonly signedIn = inject(SessionService).signedIn;
 }

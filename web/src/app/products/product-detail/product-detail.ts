@@ -7,6 +7,7 @@ import { SignInPrompt } from '../../auth/sign-in-prompt';
 import { MAX_QUANTITY } from '../../cart/cart';
 import { CartService } from '../../cart/cart.service';
 import { Product } from '../product';
+import { StockLabelPipe } from '../stock-label-pipe';
 import { ProductService, canBeMessaged } from '../product.service';
 
 // One product on its own page, reached by its id, with its buy box. A
@@ -14,7 +15,7 @@ import { ProductService, canBeMessaged } from '../product.service';
 // seller can edit or remove it.
 @Component({
   selector: 'app-product-detail',
-  imports: [CurrencyPipe, DatePipe, RouterLink],
+  imports: [CurrencyPipe, DatePipe, RouterLink, StockLabelPipe],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.css',
 })
@@ -26,22 +27,22 @@ export class ProductDetail {
   private readonly prompt = inject(SignInPrompt);
 
   readonly id = input.required<string>();
-  readonly product = signal<Product | null>(null);
-  readonly missing = signal(false);
-  readonly quantity = signal(1);
-  readonly adding = signal(false);
+  protected readonly product = signal<Product | null>(null);
+  protected readonly missing = signal(false);
+  protected readonly quantity = signal(1);
+  protected readonly adding = signal(false);
   // One to ten, never more than the stock.
-  readonly quantities = computed(() => {
+  protected readonly quantities = computed(() => {
     const most = Math.min(this.product()?.stock ?? 0, MAX_QUANTITY);
     return Array.from({ length: most }, (_, i) => i + 1);
   });
-  readonly canBeMessaged = canBeMessaged;
+  protected readonly canBeMessaged = canBeMessaged;
 
   constructor() {
     effect(() => this.load(Number(this.id())));
   }
 
-  toggleLike(): void {
+  protected toggleLike(): void {
     const product = this.product();
     if (!product || !this.prompt.ensure()) return;
     const liked = !product.liked;
@@ -54,7 +55,7 @@ export class ProductDetail {
     });
   }
 
-  addToCart(): void {
+  protected addToCart(): void {
     const product = this.product();
     if (!product || !this.prompt.ensure()) return;
     this.adding.set(true);
@@ -71,7 +72,7 @@ export class ProductDetail {
   }
 
   // The Message button is a link for a member and a prompt for a visitor.
-  message(): void {
+  protected message(): void {
     const product = this.product();
     if (!product || !this.prompt.ensure()) return;
     this.router.navigate(['/messages/new', product.seller], {
@@ -79,7 +80,7 @@ export class ProductDetail {
     });
   }
 
-  remove(): void {
+  protected remove(): void {
     const product = this.product();
     if (!product) return;
     this.service.delete(product.id).subscribe({

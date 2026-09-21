@@ -16,29 +16,29 @@ export class PhotoUploader {
   private readonly toastr = inject(ToastrService);
 
   readonly uploaded = output<UploadedPhoto>();
-  readonly file = signal<File | null>(null);
-  readonly busy = signal(false);
+  protected readonly file = signal<File | null>(null);
+  protected readonly busy = signal(false);
 
-  onDragOver(event: DragEvent): void {
+  protected onDragOver(event: DragEvent): void {
     event.preventDefault();
   }
 
-  onDrop(event: DragEvent): void {
+  protected onDrop(event: DragEvent): void {
     event.preventDefault();
     this.pick(event.dataTransfer?.files?.[0]);
   }
 
-  onFileSelected(event: Event): void {
+  protected onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.pick(input.files?.[0]);
     input.value = '';
   }
 
-  clear(): void {
+  protected clear(): void {
     this.file.set(null);
   }
 
-  upload(): void {
+  protected upload(): void {
     const file = this.file();
     if (!file) return;
     this.busy.set(true);

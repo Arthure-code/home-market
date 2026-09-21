@@ -19,7 +19,7 @@ export class OrderDetail {
   private readonly toastr = inject(ToastrService);
 
   readonly id = input.required<string>();
-  readonly order = signal<Order | null>(null);
+  protected readonly order = signal<Order | null>(null);
 
   constructor() {
     effect(() => this.load(Number(this.id())));
