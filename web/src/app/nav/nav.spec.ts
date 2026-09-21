@@ -64,12 +64,16 @@ describe('Nav', () => {
     }).compileComponents();
   });
 
-  it('gives a visitor the search box, the sign-in form and the categories', async () => {
+  it('gives a visitor the search box, a Sign in link, the cart and the categories', async () => {
     await show();
 
     expect(root().querySelector('[data-testid="search"]')).not.toBeNull();
-    expect(root().querySelector('[data-testid="sign-in"]')).not.toBeNull();
-    expect(root().querySelector('[data-testid="cart-link"]')).toBeNull();
+    expect(root().querySelector('[data-testid="sign-in-link"]')?.getAttribute('href')).toBe(
+      '/sign-in',
+    );
+    expect(root().querySelector('[data-testid="account"]')).toBeNull();
+    expect(root().querySelector('[data-testid="cart-link"]')?.getAttribute('href')).toBe('/cart');
+    expect(root().querySelector('[data-testid="cart-count"]')).toBeNull();
     const links = Array.from(root().querySelectorAll('.categories a')).map((a) =>
       a.textContent?.trim(),
     );
@@ -82,7 +86,7 @@ describe('Nav', () => {
     signedIn.set(true);
     await show();
 
-    expect(root().querySelector('[data-testid="sign-in"]')).toBeNull();
+    expect(root().querySelector('[data-testid="sign-in-link"]')).toBeNull();
     expect(root().querySelector('[data-testid="account"]')?.textContent).toContain('nadia');
     expect(cartCalls).toEqual(['load']);
     expect(root().querySelector('[data-testid="cart-link"]')?.classList.contains('cart-pill')).toBe(
@@ -94,7 +98,7 @@ describe('Nav', () => {
     root().querySelector<HTMLButtonElement>('[data-testid="sign-out"]')?.click();
     await fixture.whenStable();
     expect(cartCalls).toEqual(['load', 'clear']);
-    expect(root().querySelector('[data-testid="cart-link"]')).toBeNull();
+    expect(root().querySelector('[data-testid="sign-in-link"]')).not.toBeNull();
   });
 
   it('shows the cart as a plain icon while it is empty', async () => {

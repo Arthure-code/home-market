@@ -1,12 +1,11 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, inject, input, output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SessionService } from '../../auth/session.service';
 import { Product } from '../product';
 
 // One product on the grid. The photo and the title open its page; the
-// buttons are a quick view for everyone, like and cart for a member,
-// edit for the seller.
+// buttons are a quick view, a like and a cart for everyone, edit for the
+// seller. A visitor who likes or adds is sent to sign in by the list.
 @Component({
   selector: 'app-product-card',
   imports: [CurrencyPipe, RouterLink],
@@ -18,5 +17,4 @@ export class ProductCard {
   readonly toggleLike = output<Product>();
   readonly addToCart = output<Product>();
   readonly quickView = output<Product>();
-  readonly signedIn = inject(SessionService).signedIn;
 }

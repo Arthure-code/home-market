@@ -15,13 +15,17 @@ with Bootstrap, Font Awesome and ngx-toastr.
 
 ## Screenshots
 
-![The front page: a dark bar with HOME MARKET, a search box with a yellow button, a sign-in form; under it a grey strip of categories, All, Electronics, Home, Kitchen, Office, Accessories, Bags & travel, Personal care, Sports & outdoors; then Shop everyday things, a Sign up button and a grid of product cards six a row, each with its photo, its title, its price, In stock or Only 2 left, and a small blue quick view button](preview.png)
+![The front page: a dark bar with HOME MARKET, a search box with a yellow button, a Sign in link and the cart; under it a grey strip of categories, All, Electronics, Home, Kitchen, Office, Accessories, Bags & travel, Personal care, Sports & outdoors; then Shop everyday things, a Sign up button and a grid of product cards six a row, each with its photo, its title, its price, In stock or Only 2 left, and three small buttons, quick view, like and cart](preview.png)
+
+![The Sign in page: a card with User name, Password and a yellow Sign in button, under it New to HOME MARKET? Create your account, and a blue toast at the bottom right reading Please sign in to continue, because a visitor just clicked a like](preview-sign-in.png)
+
+![The Create account page: User name with its rule, Password with At least 8 characters, Re-enter password, a yellow Create your account button, and Already have an account? Sign in](preview-sign-up.png)
 
 ![The Kitchen category: five cards, a mug, two bottles, a toaster and a kettle, each with three small square buttons, quick view, like and cart, Kitchen underlined in the strip](preview-category.png)
 
 ![The quick view over the catalogue: a dialog with the headphones photo on the left and, on the right, $249, In stock, brand, maker, category, sold by, the description, a small like button, a yellow Add to cart button and a link See the full page](preview-quick-view.png)
 
-![A product page as a visitor sees it: the breadcrumb Catalogue, Electronics, Wireless headphones; the photo, brand, maker and description; and on the right the buy box with the price, In stock and Sign in to add it to your cart](preview-detail-visitor.png)
+![A product page as a visitor sees it, with Sign in and Cart in the bar: a Back to catalogue link, the breadcrumb Catalogue, Electronics, Wireless headphones; the photo, brand, maker and description with a small like button; and on the right the buy box with the price, In stock, a quantity and a yellow Add to cart button, exactly as a member sees it](preview-detail-visitor.png)
 
 ![The catalogue once signed in: the bar now reads Messages, Welcome, omar and Cart; every card has a quick view, a like and a cart button, the helmet reads Out of stock with its cart button greyed, and a green toast reads Added to your likes](preview-member.png)
 
@@ -123,7 +127,19 @@ mark it read, which opening it does.
 `PasswordHasher`, the same 401 for a wrong name and a wrong password,
 five attempts a minute per client address, a JWT signed with a key that
 lives outside the repository, hardening headers on every answer, CORS
-for the front end only.
+for the front end only. Sign up and sign in are pages of their own,
+each linking to the other; there is no password recovery yet, as in
+the `Identity.API` of eShop, and it is the next step, behind an
+`IEmailSender` the way the payment sits behind `IPaymentGateway`.
+
+**Nobody is asked to sign in ahead of time.** A visitor sees the same
+buttons as a member: like, cart, Message on every card, in the quick
+view and on the product page. The first click on any of them says
+"Please sign in to continue", opens the sign-in page, and brings the
+visitor back where they were once they are in (`SignInPrompt`, and the
+route guard does the same for the cart, the checkout, the orders and
+the messages). The API refuses the same actions with a 401 whatever the
+front end does.
 
 **The page and the quick view.** The photo and the title of a card open
 the product page, as on Amazon or in eShop; the small blue button opens
@@ -137,8 +153,9 @@ way eBay places its seller box; the like is a small square with its
 count, as on the cards.
 
 **Two bars, as on any shop.** The first holds the brand, the search box
-and, for a visitor, the sign-in form; for a member, Messages, an account
-menu (my products, my orders, my sales, sell, sign out) and the cart.
+and the cart, with a Sign in link for a visitor and, for a member,
+Messages and an account menu (my products, my orders, my sales, sell,
+sign out).
 Empty, the cart is a plain icon; with something in it, a filled pill
 with the count next to the icon, never a badge over it, as in eShop's
 `CartMenu`. The second bar is the strip of categories, which scrolls
@@ -186,8 +203,9 @@ npm install
 npm start
 ```
 
-Open `http://localhost:4200/`, browse, sign up from the front page, sign
-in from the bar.
+Open `http://localhost:4200/`, browse, create an account from Sign up,
+sign in from the Sign in link, or just click a like and let the shop
+walk you there.
 
 ## Tests
 
@@ -221,11 +239,12 @@ From `web`:
 npm test
 ```
 
-Seventy-six Vitest tests through `TestBed`: the session service, the
-interceptor, the guard and the API messages; the product, cart and
+Eighty-six Vitest tests through `TestBed`: the session service, the
+interceptor, the guard, the sign-in prompt, the sign-in and sign-up
+pages and the API messages; the product, cart and
 message services against `HttpTestingController`; the two bars for a
-visitor and a member, with the search and the cart count; the card for
-a visitor, a member and a seller, with its cart button; the quick view
+visitor and a member, with the search and the cart count; the card, its
+like and cart buttons for everyone and its edit button for the seller; the quick view
 that opens with a product and tells the list when it closes; the list
 with its three sources and its likes; the product page with its buy box
 and its quantities; the form for a new and for an existing product; the
@@ -255,9 +274,11 @@ caisse avec une carte (passerelle de paiement derrière une interface,
 carte jamais conservée), on reçoit une
 commande avec ses lignes figées au prix du jour et les taxes du Québec,
 on vend ses propres produits, on suit ses ventes, on aime des fiches et
-on écrit au vendeur. Personne ne peut toucher l'annonce, le panier, la
+on écrit au vendeur. Un visiteur voit les mêmes boutons qu'un membre et
+n'est invité à se connecter qu'au premier clic, puis revient où il
+était. Personne ne peut toucher l'annonce, le panier, la
 commande ni le courrier d'un autre : l'identité vient du jeton, jamais
-d'un en-tête. Cinquante-deux tests xUnit sur les contrôleurs (Moq, AutoFixture, Etant donné / Lorsque / Alors) et soixante-seize tests Vitest.
+d'un en-tête. Cinquante-deux tests xUnit sur les contrôleurs (Moq, AutoFixture, Etant donné / Lorsque / Alors) et quatre-vingt-six tests Vitest.
 
 ## Licence
 

@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { ProductCard } from './product-card';
-import { SessionService } from '../../auth/session.service';
 import { Product } from '../product';
 
 const mug: Product = {
@@ -24,7 +23,6 @@ const mug: Product = {
 
 describe('ProductCard', () => {
   let fixture: ComponentFixture<ProductCard>;
-  let signedIn = false;
 
   const root = () => fixture.nativeElement as HTMLElement;
   const show = async (product: Product) => {
@@ -37,10 +35,7 @@ describe('ProductCard', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ProductCard],
-      providers: [
-        provideRouter([]),
-        { provide: SessionService, useValue: { signedIn: () => signedIn } },
-      ],
+      providers: [provideRouter([])],
     }).compileComponents();
   });
 
@@ -56,21 +51,18 @@ describe('ProductCard', () => {
     expect(root().textContent).toContain('$12');
   });
 
-  it('opens the page from the photo and gives a visitor the quick view only', async () => {
-    signedIn = false;
+  it('opens the page from the photo and gives everyone the quick view, the like and the cart', async () => {
     await show(mug);
     const viewed: Product[] = [];
     fixture.componentInstance.quickView.subscribe((p) => viewed.push(p));
 
     expect(root().querySelector('[data-testid="open"]')?.getAttribute('href')).toBe('/products/23');
-    expect(root().querySelectorAll('.list-inline-item').length).toBe(1);
-    expect(root().querySelector('[data-testid="like"]')).toBeNull();
+    expect(root().querySelectorAll('.list-inline-item').length).toBe(3);
     root().querySelector<HTMLButtonElement>('[data-testid="quick-view"]')?.click();
     expect(viewed).toEqual([mug]);
   });
 
-  it('gives a member a like button that shows the count and emits the product', async () => {
-    signedIn = true;
+  it('gives a like button that shows the count and emits the product', async () => {
     await show(mug);
     const emitted: Product[] = [];
     fixture.componentInstance.toggleLike.subscribe((p) => emitted.push(p));
@@ -82,8 +74,7 @@ describe('ProductCard', () => {
     expect(emitted).toEqual([mug]);
   });
 
-  it('gives a member a cart button that emits the product, greyed when sold out', async () => {
-    signedIn = true;
+  it('gives a cart button that emits the product, greyed when sold out', async () => {
     await show(mug);
     const emitted: Product[] = [];
     fixture.componentInstance.addToCart.subscribe((p) => emitted.push(p));
@@ -98,14 +89,9 @@ describe('ProductCard', () => {
     expect(root().querySelector<HTMLButtonElement>('[data-testid="add-to-cart"]')?.disabled).toBe(
       true,
     );
-
-    signedIn = false;
-    await show(mug);
-    expect(root().querySelector('[data-testid="add-to-cart"]')).toBeNull();
   });
 
   it('gives the seller an edit link instead of a like', async () => {
-    signedIn = true;
     await show({ ...mug, mine: true });
 
     expect(root().querySelector('[data-testid="like"]')).toBeNull();

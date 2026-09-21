@@ -17,7 +17,7 @@ describe('authGuard', () => {
     );
 
   const configure = (signedIn: boolean) => {
-    const toastr = { error: vi.fn() };
+    const toastr = { info: vi.fn() };
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
@@ -32,7 +32,7 @@ describe('authGuard', () => {
     const toastr = configure(true);
 
     expect(run()).toBe(true);
-    expect(toastr.error).not.toHaveBeenCalled();
+    expect(toastr.info).not.toHaveBeenCalled();
   });
 
   it('sends a visitor who is not signed in to the sign-in page, with a message', () => {
@@ -41,7 +41,7 @@ describe('authGuard', () => {
     const result = run() as UrlTree;
 
     expect(result instanceof UrlTree).toBe(true);
-    expect(TestBed.inject(Router).serializeUrl(result)).toBe('/');
-    expect(toastr.error).toHaveBeenCalledWith('Please sign in first');
+    expect(TestBed.inject(Router).serializeUrl(result)).toBe('/sign-in?returnUrl=%2Fmemos');
+    expect(toastr.info).toHaveBeenCalledWith('Please sign in to continue');
   });
 });

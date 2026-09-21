@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of } from 'rxjs';
 import { ProductList } from './product-list';
-import { SessionService } from '../../auth/session.service';
+import { SignInPrompt } from '../../auth/sign-in-prompt';
 import { Product } from '../product';
 import { ProductService } from '../product.service';
 
@@ -49,6 +49,8 @@ describe('ProductList', () => {
   let fixture: ComponentFixture<ProductList>;
   let stub: ServiceStub;
   let toastr: { success: ReturnType<typeof vi.fn>; error: ReturnType<typeof vi.fn> };
+  let signedIn: boolean;
+  let prompted: number;
 
   const root = () => fixture.nativeElement as HTMLElement;
   const cards = () => root().querySelectorAll('app-product-card');
@@ -62,12 +64,22 @@ describe('ProductList', () => {
   beforeEach(async () => {
     stub = new ServiceStub();
     toastr = { success: vi.fn(), error: vi.fn() };
+    signedIn = true;
+    prompted = 0;
     await TestBed.configureTestingModule({
       imports: [ProductList],
       providers: [
         provideRouter([]),
         { provide: ProductService, useValue: stub },
-        { provide: SessionService, useValue: { signedIn: () => true } },
+        {
+          provide: SignInPrompt,
+          useValue: {
+            ensure: () => {
+              if (!signedIn) prompted++;
+              return signedIn;
+            },
+          },
+        },
         { provide: ToastrService, useValue: toastr },
       ],
     }).compileComponents();
@@ -108,5 +120,16 @@ describe('ProductList', () => {
     expect(cards()[1].querySelector('[data-testid="like"]')?.getAttribute('aria-pressed')).toBe(
       'false',
     );
+  });
+
+  it('sends a visitor who likes to sign in, without calling the service', async () => {
+    signedIn = false;
+    await show();
+
+    cards()[0].querySelector<HTMLButtonElement>('[data-testid="like"]')?.click();
+    await fixture.whenStable();
+
+    expect(prompted).toBe(1);
+    expect(stub.calls).toEqual(['list']);
   });
 });

@@ -63,7 +63,7 @@
             </dl>
             <p class="small description mb-3">{{ item.description || 'No description.' }}</p>
             <div class="d-flex align-items-center gap-2 flex-wrap">
-              @if (signedIn() && !item.mine) {
+              @if (!item.mine) {
                 <button
                   type="button"
                   class="btn btn-success btn-sm"
