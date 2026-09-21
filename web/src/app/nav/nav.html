@@ -84,29 +84,24 @@
             </a>
           }
         } @else {
-          <form class="d-flex" (ngSubmit)="signIn()" autocomplete="off" data-testid="sign-in">
-            <label for="nav-user-name" class="visually-hidden">User name</label>
-            <input
-              class="form-control me-2"
-              type="text"
-              id="nav-user-name"
-              name="userName"
-              placeholder="User name"
-              autocomplete="username"
-              [(ngModel)]="credentials.userName"
-            />
-            <label for="nav-password" class="visually-hidden">Password</label>
-            <input
-              class="form-control me-2"
-              type="password"
-              id="nav-password"
-              name="password"
-              placeholder="Password"
-              autocomplete="current-password"
-              [(ngModel)]="credentials.password"
-            />
-            <button class="btn btn-success text-nowrap" type="submit">Sign in</button>
-          </form>
+          <a
+            class="nav-link text-light"
+            routerLink="/sign-in"
+            routerLinkActive="active"
+            data-testid="sign-in-link"
+          >
+            <i class="fa fa-user" aria-hidden="true"></i>
+            <span class="ms-1">Sign in</span>
+          </a>
+          <a
+            class="nav-link text-light"
+            routerLink="/cart"
+            aria-label="Cart"
+            data-testid="cart-link"
+          >
+            <i class="fa fa-shopping-cart fa-lg" aria-hidden="true"></i>
+            <span class="d-none d-lg-inline ms-1">Cart</span>
+          </a>
         }
       </div>
     </div>

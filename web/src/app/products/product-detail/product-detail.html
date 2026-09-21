@@ -64,7 +64,7 @@
             >
               <i class="fa fa-trash" aria-hidden="true"></i> Remove
             </button>
-          } @else if (signedIn()) {
+          } @else {
             <button
               type="button"
               class="btn btn-success btn-sm"
@@ -79,11 +79,6 @@
               }
             </button>
             <span class="small text-secondary">{{ item.liked ? 'You like this' : 'Like' }}</span>
-          } @else {
-            <span class="small text-secondary" data-testid="likes"
-              ><i class="fa fa-thumbs-up" aria-hidden="true"></i> {{ item.likes }}
-              {{ item.likes === 1 ? 'like' : 'likes' }}, sign in to add yours</span
-            >
           }
         </div>
       </div>
@@ -113,8 +108,6 @@
           </p>
           @if (item.mine) {
             <p class="text-secondary mb-0" data-testid="own">This is your listing.</p>
-          } @else if (!signedIn()) {
-            <p class="text-secondary mb-0" data-testid="visitor">Sign in to add it to your cart.</p>
           } @else if (item.stock > 0) {
             <label for="quantity" class="form-label mb-1">Quantity</label>
             <select
@@ -143,14 +136,15 @@
           <span class="small"
             >Sold by <strong>{{ item.seller }}</strong></span
           >
-          @if (signedIn() && !item.mine && canBeMessaged(item.seller)) {
-            <a
-              [routerLink]="['/messages/new', item.seller]"
-              [queryParams]="{ subject: 'About ' + item.title }"
+          @if (!item.mine && canBeMessaged(item.seller)) {
+            <button
+              type="button"
               class="btn btn-outline-secondary btn-sm rounded-pill"
+              (click)="message()"
               data-testid="message"
-              ><i class="fa fa-envelope" aria-hidden="true"></i> Message</a
             >
+              <i class="fa fa-envelope" aria-hidden="true"></i> Message
+            </button>
           }
         </div>
       </div>
