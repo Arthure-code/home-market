@@ -3,7 +3,7 @@ import { Component, computed, effect, inject, input, signal } from '@angular/cor
 import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { apiMessage } from '../../auth/api-message';
-import { SessionService } from '../../auth/session.service';
+import { SignInPrompt } from '../../auth/sign-in-prompt';
 import { MAX_QUANTITY } from '../../cart/cart';
 import { CartService } from '../../cart/cart.service';
 import { Product } from '../product';
@@ -23,6 +23,7 @@ export class ProductDetail {
   private readonly router = inject(Router);
   private readonly toastr = inject(ToastrService);
   private readonly cart = inject(CartService);
+  private readonly prompt = inject(SignInPrompt);
 
   readonly id = input.required<string>();
   readonly product = signal<Product | null>(null);
@@ -34,7 +35,6 @@ export class ProductDetail {
     const most = Math.min(this.product()?.stock ?? 0, MAX_QUANTITY);
     return Array.from({ length: most }, (_, i) => i + 1);
   });
-  readonly signedIn = inject(SessionService).signedIn;
   readonly canBeMessaged = canBeMessaged;
 
   constructor() {
@@ -43,7 +43,7 @@ export class ProductDetail {
 
   toggleLike(): void {
     const product = this.product();
-    if (!product) return;
+    if (!product || !this.prompt.ensure()) return;
     const liked = !product.liked;
     this.service.setLike(product.id, liked).subscribe({
       next: () => {
@@ -56,7 +56,7 @@ export class ProductDetail {
 
   addToCart(): void {
     const product = this.product();
-    if (!product) return;
+    if (!product || !this.prompt.ensure()) return;
     this.adding.set(true);
     this.cart.add(product.id, this.quantity()).subscribe({
       next: () => {
@@ -67,6 +67,15 @@ export class ProductDetail {
         this.toastr.error(apiMessage(error));
         this.adding.set(false);
       },
+    });
+  }
+
+  // The Message button is a link for a member and a prompt for a visitor.
+  message(): void {
+    const product = this.product();
+    if (!product || !this.prompt.ensure()) return;
+    this.router.navigate(['/messages/new', product.seller], {
+      queryParams: { subject: `About ${product.title}` },
     });
   }
 

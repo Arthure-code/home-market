@@ -1,7 +1,6 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, ElementRef, effect, inject, input, output, viewChild } from '@angular/core';
+import { Component, ElementRef, effect, input, output, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SessionService } from '../../auth/session.service';
 import { Product } from '../product';
 
 // A look at one product without leaving the grid: the photo, the price,
@@ -18,7 +17,6 @@ export class QuickView {
   readonly closed = output<void>();
   readonly toggleLike = output<Product>();
   readonly addToCart = output<Product>();
-  readonly signedIn = inject(SessionService).signedIn;
 
   private readonly dialog = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
 

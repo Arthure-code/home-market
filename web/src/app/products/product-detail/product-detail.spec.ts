@@ -4,7 +4,7 @@ import { Router, provideRouter } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of, throwError } from 'rxjs';
 import { ProductDetail } from './product-detail';
-import { SessionService } from '../../auth/session.service';
+import { SignInPrompt } from '../../auth/sign-in-prompt';
 import { EMPTY_CART } from '../../cart/cart';
 import { CartService } from '../../cart/cart.service';
 import { Product } from '../product';
@@ -71,7 +71,15 @@ describe('ProductDetail', () => {
             },
           },
         },
-        { provide: SessionService, useValue: { signedIn: () => signedIn } },
+        {
+          provide: SignInPrompt,
+          useValue: {
+            ensure: () => {
+              if (!signedIn) calls.push('prompt');
+              return signedIn;
+            },
+          },
+        },
         {
           provide: CartService,
           useValue: {
@@ -86,13 +94,13 @@ describe('ProductDetail', () => {
     }).compileComponents();
   });
 
-  it('shows the product named in the address, with the likes and a hint for a visitor', async () => {
+  it('shows the product named in the address, its price and its likes', async () => {
     await open('4');
 
     expect(calls).toEqual(['get 4']);
     expect(root().querySelector('h1')?.textContent?.trim()).toBe('Desk fan, chrome');
     expect(text('price')).toBe('$59');
-    expect(text('likes')).toBe('3 likes, sign in to add yours');
+    expect(text('like')).toBe('3');
     expect(root().querySelector('[data-testid="back"]')?.getAttribute('href')).toBe('/products');
   });
 
@@ -117,10 +125,12 @@ describe('ProductDetail', () => {
   it('lets a member write to the seller, unless the seller is the store', async () => {
     signedIn = true;
     answer = of({ ...fan, seller: 'nadia' });
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     await open('4');
-    expect(root().querySelector('[data-testid="message"]')?.getAttribute('href')).toBe(
-      '/messages/new/nadia?subject=About%20Desk%20fan,%20chrome',
-    );
+    root().querySelector<HTMLButtonElement>('[data-testid="message"]')?.click();
+    expect(navigate).toHaveBeenCalledWith(['/messages/new', 'nadia'], {
+      queryParams: { subject: 'About Desk fan, chrome' },
+    });
 
     answer = of(fan);
     await open('4');
@@ -163,11 +173,17 @@ describe('ProductDetail', () => {
     expect(navigate).toHaveBeenCalledWith('/cart');
   });
 
-  it('offers no cart to a visitor, to the seller, or when sold out', async () => {
+  it('sends a visitor who adds to the cart to sign in, without calling the service', async () => {
+    signedIn = false;
     await open('4');
-    expect(root().querySelector('[data-testid="visitor"]')).not.toBeNull();
-    expect(root().querySelector('[data-testid="add-to-cart"]')).toBeNull();
 
+    root().querySelector<HTMLButtonElement>('[data-testid="add-to-cart"]')?.click();
+    await fixture.whenStable();
+
+    expect(calls).toEqual(['get 4', 'prompt']);
+  });
+
+  it('offers no cart to the seller, or when sold out', async () => {
     signedIn = true;
     answer = of({ ...fan, mine: true });
     await open('4');

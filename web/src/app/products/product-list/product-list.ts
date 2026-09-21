@@ -2,6 +2,7 @@ import { Component, effect, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { apiMessage } from '../../auth/api-message';
+import { SignInPrompt } from '../../auth/sign-in-prompt';
 import { CartService } from '../../cart/cart.service';
 import { Product } from '../product';
 import { ProductCard } from '../product-card/product-card';
@@ -21,6 +22,7 @@ export class ProductList {
   private readonly toastr = inject(ToastrService);
   private readonly cart = inject(CartService);
   private readonly router = inject(Router);
+  private readonly prompt = inject(SignInPrompt);
 
   // Which list to show: the whole catalogue, my listings, or my likes.
   readonly source = input<'all' | 'mine' | 'liked'>('all');
@@ -37,6 +39,7 @@ export class ProductList {
   }
 
   toggleLike(product: Product): void {
+    if (!this.prompt.ensure()) return;
     const liked = !product.liked;
     this.service.setLike(product.id, liked).subscribe({
       next: () => {
@@ -51,6 +54,7 @@ export class ProductList {
 
   // One of it goes in the cart, and the cart opens.
   addToCart(product: Product): void {
+    if (!this.prompt.ensure()) return;
     this.cart.add(product.id).subscribe({
       next: () => {
         this.toastr.success('Added to your cart');
