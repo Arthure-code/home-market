@@ -32,11 +32,11 @@ export class ProductForm implements OnInit {
   private readonly toastr = inject(ToastrService);
 
   readonly id = input<string>();
-  readonly draft = signal<ProductDraft>({ ...EMPTY });
-  readonly photoUrl = signal('');
-  readonly saving = signal(false);
-  readonly editing = computed(() => this.id() !== undefined);
-  readonly categories = signal<Category[]>([]);
+  protected readonly draft = signal<ProductDraft>({ ...EMPTY });
+  protected readonly photoUrl = signal('');
+  protected readonly saving = signal(false);
+  protected readonly editing = computed(() => this.id() !== undefined);
+  protected readonly categories = signal<Category[]>([]);
 
   constructor() {
     effect(() => {
@@ -52,7 +52,7 @@ export class ProductForm implements OnInit {
     });
   }
 
-  save(): void {
+  protected save(): void {
     if (!this.draft().category) {
       this.toastr.error('Pick a category');
       return;
@@ -75,7 +75,7 @@ export class ProductForm implements OnInit {
     });
   }
 
-  photoUploaded(photo: UploadedPhoto): void {
+  protected photoUploaded(photo: UploadedPhoto): void {
     this.draft.update((draft) => ({ ...draft, photo: photo.photo }));
     this.photoUrl.set(photo.url);
   }

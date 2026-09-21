@@ -98,13 +98,7 @@
             [class.text-danger]="item.stock === 0"
             data-testid="stock"
           >
-            {{
-              item.stock === 0
-                ? 'Out of stock'
-                : item.stock <= 3
-                  ? 'Only ' + item.stock + ' left in stock'
-                  : 'In stock'
-            }}
+            {{ item.stock | stockLabel: 'long' }}
           </p>
           @if (item.mine) {
             <p class="text-secondary mb-0" data-testid="own">This is your listing.</p>

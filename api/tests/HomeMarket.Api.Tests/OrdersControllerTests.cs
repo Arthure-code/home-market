@@ -116,9 +116,8 @@ namespace HomeMarket.Api.Tests
             var result = await controller.Place(checkout);
 
             // Then
-            var refused = Assert.IsType<ObjectResult>(result.Result);
-            Assert.Equal(StatusCodes.Status402PaymentRequired, refused.StatusCode);
-            Assert.Contains("declined", refused.Value!.ToString());
+            var refused = Refusal.Of(result.Result, StatusCodes.Status402PaymentRequired);
+            Assert.Contains("declined", refused.Detail);
         }
 
         [Fact]
@@ -135,7 +134,7 @@ namespace HomeMarket.Api.Tests
             var result = await controller.Place(checkout);
 
             // Then
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            Refusal.Of(result.Result, StatusCodes.Status400BadRequest);
         }
 
         [Fact]
@@ -152,7 +151,7 @@ namespace HomeMarket.Api.Tests
             var result = await controller.Place(checkout);
 
             // Then
-            Assert.IsType<ConflictObjectResult>(result.Result);
+            Refusal.Of(result.Result, StatusCodes.Status409Conflict);
         }
     }
 }

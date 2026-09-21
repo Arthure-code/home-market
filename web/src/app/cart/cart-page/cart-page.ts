@@ -18,17 +18,17 @@ export class CartPage {
   private readonly service = inject(CartService);
   private readonly toastr = inject(ToastrService);
 
-  readonly cart = this.service.cart;
-  readonly busy = signal(false);
-  readonly empty = computed(() => this.cart().lines.length === 0);
+  protected readonly cart = this.service.cart;
+  protected readonly busy = signal(false);
+  protected readonly empty = computed(() => this.cart().lines.length === 0);
 
   // One to ten, never more than the stock, and at least what is there.
-  quantities(line: CartLine): number[] {
+  protected quantities(line: CartLine): number[] {
     const most = Math.max(Math.min(line.stock, MAX_QUANTITY), line.quantity);
     return Array.from({ length: most }, (_, i) => i + 1);
   }
 
-  setQuantity(line: CartLine, quantity: number): void {
+  protected setQuantity(line: CartLine, quantity: number): void {
     this.busy.set(true);
     this.service.setQuantity(line.productId, quantity).subscribe({
       next: () => this.busy.set(false),
@@ -39,7 +39,7 @@ export class CartPage {
     });
   }
 
-  remove(line: CartLine): void {
+  protected remove(line: CartLine): void {
     this.busy.set(true);
     this.service.remove(line.productId).subscribe({
       next: () => {

@@ -22,10 +22,10 @@ export class Checkout {
   private readonly router = inject(Router);
   private readonly toastr = inject(ToastrService);
 
-  readonly cart = this.cartService.cart;
-  readonly empty = computed(() => this.cart().lines.length === 0);
-  readonly placing = signal(false);
-  readonly draft: CheckoutDraft = {
+  protected readonly cart = this.cartService.cart;
+  protected readonly empty = computed(() => this.cart().lines.length === 0);
+  protected readonly placing = signal(false);
+  protected readonly draft: CheckoutDraft = {
     fullName: '',
     street: '',
     city: '',
@@ -38,7 +38,7 @@ export class Checkout {
     securityCode: '',
   };
 
-  placeOrder(): void {
+  protected placeOrder(): void {
     const d = this.draft;
     const missing = Object.entries(d).find(([, value]) => !value.trim());
     if (missing) {

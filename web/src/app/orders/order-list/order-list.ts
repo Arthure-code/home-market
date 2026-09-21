@@ -16,8 +16,8 @@ export class OrderList implements OnInit {
   private readonly service = inject(OrderService);
   private readonly toastr = inject(ToastrService);
 
-  readonly orders = signal<Order[]>([]);
-  readonly loading = signal(true);
+  protected readonly orders = signal<Order[]>([]);
+  protected readonly loading = signal(true);
 
   ngOnInit(): void {
     this.service.mine().subscribe({
@@ -32,7 +32,7 @@ export class OrderList implements OnInit {
     });
   }
 
-  summary(order: Order): string {
+  protected summary(order: Order): string {
     const first = order.lines[0]?.title ?? '';
     const more = order.lines.length - 1;
     return more > 0 ? `${first} and ${more} more` : first;

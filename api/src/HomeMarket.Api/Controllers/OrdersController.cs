@@ -47,9 +47,9 @@ namespace HomeMarket.Api.Controllers
             var (outcome, order, detail) = await _orders.PlaceAsync(User.AccountId(), request);
             return outcome switch
             {
-                OrderOutcome.EmptyCart => BadRequest(new { message = detail }),
-                OrderOutcome.NotEnoughStock => Conflict(new { message = detail }),
-                OrderOutcome.CardRefused => StatusCode(StatusCodes.Status402PaymentRequired, new { message = detail }),
+                OrderOutcome.EmptyCart => Problem(detail, statusCode: StatusCodes.Status400BadRequest),
+                OrderOutcome.NotEnoughStock => Problem(detail, statusCode: StatusCodes.Status409Conflict),
+                OrderOutcome.CardRefused => Problem(detail, statusCode: StatusCodes.Status402PaymentRequired),
                 _ => CreatedAtAction(nameof(Get), new { id = order!.Id }, order),
             };
         }

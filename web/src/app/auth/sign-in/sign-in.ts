@@ -19,10 +19,10 @@ export class SignIn {
   private readonly toastr = inject(ToastrService);
 
   readonly returnUrl = input<string>();
-  readonly credentials: Credentials = { userName: '', password: '' };
-  readonly busy = signal(false);
+  protected readonly credentials: Credentials = { userName: '', password: '' };
+  protected readonly busy = signal(false);
 
-  signIn(): void {
+  protected signIn(): void {
     if (!this.credentials.userName.trim() || !this.credentials.password) {
       this.toastr.error('Please enter your user name and password');
       return;

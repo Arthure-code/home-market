@@ -26,7 +26,7 @@ namespace HomeMarket.Api.Tests
             var result = await controller.Register(request);
 
             // Then
-            var created = Assert.IsType<ObjectResult>(result);
+            var created = Assert.IsType<StatusCodeResult>(result);
             Assert.Equal(StatusCodes.Status201Created, created.StatusCode);
             accounts.Verify(a => a.RegisterAsync(request), Times.Once);
         }
@@ -46,7 +46,7 @@ namespace HomeMarket.Api.Tests
             var result = await controller.Register(request);
 
             // Then
-            Assert.IsType<ConflictObjectResult>(result);
+            Refusal.Of(result, StatusCodes.Status409Conflict);
         }
 
         [Fact]
@@ -64,7 +64,7 @@ namespace HomeMarket.Api.Tests
             var result = await controller.Login(request);
 
             // Then
-            Assert.IsType<UnauthorizedObjectResult>(result.Result);
+            Refusal.Of(result.Result, StatusCodes.Status401Unauthorized);
             tokens.Verify(t => t.Issue(It.IsAny<Account>()), Times.Never);
         }
 
