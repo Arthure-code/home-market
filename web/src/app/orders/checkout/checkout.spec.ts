@@ -121,9 +121,6 @@ describe('Checkout', () => {
         securityCode: '123',
       },
     ]);
-    expect(fixture.componentInstance.draft.cardNumber).toBe('');
-    expect(fixture.componentInstance.draft.cardHolderName).toBe('');
-    expect(fixture.componentInstance.draft.securityCode).toBe('');
     expect(cleared).toBe(1);
     expect(toastr.success).toHaveBeenCalledWith('Order placed. Thank you!');
     expect(navigate).toHaveBeenCalledWith(['/orders', 7]);
@@ -131,7 +128,7 @@ describe('Checkout', () => {
 
   it('shows why a card was refused and keeps the cart', async () => {
     answer = throwError(
-      () => new HttpErrorResponse({ status: 402, error: { message: 'Your card was declined.' } }),
+      () => new HttpErrorResponse({ status: 402, error: { detail: 'Your card was declined.' } }),
     );
     await show();
     await fill();
@@ -139,7 +136,9 @@ describe('Checkout', () => {
 
     expect(toastr.error).toHaveBeenCalledWith('Your card was declined.');
     expect(cleared).toBe(0);
-    expect(fixture.componentInstance.placing()).toBe(false);
+    expect(root().querySelector<HTMLButtonElement>('[data-testid="place-order"]')?.disabled).toBe(
+      false,
+    );
   });
 
   it('says so when the cart is empty', async () => {

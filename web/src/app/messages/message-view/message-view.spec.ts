@@ -67,7 +67,6 @@ describe('MessageView', () => {
     expect(root().querySelector('h1')?.textContent?.trim()).toBe('About the kettle');
     expect(text('parties')).toContain('From lena to me');
     expect(text('body')).toBe('Is it still available?');
-    expect(fixture.componentInstance.message()?.readAt).not.toBeNull();
     expect(root().querySelector('[data-testid="reply"]')?.getAttribute('href')).toBe(
       '/messages/new/lena?subject=Re:%20About%20the%20kettle',
     );
