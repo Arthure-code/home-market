@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { QuickView } from './quick-view';
-import { SessionService } from '../../auth/session.service';
 import { Product } from '../product';
 
 const lamp: Product = {
@@ -24,7 +23,6 @@ const lamp: Product = {
 
 describe('QuickView', () => {
   let fixture: ComponentFixture<QuickView>;
-  let signedIn = false;
 
   const root = () => fixture.nativeElement as HTMLElement;
   const dialog = () => root().querySelector('dialog')!;
@@ -49,10 +47,7 @@ describe('QuickView', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [QuickView],
-      providers: [
-        provideRouter([]),
-        { provide: SessionService, useValue: { signedIn: () => signedIn } },
-      ],
+      providers: [provideRouter([])],
     }).compileComponents();
   });
 
@@ -71,8 +66,7 @@ describe('QuickView', () => {
     );
   });
 
-  it('tells the parent when it closes, and offers like and cart to a member', async () => {
-    signedIn = true;
+  it('tells the parent when it closes, and offers like and cart', async () => {
     await show(lamp);
     const closed: number[] = [];
     const carted: Product[] = [];
@@ -89,9 +83,8 @@ describe('QuickView', () => {
     expect(closed).toEqual([1]);
   });
 
-  it('gives a visitor the look and the link only', async () => {
-    signedIn = false;
-    await show(lamp);
+  it('gives the seller the look and the link only', async () => {
+    await show({ ...lamp, mine: true });
 
     expect(root().querySelector('[data-testid="add-to-cart"]')).toBeNull();
     expect(root().querySelector('[data-testid="like"]')).toBeNull();
