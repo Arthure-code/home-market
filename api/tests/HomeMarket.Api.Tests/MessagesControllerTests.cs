@@ -2,6 +2,7 @@ using AutoFixture;
 using HomeMarket.Api.Controllers;
 using HomeMarket.Api.Dtos;
 using HomeMarket.Api.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -115,7 +116,7 @@ namespace HomeMarket.Api.Tests
             var result = await controller.Send(request);
 
             // Then
-            Assert.IsType<NotFoundObjectResult>(result.Result);
+            Refusal.Of(result.Result, StatusCodes.Status404NotFound);
         }
 
         [Fact]
@@ -132,7 +133,7 @@ namespace HomeMarket.Api.Tests
             var result = await controller.Send(request);
 
             // Then
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            Refusal.Of(result.Result, StatusCodes.Status400BadRequest);
         }
 
         [Fact]
