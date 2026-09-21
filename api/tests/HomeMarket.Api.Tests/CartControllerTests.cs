@@ -2,6 +2,7 @@ using AutoFixture;
 using HomeMarket.Api.Controllers;
 using HomeMarket.Api.Dtos;
 using HomeMarket.Api.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -74,7 +75,7 @@ namespace HomeMarket.Api.Tests
             var result = await controller.Add(new CartAddRequest { ProductId = 30, Quantity = 1 });
 
             // Then
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            Refusal.Of(result.Result, StatusCodes.Status400BadRequest);
         }
 
         [Fact]
@@ -89,7 +90,7 @@ namespace HomeMarket.Api.Tests
             var result = await controller.Add(new CartAddRequest { ProductId = 29, Quantity = 5 });
 
             // Then
-            Assert.IsType<ConflictObjectResult>(result.Result);
+            Refusal.Of(result.Result, StatusCodes.Status409Conflict);
         }
 
         [Fact]
@@ -122,7 +123,7 @@ namespace HomeMarket.Api.Tests
             var result = await controller.SetQuantity(23, new CartQuantityRequest { Quantity = 9 });
 
             // Then
-            Assert.IsType<ConflictObjectResult>(result.Result);
+            Refusal.Of(result.Result, StatusCodes.Status409Conflict);
         }
 
         [Fact]
