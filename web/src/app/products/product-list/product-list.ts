@@ -28,17 +28,17 @@ export class ProductList {
   readonly source = input<'all' | 'mine' | 'liked'>('all');
   readonly query = input<string>();
   readonly category = input<string>();
-  readonly products = signal<Product[]>([]);
-  readonly loading = signal(true);
+  protected readonly products = signal<Product[]>([]);
+  protected readonly loading = signal(true);
   // The product open in the quick view, if any. It follows the list, so a
   // like given in the dialog shows on its card too.
-  readonly viewing = signal<Product | null>(null);
+  protected readonly viewing = signal<Product | null>(null);
 
   constructor() {
     effect(() => this.load());
   }
 
-  toggleLike(product: Product): void {
+  protected toggleLike(product: Product): void {
     if (!this.prompt.ensure()) return;
     const liked = !product.liked;
     this.service.setLike(product.id, liked).subscribe({
@@ -53,7 +53,7 @@ export class ProductList {
   }
 
   // One of it goes in the cart, and the cart opens.
-  addToCart(product: Product): void {
+  protected addToCart(product: Product): void {
     if (!this.prompt.ensure()) return;
     this.cart.add(product.id).subscribe({
       next: () => {

@@ -33,13 +33,7 @@
         {{ item.price | currency: 'CAD' : 'symbol-narrow' : '1.0-0' }}
       </p>
       <p class="text-center small mb-1" [class.text-danger]="item.stock === 0" data-testid="stock">
-        {{
-          item.stock === 0
-            ? 'Out of stock'
-            : item.stock <= 3
-              ? 'Only ' + item.stock + ' left'
-              : 'In stock'
-        }}
+        {{ item.stock | stockLabel }}
       </p>
     </div>
   </a>

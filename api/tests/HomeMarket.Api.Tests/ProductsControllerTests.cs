@@ -179,7 +179,7 @@ namespace HomeMarket.Api.Tests
             var result = await controller.Create(request);
 
             // Then
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            Refusal.Of(result.Result, StatusCodes.Status400BadRequest);
         }
 
         [Fact]
@@ -197,7 +197,7 @@ namespace HomeMarket.Api.Tests
             var result = await controller.Create(request);
 
             // Then
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            Refusal.Of(result.Result, StatusCodes.Status400BadRequest);
         }
 
         [Fact]
@@ -373,7 +373,7 @@ namespace HomeMarket.Api.Tests
             var result = await controller.UploadPhoto(file);
 
             // Then
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            Refusal.Of(result.Result, StatusCodes.Status400BadRequest);
         }
 
         [Fact]
@@ -390,7 +390,7 @@ namespace HomeMarket.Api.Tests
             var result = await controller.UploadPhoto(file);
 
             // Then
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            Refusal.Of(result.Result, StatusCodes.Status400BadRequest);
         }
     }
 }

@@ -17,9 +17,11 @@ export class Sales implements OnInit {
   private readonly service = inject(OrderService);
   private readonly toastr = inject(ToastrService);
 
-  readonly sales = signal<Sale[]>([]);
-  readonly loading = signal(true);
-  readonly revenue = computed(() => this.sales().reduce((sum, s) => sum + s.lineTotal, 0));
+  protected readonly sales = signal<Sale[]>([]);
+  protected readonly loading = signal(true);
+  protected readonly revenue = computed(() =>
+    this.sales().reduce((sum, s) => sum + s.lineTotal, 0),
+  );
 
   ngOnInit(): void {
     this.service.sales().subscribe({

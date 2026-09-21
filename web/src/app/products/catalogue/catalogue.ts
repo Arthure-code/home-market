@@ -11,7 +11,7 @@ import { ProductList } from '../product-list/product-list';
 export class Catalogue {
   readonly q = input<string>();
   readonly category = input<string>();
-  readonly title = computed(() => {
+  protected readonly title = computed(() => {
     if (this.category()) return this.category();
     const q = this.q()?.trim();
     return q ? `Results for "${q}"` : 'Catalogue';

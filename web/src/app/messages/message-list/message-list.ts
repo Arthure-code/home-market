@@ -17,10 +17,10 @@ export class MessageList implements OnInit {
   private readonly service = inject(MessageService);
   private readonly toastr = inject(ToastrService);
 
-  readonly folder = signal<Folder>('inbox');
-  readonly messages = signal<Message[]>([]);
-  readonly loading = signal(true);
-  readonly unread = computed(
+  protected readonly folder = signal<Folder>('inbox');
+  protected readonly messages = signal<Message[]>([]);
+  protected readonly loading = signal(true);
+  protected readonly unread = computed(
     () => this.messages().filter((m) => !m.mine && m.readAt === null).length,
   );
 
@@ -28,7 +28,7 @@ export class MessageList implements OnInit {
     this.show('inbox');
   }
 
-  show(folder: Folder): void {
+  protected show(folder: Folder): void {
     this.folder.set(folder);
     this.loading.set(true);
     this.service.folder(folder).subscribe({
@@ -43,7 +43,7 @@ export class MessageList implements OnInit {
     });
   }
 
-  isNew(message: Message): boolean {
+  protected isNew(message: Message): boolean {
     return !message.mine && message.readAt === null;
   }
 }

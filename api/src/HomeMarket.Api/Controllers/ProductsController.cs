@@ -7,7 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace HomeMarket.Api.Controllers
 {
     // The catalogue is public; selling, changing and liking need a token,
-    // and the account named by the token is the only one acted for.
+    // and the account named by the token is the only one acted for. A
+    // refusal with a reason is a Problem Details answer (RFC 9457), as the
+    // ASP.NET Core documentation recommends; a bare status is one too,
+    // through the status code pages.
     [ApiController]
     [Route("api/products")]
     [Produces("application/json")]
@@ -64,8 +67,8 @@ namespace HomeMarket.Api.Controllers
             var (outcome, product) = await _products.CreateAsync(User.AccountId(), request);
             return outcome switch
             {
-                ProductOutcome.BadPhoto => BadRequest(new { message = BadPhotoMessage }),
-                ProductOutcome.BadCategory => BadRequest(new { message = BadCategoryMessage }),
+                ProductOutcome.BadPhoto => Problem(BadPhotoMessage, statusCode: StatusCodes.Status400BadRequest),
+                ProductOutcome.BadCategory => Problem(BadCategoryMessage, statusCode: StatusCodes.Status400BadRequest),
                 _ => CreatedAtAction(nameof(Get), new { id = product!.Id }, product),
             };
         }
@@ -79,8 +82,8 @@ namespace HomeMarket.Api.Controllers
             {
                 ProductOutcome.NotFound => NotFound(),
                 ProductOutcome.NotMine => Forbid(),
-                ProductOutcome.BadPhoto => BadRequest(new { message = BadPhotoMessage }),
-                ProductOutcome.BadCategory => BadRequest(new { message = BadCategoryMessage }),
+                ProductOutcome.BadPhoto => Problem(BadPhotoMessage, statusCode: StatusCodes.Status400BadRequest),
+                ProductOutcome.BadCategory => Problem(BadCategoryMessage, statusCode: StatusCodes.Status400BadRequest),
                 _ => Ok(product),
             };
         }
@@ -121,8 +124,8 @@ namespace HomeMarket.Api.Controllers
             var (outcome, fileName) = await _photos.SaveAsync(photo);
             return outcome switch
             {
-                PhotoOutcome.NotAnImage => BadRequest(new { message = "That file is not a JPEG, PNG, GIF or WebP image." }),
-                PhotoOutcome.TooLarge => BadRequest(new { message = "Photos must be 5 MB or less." }),
+                PhotoOutcome.NotAnImage => Problem("That file is not a JPEG, PNG, GIF or WebP image.", statusCode: StatusCodes.Status400BadRequest),
+                PhotoOutcome.TooLarge => Problem("Photos must be 5 MB or less.", statusCode: StatusCodes.Status400BadRequest),
                 _ => Ok(new UploadedPhotoDto { Photo = fileName, Url = _photos.UrlFor(fileName) }),
             };
         }

@@ -18,11 +18,11 @@ export class SignUp {
   private readonly toastr = inject(ToastrService);
 
   readonly returnUrl = input<string>();
-  readonly credentials: Credentials = { userName: '', password: '' };
-  confirmation = '';
-  readonly busy = signal(false);
+  protected readonly credentials: Credentials = { userName: '', password: '' };
+  protected confirmation = '';
+  protected readonly busy = signal(false);
 
-  signUp(): void {
+  protected signUp(): void {
     if (this.credentials.password !== this.confirmation) {
       this.toastr.error('The two passwords differ');
       return;

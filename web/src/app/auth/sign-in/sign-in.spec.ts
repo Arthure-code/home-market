@@ -85,12 +85,14 @@ describe('SignIn', () => {
 
     answer = throwError(
       () =>
-        new HttpErrorResponse({ status: 401, error: { message: 'Wrong user name or password.' } }),
+        new HttpErrorResponse({ status: 401, error: { detail: 'Wrong user name or password.' } }),
     );
     await type('userName', 'nadia');
     await type('password', 'wrong');
     await submit();
     expect(toastr.error).toHaveBeenCalledWith('Wrong user name or password.');
-    expect(fixture.componentInstance.busy()).toBe(false);
+    expect(root().querySelector<HTMLButtonElement>('[data-testid="sign-in"]')?.disabled).toBe(
+      false,
+    );
   });
 });

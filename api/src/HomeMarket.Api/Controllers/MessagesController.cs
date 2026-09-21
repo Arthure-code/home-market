@@ -46,8 +46,8 @@ namespace HomeMarket.Api.Controllers
             var (outcome, message) = await _messages.SendAsync(User.AccountId(), request);
             return outcome switch
             {
-                MessageOutcome.NoSuchRecipient => NotFound(new { message = "No member has that user name." }),
-                MessageOutcome.ToSelf => BadRequest(new { message = "You cannot message yourself." }),
+                MessageOutcome.NoSuchRecipient => Problem("No member has that user name.", statusCode: StatusCodes.Status404NotFound),
+                MessageOutcome.ToSelf => Problem("You cannot message yourself.", statusCode: StatusCodes.Status400BadRequest),
                 _ => CreatedAtAction(nameof(Get), new { id = message!.Id }, message),
             };
         }
