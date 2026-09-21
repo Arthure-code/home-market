@@ -123,6 +123,15 @@ id answers its sender and its recipient only: for anyone else it is a
 404, not a 403 that would confirm it exists. Only the recipient can
 mark it read, which opening it does.
 
+**Every refusal is a Problem Details document.** As the ASP.NET Core
+documentation recommends, `AddProblemDetails`, `UseStatusCodePages` and
+`UseExceptionHandler` are on, and a controller that refuses with a
+reason answers `Problem(detail, statusCode)`: a 400, 401, 402, 404 or
+409 always comes as RFC 9457 JSON with a `title`, a `status` and, when
+there is one, a `detail`; a request that fails validation comes as the
+`ValidationProblemDetails` with its `errors`. The front end reads the
+`detail` or the first error and shows it in a toast.
+
 **Accounts as in the other repositories.** Passwords hashed with
 `PasswordHasher`, the same 401 for a wrong name and a wrong password,
 five attempts a minute per client address, a JWT signed with a key that
@@ -173,6 +182,21 @@ a like given there shows on the card too. `ProductForm` serves both Sell
 and Edit: with an id in the address it loads the product and, if it is
 not mine, goes back to the product page with a message.
 
+**Written the way the two documentations say.** On the Angular side:
+standalone components, signals, `input()` and `output()` marked
+`readonly`, `inject()` rather than constructor parameters, `@if` and
+`@for`, `protected` for everything a template reads and nothing else
+exposed, a pipe (`stockLabel`) instead of logic in the templates, a
+functional guard and a functional interceptor, `TestBed` with
+`HttpTestingController` and substituted services for the tests. On the
+API side: `[ApiController]` controllers returning `ActionResult<T>`,
+the options pattern for the JWT settings, `PasswordHasher`, JWT bearer,
+the built-in rate limiter, Problem Details for errors, EF Core with a
+migration applied at start, and controller tests written as Microsoft's
+"Unit test controller logic" page shows them: xUnit, Moq substitutes,
+`Assert.IsType` on the result, one behaviour per test named
+`Method_Condition_Result`.
+
 **The photos are linked, not stored.** The twenty-eight opening
 products point at public pictures on Unsplash; the card asks for a
 400 px crop, the page for 900 px, the cart for 160 px. Uploaded photos
@@ -187,8 +211,9 @@ The API, from `api/src/HomeMarket.Api`:
 dotnet run --launch-profile http
 ```
 
-It listens on `http://localhost:5130`, creates `market.db` with the
-store account and the catalogue on first start, serves uploads under
+It listens on `http://localhost:5130`, creates `market.db` by applying
+its migration and seeds the store account and the catalogue on first
+start, serves uploads under
 `/images` and Swagger at `/swagger`. To keep the same signing key
 between runs while developing:
 
@@ -239,9 +264,9 @@ From `web`:
 npm test
 ```
 
-Eighty-six Vitest tests through `TestBed`: the session service, the
+Eighty-eight Vitest tests through `TestBed`: the session service, the
 interceptor, the guard, the sign-in prompt, the sign-in and sign-up
-pages and the API messages; the product, cart and
+pages, the API messages and the stock label pipe; the product, cart and
 message services against `HttpTestingController`; the two bars for a
 visitor and a member, with the search and the cart count; the card, its
 like and cart buttons for everyone and its edit button for the seller; the quick view
@@ -257,9 +282,10 @@ report.
 
 ## Stack
 
-ASP.NET Core 8 Web API, Entity Framework Core 8 with SQLite,
-`PasswordHasher`, JWT bearer authentication, the built-in rate limiter,
-xUnit with Moq and AutoFixture. Angular 21 with standalone
+ASP.NET Core 8 Web API with Problem Details, Entity Framework Core 8
+with SQLite and migrations, `PasswordHasher`, JWT bearer
+authentication, the built-in rate limiter, xUnit with Moq and
+AutoFixture. Angular 21 with standalone
 components, signals, `input()` and `output()`, template forms, functional
 guard and interceptor, ngx-toastr 20, Font Awesome 4, Bootstrap 5.3
 through npm with only the parts the pages use; Vitest.
@@ -278,7 +304,7 @@ on écrit au vendeur. Un visiteur voit les mêmes boutons qu'un membre et
 n'est invité à se connecter qu'au premier clic, puis revient où il
 était. Personne ne peut toucher l'annonce, le panier, la
 commande ni le courrier d'un autre : l'identité vient du jeton, jamais
-d'un en-tête. Cinquante-deux tests xUnit sur les contrôleurs (Moq, AutoFixture, Etant donné / Lorsque / Alors) et quatre-vingt-six tests Vitest.
+d'un en-tête. Cinquante-deux tests xUnit sur les contrôleurs (Moq, AutoFixture, Etant donné / Lorsque / Alors) et quatre-vingt-huit tests Vitest.
 
 ## Licence
 
