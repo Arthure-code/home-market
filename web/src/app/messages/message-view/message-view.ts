@@ -20,7 +20,7 @@ export class MessageView {
   private readonly toastr = inject(ToastrService);
 
   readonly id = input.required<string>();
-  readonly message = signal<MessageDetail | null>(null);
+  protected readonly message = signal<MessageDetail | null>(null);
 
   constructor() {
     effect(() => this.load(Number(this.id())));
