@@ -7,7 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace HomeMarket.Api.Controllers
 {
     // The cart of the account named by the token. Every change answers
-    // with the whole cart, totals included, so the client never adds up.
+    // with the whole cart, totals included, so the client never adds up;
+    // every refusal is a Problem Details answer, like everywhere else.
     [Authorize]
     [ApiController]
     [Route("api/cart")]
@@ -53,8 +54,8 @@ namespace HomeMarket.Api.Controllers
             return outcome switch
             {
                 CartOutcome.NotFound => NotFound(),
-                CartOutcome.OwnProduct => BadRequest(new { message = "That is your own listing." }),
-                CartOutcome.NotEnoughStock => Conflict(new { message = "There are not that many left in stock." }),
+                CartOutcome.OwnProduct => Problem("That is your own listing.", statusCode: StatusCodes.Status400BadRequest),
+                CartOutcome.NotEnoughStock => Problem("There are not that many left in stock.", statusCode: StatusCodes.Status409Conflict),
                 _ => Ok(cart),
             };
         }

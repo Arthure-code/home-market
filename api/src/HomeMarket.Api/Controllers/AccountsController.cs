@@ -24,8 +24,8 @@ namespace HomeMarket.Api.Controllers
         {
             var outcome = await _accounts.RegisterAsync(request);
             return outcome == RegisterOutcome.NameTaken
-                ? Conflict(new { message = "That user name is taken." })
-                : StatusCode(StatusCodes.Status201Created, new { message = "Account created." });
+                ? Problem("That user name is taken.", statusCode: StatusCodes.Status409Conflict)
+                : StatusCode(StatusCodes.Status201Created);
         }
 
         // One answer for a wrong name and a wrong password, and a limit on
@@ -35,7 +35,7 @@ namespace HomeMarket.Api.Controllers
         public async Task<ActionResult<SessionDto>> Login(LoginRequest request)
         {
             var account = await _accounts.AuthenticateAsync(request);
-            if (account is null) return Unauthorized(new { message = "Wrong user name or password." });
+            if (account is null) return Problem("Wrong user name or password.", statusCode: StatusCodes.Status401Unauthorized);
 
             var (token, expiresAt) = _tokens.Issue(account);
             return Ok(new SessionDto { UserName = account.UserName, Token = token, ExpiresAt = expiresAt });
