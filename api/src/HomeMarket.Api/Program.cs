@@ -26,6 +26,9 @@ namespace HomeMarket.Api
 
             builder.Services.AddRouting(options => options.LowercaseUrls = true);
             builder.Services.AddControllers();
+            // Every error answer, from a controller, a bare status code or an
+            // unhandled exception, is a Problem Details document.
+            builder.Services.AddProblemDetails();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -107,7 +110,7 @@ namespace HomeMarket.Api
             using (var scope = app.Services.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<MarketContext>();
-                context.Database.EnsureCreated();
+                context.Database.Migrate();
                 Seed(context);
             }
 
@@ -116,6 +119,11 @@ namespace HomeMarket.Api
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            else
+            {
+                app.UseExceptionHandler();
+            }
+            app.UseStatusCodePages();
 
             app.UseHttpsRedirection();
             var images = Path.Combine(app.Environment.ContentRootPath, "images");
