@@ -139,13 +139,11 @@ not in the shop or one's own product in the cart, `Result.Conflict(...)`
 for a short stock, `Result.Error(reason)` for a refused card. One
 extension, `Refuse`, translates them in one place: 404, 403, 400 with
 the errors field by field, 409, and 402 for the card. Every one of
-those, as the ASP.NET Core documentation recommends, is a Problem
-Details document (`AddProblemDetails`, `UseStatusCodePages`,
-`UseExceptionHandler`): RFC 9457 JSON with a `title`, a `status` and a
-`detail`, or the `errors` of a `ValidationProblemDetails`. The front
-end reads the `detail` or the first error and shows it in a toast.
+those is a Problem Details document: JSON with a `title`, a `status`
+and a `detail`, or the `errors` field by field. The front end reads the
+`detail` or the first error and shows it in a toast.
 
-**Accounts as in the other repositories.** Passwords hashed with
+**Accounts.** Passwords hashed with
 `PasswordHasher`, the same 401 for a wrong name and a wrong password,
 five attempts a minute per client address, a JWT signed with a key that
 lives outside the repository, hardening headers on every answer, CORS
@@ -193,21 +191,6 @@ edit button to the seller; the list owns the one `QuickView` dialog, so
 a like given there shows on the card too. `ProductForm` serves both Sell
 and Edit: with an id in the address it loads the product and, if it is
 not mine, goes back to the product page with a message.
-
-**Written the way the two documentations say.** On the Angular side:
-standalone components, signals, `input()` and `output()` marked
-`readonly`, `inject()` rather than constructor parameters, `@if` and
-`@for`, `protected` for everything a template reads and nothing else
-exposed, a pipe (`stockLabel`) instead of logic in the templates, a
-functional guard and a functional interceptor, `TestBed` with
-`HttpTestingController` and substituted services for the tests. On the
-API side: `[ApiController]` controllers returning `ActionResult<T>`,
-the options pattern for the JWT settings, `PasswordHasher`, JWT bearer,
-the built-in rate limiter, `Result<T>` from services and Problem
-Details on the wire, EF Core with a migration applied at start, and
-controller tests as the "Unit test controller logic in ASP.NET Core"
-page shows them: xUnit, Moq substitutes, `Assert.IsType` on the result,
-one behaviour per test named `Method_Condition_Result`.
 
 **The photos are linked, not stored.** The twenty-eight opening
 products point at public pictures on Unsplash; the card asks for a
