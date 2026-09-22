@@ -73,10 +73,9 @@ up. Nothing of my own goes in, nothing missing, never more than the
 stock and never more than ten of a thing. The badge in the bar and the
 cart page read one signal that every answer replaces.
 
-**Checkout in one transaction.** `POST /api/orders` takes what the
-order of Microsoft's [eShop reference](https://github.com/dotnet/eShop)
-takes: the address (street, city, province, postal code, country) and
-the card (number, name on the card, expiration, security code). The
+**Checkout in one transaction.** `POST /api/orders` takes the address
+(street, city, province, postal code, country) and the card (number,
+name on the card, expiration, security code). The
 stock is checked line by line, the card is charged for the total, the
 lines are copied with the title and price of the day, the stock goes
 down and the cart is emptied, all in one `SaveChanges`. A refused card,
@@ -124,8 +123,7 @@ id answers its sender and its recipient only: for anyone else it is a
 mark it read, which opening it does.
 
 **A service answers with a Result, a controller turns it into HTTP.**
-As in Microsoft's eShopOnWeb reference, what can be refused comes back
-as a `Result<T>` from Ardalis.Result: `Result.NotFound()`,
+What can be refused comes back as a `Result<T>` from Ardalis.Result: `Result.NotFound()`,
 `Result.Forbidden()` for someone else's listing, `Result.Invalid(new
 ValidationError(...))` for a photo the server never stored, a category
 not in the shop or one's own product in the cart, `Result.Conflict(...)`
@@ -143,9 +141,9 @@ end reads the `detail` or the first error and shows it in a toast.
 five attempts a minute per client address, a JWT signed with a key that
 lives outside the repository, hardening headers on every answer, CORS
 for the front end only. Sign up and sign in are pages of their own,
-each linking to the other; there is no password recovery yet, as in
-the `Identity.API` of eShop, and it is the next step, behind an
-`IEmailSender` the way the payment sits behind `IPaymentGateway`.
+each linking to the other; there is no password recovery yet, it is
+the next step, behind an `IEmailSender` the way the payment sits behind
+`IPaymentGateway`.
 
 **Nobody is asked to sign in ahead of time.** A visitor sees the same
 buttons as a member: like, cart, Message on every card, in the quick
@@ -157,23 +155,21 @@ the messages). The API refuses the same actions with a 401 whatever the
 front end does.
 
 **The page and the quick view.** The photo and the title of a card open
-the product page, as on Amazon or in eShop; the small blue button opens
+the product page; the small blue button opens
 a quick view, a native `<dialog>` with the photo, the price, the stock,
 the brand, the maker, the description, the same like and cart buttons
 as the card, and a link to the full page. Escape, the close button or a
 click outside close it. The product page has a Back to catalogue link,
 a breadcrumb through the category, the buy box (price, stock, quantity,
-Add to cart) and, under it, the seller with a small Message pill, the
-way eBay places its seller box; the like is a small square with its
-count, as on the cards.
+Add to cart) and, under it, the seller with a small Message pill; the
+like is a small square with its count, as on the cards.
 
 **Two bars, as on any shop.** The first holds the brand, the search box
 and the cart, with a Sign in link for a visitor and, for a member,
 Messages and an account menu (my products, my orders, my sales, sell,
 sign out).
 Empty, the cart is a plain icon; with something in it, a filled pill
-with the count next to the icon, never a badge over it, as in eShop's
-`CartMenu`. The second bar is the strip of categories, which scrolls
+with the count next to the icon, never a badge over it. The second bar is the strip of categories, which scrolls
 sideways on a phone. Search and category are query parameters of the
 catalogue page, so a result can be shared. The product page carries a
 buy box with the price, the stock, a quantity and Add to cart; a card
@@ -198,10 +194,10 @@ functional guard and a functional interceptor, `TestBed` with
 API side: `[ApiController]` controllers returning `ActionResult<T>`,
 the options pattern for the JWT settings, `PasswordHasher`, JWT bearer,
 the built-in rate limiter, `Result<T>` from services and Problem
-Details on the wire, EF Core with a migration applied at start, and controller tests written as Microsoft's
-"Unit test controller logic" page shows them: xUnit, Moq substitutes,
-`Assert.IsType` on the result, one behaviour per test named
-`Method_Condition_Result`.
+Details on the wire, EF Core with a migration applied at start, and
+controller tests as the "Unit test controller logic in ASP.NET Core"
+page shows them: xUnit, Moq substitutes, `Assert.IsType` on the result,
+one behaviour per test named `Method_Condition_Result`.
 
 **The photos are linked, not stored.** The twenty-eight opening
 products point at public pictures on Unsplash; the card asks for a
