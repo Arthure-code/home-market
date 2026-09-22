@@ -1,6 +1,5 @@
-// What the checkout form sends: where to ship and how to pay, the same
-// fields as the order of Microsoft's eShop reference. The card goes to
-// the API once and is never kept, there or here.
+// What the checkout form sends: where to ship and how to pay. The card
+// goes to the API once and is never kept, there or here.
 export interface Checkout {
   fullName: string;
   street: string;

@@ -6,9 +6,9 @@ namespace HomeMarket.Api.Interfaces
     // The viewer is the signed-in account, or null for a visitor: the
     // catalogue is public, liked and mine are computed for the viewer.
     // The list can be narrowed by a search text and by a category. What
-    // can be refused comes back as a Result, as in the eShopOnWeb
-    // reference: NotFound, Forbidden for someone else's listing, Invalid
-    // for a photo the server never stored or a category not in the shop.
+    // can be refused comes back as a Result: NotFound, Forbidden for
+    // someone else's listing, Invalid for a photo the server never stored
+    // or a category not in the shop.
     public interface IProductService
     {
         Task<IReadOnlyList<ProductDto>> ListAsync(int? viewerId, string? query = null, string? category = null);

@@ -2,9 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HomeMarket.Api.Dtos
 {
-    // Checking out: where to ship and how to pay, the same fields as the
-    // order of Microsoft's eShop reference. The card fields are passed to
-    // the payment gateway and never stored.
+    // Checking out: where to ship and how to pay. The card fields are
+    // passed to the payment gateway and never stored.
     public class CheckoutRequest
     {
         [Required]
