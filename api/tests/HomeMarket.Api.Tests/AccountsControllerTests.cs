@@ -1,3 +1,4 @@
+using Ardalis.Result;
 using AutoFixture;
 using HomeMarket.Api.Controllers;
 using HomeMarket.Api.Dtos;
@@ -19,7 +20,7 @@ namespace HomeMarket.Api.Tests
             var request = fixture.Create<RegisterRequest>();
             var accounts = new Mock<IAccountService>();
             var tokens = new Mock<ITokenService>();
-            accounts.Setup(a => a.RegisterAsync(request)).ReturnsAsync(RegisterOutcome.Created);
+            accounts.Setup(a => a.RegisterAsync(request)).ReturnsAsync(Result.Success());
             var controller = new AccountsController(accounts.Object, tokens.Object);
 
             // When
@@ -39,7 +40,7 @@ namespace HomeMarket.Api.Tests
             var request = fixture.Create<RegisterRequest>();
             var accounts = new Mock<IAccountService>();
             var tokens = new Mock<ITokenService>();
-            accounts.Setup(a => a.RegisterAsync(request)).ReturnsAsync(RegisterOutcome.NameTaken);
+            accounts.Setup(a => a.RegisterAsync(request)).ReturnsAsync(Result.Conflict("That user name is taken."));
             var controller = new AccountsController(accounts.Object, tokens.Object);
 
             // When

@@ -8,9 +8,9 @@ namespace HomeMarket.Api.Tests
     {
         public static ProblemDetails Of(object? result, int statusCode)
         {
-            var objectResult = Assert.IsType<ObjectResult>(result);
+            var objectResult = Assert.IsAssignableFrom<ObjectResult>(result);
             Assert.Equal(statusCode, objectResult.StatusCode);
-            return Assert.IsType<ProblemDetails>(objectResult.Value);
+            return Assert.IsAssignableFrom<ProblemDetails>(objectResult.Value);
         }
     }
 }
