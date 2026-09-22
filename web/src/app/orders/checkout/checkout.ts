@@ -40,8 +40,7 @@ export class Checkout {
 
   protected placeOrder(): void {
     const d = this.draft;
-    const missing = Object.entries(d).find(([, value]) => !value.trim());
-    if (missing) {
+    if (Object.values(d).some((value) => !value.trim())) {
       this.toastr.error('Please fill in every field');
       return;
     }

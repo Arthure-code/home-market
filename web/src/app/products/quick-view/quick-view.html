@@ -23,11 +23,7 @@
                 height="450"
               />
             } @else {
-              <div
-                class="rounded no-photo"
-                role="img"
-                [attr.aria-label]="item.title + ', no photo'"
-              >
+              <div class="rounded no-photo" aria-hidden="true">
                 <i class="fa fa-camera" aria-hidden="true"></i>
               </div>
             }

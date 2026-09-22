@@ -16,12 +16,10 @@ namespace HomeMarket.Api.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _products;
-        private readonly IPhotoStore _photos;
 
-        public ProductsController(IProductService products, IPhotoStore photos)
+        public ProductsController(IProductService products)
         {
             _products = products;
-            _photos = photos;
         }
 
         [HttpGet]
@@ -97,19 +95,6 @@ namespace HomeMarket.Api.Controllers
         {
             var result = await _products.SetLikeAsync(User.AccountId(), id, false);
             return result.IsSuccess ? NoContent() : this.Refuse(result);
-        }
-
-        // The file is checked by its bytes and stored under a name the
-        // server picks; the answer is that name, to put in the listing.
-        [Authorize]
-        [HttpPost("photos")]
-        [RequestSizeLimit(Services.PhotoStore.MaxBytes + 4096)]
-        public async Task<ActionResult<UploadedPhotoDto>> UploadPhoto(IFormFile photo)
-        {
-            var result = await _photos.SaveAsync(photo);
-            return result.IsSuccess
-                ? Ok(new UploadedPhotoDto { Photo = result.Value, Url = _photos.UrlFor(result.Value) })
-                : this.Refuse(result);
         }
     }
 }
