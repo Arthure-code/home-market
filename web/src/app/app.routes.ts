@@ -1,11 +1,13 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './auth/auth.guard';
-import { SignIn } from './auth/sign-in/sign-in';
-import { SignUp } from './auth/sign-up/sign-up';
+import { authGuard } from './guards/auth.guard';
+import { ownerGuard } from './guards/owner.guard';
+import { SignIn } from './sign-in/sign-in';
+import { SignUp } from './sign-up/sign-up';
 import { Home } from './home/home';
 import { Catalogue } from './products/catalogue/catalogue';
 import { ProductDetail } from './products/product-detail/product-detail';
-import { ProductForm } from './products/product-form/product-form';
+import { ProductNew } from './products/product-new/product-new';
+import { ProductEdit } from './products/product-edit/product-edit';
 import { MyProducts } from './products/my-products/my-products';
 import { MessageList } from './messages/message-list/message-list';
 import { MessageView } from './messages/message-view/message-view';
@@ -21,9 +23,9 @@ export const routes: Routes = [
   { path: 'sign-in', component: SignIn },
   { path: 'sign-up', component: SignUp },
   { path: 'products', component: Catalogue },
-  { path: 'products/new', component: ProductForm, canActivate: [authGuard] },
+  { path: 'products/new', component: ProductNew, canActivate: [authGuard] },
   { path: 'products/:id', component: ProductDetail },
-  { path: 'products/:id/edit', component: ProductForm, canActivate: [authGuard] },
+  { path: 'products/:id/edit', component: ProductEdit, canActivate: [authGuard, ownerGuard] },
   { path: 'my-products', component: MyProducts, canActivate: [authGuard] },
   { path: 'messages', component: MessageList, canActivate: [authGuard] },
   { path: 'messages/new', component: Compose, canActivate: [authGuard] },

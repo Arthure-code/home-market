@@ -2,9 +2,9 @@ import { Component, effect, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { apiMessage } from '../../auth/api-message';
-import { MessageDraft } from '../message';
-import { MessageService } from '../message.service';
+import { apiMessage } from '../../helpers/api-message';
+import { MessageDraft } from '../../models/message';
+import { MessageService } from '../../services/message.service';
 
 // A new message. The recipient and the subject may come from the address
 // (the Message the seller button, the Reply button) and can be changed;

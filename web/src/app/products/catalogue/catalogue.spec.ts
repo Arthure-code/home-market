@@ -5,9 +5,9 @@ import { provideRouter } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
 import { Catalogue } from './catalogue';
-import { SignInPrompt } from '../../auth/sign-in-prompt';
-import { ProductFilter } from '../product';
-import { ProductService } from '../product.service';
+import { SignInPrompt } from '../../services/sign-in-prompt';
+import { ProductFilter } from '../../models/product';
+import { ProductService } from '../../services/product.service';
 
 describe('Catalogue', () => {
   let fixture: ComponentFixture<Catalogue>;

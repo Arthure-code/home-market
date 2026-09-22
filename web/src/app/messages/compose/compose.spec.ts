@@ -4,8 +4,8 @@ import { Router, provideRouter } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of, throwError } from 'rxjs';
 import { Compose } from './compose';
-import { MessageDetail, MessageDraft } from '../message';
-import { MessageService } from '../message.service';
+import { MessageDetail, MessageDraft } from '../../models/message';
+import { MessageService } from '../../services/message.service';
 
 describe('Compose', () => {
   let fixture: ComponentFixture<Compose>;

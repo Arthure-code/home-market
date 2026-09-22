@@ -2,9 +2,9 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { apiMessage } from '../../auth/api-message';
-import { Message } from '../message';
-import { Folder, MessageService } from '../message.service';
+import { apiMessage } from '../../helpers/api-message';
+import { Message } from '../../models/message';
+import { Folder, MessageService } from '../../services/message.service';
 
 // My messages: the inbox, or what I sent, one table for both. An unread
 // line in the inbox is shown in bold with a New badge.

@@ -4,8 +4,8 @@ import { Router, provideRouter } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of, throwError } from 'rxjs';
 import { MessageView } from './message-view';
-import { MessageDetail } from '../message';
-import { MessageService } from '../message.service';
+import { MessageDetail } from '../../models/message';
+import { MessageService } from '../../services/message.service';
 
 const received: MessageDetail = {
   id: 7,

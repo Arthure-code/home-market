@@ -4,8 +4,8 @@ import { provideRouter } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
 import { CartPage } from './cart-page';
-import { Cart, EMPTY_CART } from '../cart';
-import { CartService } from '../cart.service';
+import { Cart, EMPTY_CART } from '../../models/cart';
+import { CartService } from '../../services/cart.service';
 
 const filled: Cart = {
   lines: [

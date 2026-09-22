@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { ACCOUNTS_URL, SessionService } from './session.service';
-import { Session } from './session';
+import { Session } from '../models/session';
 
 const session: Session = {
   userName: 'nadia',

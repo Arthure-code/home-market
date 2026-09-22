@@ -8,7 +8,7 @@ import {
 } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { authGuard } from './auth.guard';
-import { SessionService } from './session.service';
+import { SessionService } from '../services/session.service';
 
 describe('authGuard', () => {
   const run = () =>

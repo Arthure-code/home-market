@@ -2,13 +2,13 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { apiMessage } from '../../auth/api-message';
-import { SignInPrompt } from '../../auth/sign-in-prompt';
-import { MAX_QUANTITY } from '../../cart/cart';
-import { CartService } from '../../cart/cart.service';
-import { Product } from '../product';
-import { StockLabelPipe } from '../stock-label-pipe';
-import { ProductService, canBeMessaged } from '../product.service';
+import { apiMessage } from '../../helpers/api-message';
+import { SignInPrompt } from '../../services/sign-in-prompt';
+import { MAX_QUANTITY } from '../../models/cart';
+import { CartService } from '../../services/cart.service';
+import { Product } from '../../models/product';
+import { StockLabelPipe } from '../../pipes/stock-label-pipe';
+import { ProductService, canBeMessaged } from '../../services/product.service';
 
 // One product on its own page, reached by its id, with its buy box. A
 // member can like it, write to its seller and put some in the cart; its

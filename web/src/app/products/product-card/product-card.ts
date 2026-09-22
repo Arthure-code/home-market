@@ -1,8 +1,8 @@
 import { CurrencyPipe } from '@angular/common';
 import { Component, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Product } from '../product';
-import { StockLabelPipe } from '../stock-label-pipe';
+import { Product } from '../../models/product';
+import { StockLabelPipe } from '../../pipes/stock-label-pipe';
 
 // One product on the grid. The photo and the title open its page; the
 // buttons are a quick view, a like and a cart for everyone, edit for the

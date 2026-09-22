@@ -188,9 +188,10 @@ page, the catalogue page and the two lists of My products use it with
 `source` set to `all`, `mine` or `liked`. `ProductCard` shows the
 quick view button to everyone, a like and a cart button to members, an
 edit button to the seller; the list owns the one `QuickView` dialog, so
-a like given there shows on the card too. `ProductForm` serves both Sell
-and Edit: with an id in the address it loads the product and, if it is
-not mine, goes back to the product page with a message.
+a like given there shows on the card too. `ProductNew` and
+`ProductEdit` share the fields of `ProductForm`; an owner guard on the
+edit route sends anyone but the seller back to the product page with a
+message.
 
 **The photos are linked, not stored.** The twenty-eight opening
 products point at public pictures on Unsplash; the card asks for a

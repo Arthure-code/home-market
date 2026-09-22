@@ -1,12 +1,12 @@
 import { Component, effect, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { apiMessage } from '../../auth/api-message';
-import { SignInPrompt } from '../../auth/sign-in-prompt';
-import { CartService } from '../../cart/cart.service';
-import { Product } from '../product';
+import { apiMessage } from '../../helpers/api-message';
+import { SignInPrompt } from '../../services/sign-in-prompt';
+import { CartService } from '../../services/cart.service';
+import { Product } from '../../models/product';
 import { ProductCard } from '../product-card/product-card';
-import { ProductService } from '../product.service';
+import { ProductService } from '../../services/product.service';
 import { QuickView } from '../quick-view/quick-view';
 
 // The catalogue: every product on a grid of cards. The same grid serves

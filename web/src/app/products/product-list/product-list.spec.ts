@@ -3,9 +3,9 @@ import { provideRouter } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of } from 'rxjs';
 import { ProductList } from './product-list';
-import { SignInPrompt } from '../../auth/sign-in-prompt';
-import { Product } from '../product';
-import { ProductService } from '../product.service';
+import { SignInPrompt } from '../../services/sign-in-prompt';
+import { Product } from '../../models/product';
+import { ProductService } from '../../services/product.service';
 
 const product = (id: number, liked = false): Product => ({
   id,

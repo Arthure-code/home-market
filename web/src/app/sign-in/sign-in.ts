@@ -2,9 +2,9 @@ import { Component, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { apiMessage } from '../api-message';
-import { Credentials } from '../session';
-import { SessionService } from '../session.service';
+import { apiMessage } from '../helpers/api-message';
+import { Credentials } from '../models/session';
+import { SessionService } from '../services/session.service';
 
 // The sign-in page. It is where a visitor lands when they try something
 // that needs an account; once in, they go back where they were.

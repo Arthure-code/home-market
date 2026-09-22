@@ -1,7 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { Cart } from './cart';
+import { Cart } from '../models/cart';
 import { CART_URL, CartService } from './cart.service';
 
 const twoMugs: Cart = {

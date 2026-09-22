@@ -3,8 +3,8 @@ import { provideRouter } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
 import { OrderList } from './order-list';
-import { Order } from '../order';
-import { OrderService } from '../order.service';
+import { Order } from '../../models/order';
+import { OrderService } from '../../services/order.service';
 
 const orders = [
   {

@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { authInterceptor } from './auth.interceptor';
-import { SessionService } from './session.service';
+import { SessionService } from '../services/session.service';
 
 describe('authInterceptor', () => {
   let http: HttpClient;

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Message, MessageDetail, MessageDraft } from './message';
+import { Message, MessageDetail, MessageDraft } from '../models/message';
 
 export const MESSAGES_URL = 'http://localhost:5130/api/messages';
 

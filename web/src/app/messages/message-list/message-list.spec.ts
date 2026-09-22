@@ -3,8 +3,8 @@ import { provideRouter } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
 import { MessageList } from './message-list';
-import { Message } from '../message';
-import { Folder, MessageService } from '../message.service';
+import { Message } from '../../models/message';
+import { Folder, MessageService } from '../../services/message.service';
 
 const message = (id: number, mine: boolean, readAt: string | null = null): Message => ({
   id,

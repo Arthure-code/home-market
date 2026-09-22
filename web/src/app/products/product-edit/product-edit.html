@@ -1,0 +1,10 @@
+@if (draft(); as item) {
+  <app-product-form
+    heading="Edit product"
+    submitLabel="Save changes"
+    [draft]="item"
+    [photoUrl]="photoUrl()"
+    [saving]="saving()"
+    (submitted)="update()"
+  />
+}

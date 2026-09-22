@@ -4,11 +4,11 @@ import { Router, provideRouter } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of, throwError } from 'rxjs';
 import { ProductDetail } from './product-detail';
-import { SignInPrompt } from '../../auth/sign-in-prompt';
-import { EMPTY_CART } from '../../cart/cart';
-import { CartService } from '../../cart/cart.service';
-import { Product } from '../product';
-import { ProductService } from '../product.service';
+import { SignInPrompt } from '../../services/sign-in-prompt';
+import { EMPTY_CART } from '../../models/cart';
+import { CartService } from '../../services/cart.service';
+import { Product } from '../../models/product';
+import { ProductService } from '../../services/product.service';
 
 const fan: Product = {
   id: 4,

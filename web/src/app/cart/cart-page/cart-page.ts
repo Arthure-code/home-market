@@ -2,9 +2,9 @@ import { CurrencyPipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { apiMessage } from '../../auth/api-message';
-import { CartLine, MAX_QUANTITY } from '../cart';
-import { CartService } from '../cart.service';
+import { apiMessage } from '../../helpers/api-message';
+import { CartLine, MAX_QUANTITY } from '../../models/cart';
+import { CartService } from '../../services/cart.service';
 
 // My cart: one line per product with its quantity to change or remove,
 // and the totals as the API adds them up.

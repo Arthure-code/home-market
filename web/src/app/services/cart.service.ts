@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import { Cart, EMPTY_CART } from './cart';
+import { Cart, EMPTY_CART } from '../models/cart';
 
 export const CART_URL = 'http://localhost:5130/api/cart';
 

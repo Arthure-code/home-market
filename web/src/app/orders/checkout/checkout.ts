@@ -3,10 +3,10 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { apiMessage } from '../../auth/api-message';
-import { CartService } from '../../cart/cart.service';
-import { Checkout as CheckoutDraft } from '../order';
-import { OrderService } from '../order.service';
+import { apiMessage } from '../../helpers/api-message';
+import { CartService } from '../../services/cart.service';
+import { Checkout as CheckoutDraft } from '../../models/order';
+import { OrderService } from '../../services/order.service';
 
 // Where to ship and how to pay, next to what the cart adds up to. The
 // card goes to the API with the order and nowhere else; a refused card

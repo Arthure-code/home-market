@@ -2,9 +2,9 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { apiMessage } from '../../auth/api-message';
-import { Sale } from '../order';
-import { OrderService } from '../order.service';
+import { apiMessage } from '../../helpers/api-message';
+import { Sale } from '../../models/order';
+import { OrderService } from '../../services/order.service';
 
 // What other members bought from me, newest first, with where to send
 // it. The buyer's card is not part of it.
