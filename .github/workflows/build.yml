@@ -46,7 +46,7 @@ jobs:
           /d:sonar.javascript.lcov.reportPaths="web/coverage/web/lcov.info"
           /d:sonar.exclusions="web/node_modules/**,web/dist/**,web/.angular/**,web/coverage/**,web/public/**,api/src/HomeMarket.Api/Migrations/**"
           /d:sonar.test.inclusions="**/*.spec.ts"
-          /d:sonar.coverage.exclusions="web/src/main.ts,web/src/app/app.config.ts,web/src/app/app.routes.ts,api/src/HomeMarket.Api/Program.cs,api/src/HomeMarket.Api/Data/Catalogue.cs,api/src/HomeMarket.Api/Migrations/**"
+          /d:sonar.coverage.exclusions="web/eslint.config.js,web/src/main.ts,web/src/app/app.config.ts,web/src/app/app.routes.ts,api/src/HomeMarket.Api/Program.cs,api/src/HomeMarket.Api/Data/Catalogue.cs,api/src/HomeMarket.Api/Migrations/**"
       - name: Build and test the API with coverage
         run: |
           dotnet build api/HomeMarket.sln --no-incremental
