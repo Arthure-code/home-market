@@ -22,10 +22,8 @@ namespace HomeMarket.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterRequest request)
         {
-            var outcome = await _accounts.RegisterAsync(request);
-            return outcome == RegisterOutcome.NameTaken
-                ? Problem("That user name is taken.", statusCode: StatusCodes.Status409Conflict)
-                : StatusCode(StatusCodes.Status201Created);
+            var result = await _accounts.RegisterAsync(request);
+            return result.IsSuccess ? StatusCode(StatusCodes.Status201Created) : this.Refuse(result);
         }
 
         // One answer for a wrong name and a wrong password, and a limit on

@@ -1,17 +1,13 @@
+using Ardalis.Result;
 using HomeMarket.Api.Dtos;
 using HomeMarket.Api.Models;
 
 namespace HomeMarket.Api.Interfaces
 {
-    public enum RegisterOutcome
-    {
-        Created,
-        NameTaken,
-    }
-
     public interface IAccountService
     {
-        Task<RegisterOutcome> RegisterAsync(RegisterRequest request);
+        // Conflict when the user name is taken.
+        Task<Result> RegisterAsync(RegisterRequest request);
         Task<Account?> AuthenticateAsync(LoginRequest request);
     }
 }

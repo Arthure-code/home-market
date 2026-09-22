@@ -43,24 +43,17 @@ namespace HomeMarket.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<MessageDetailDto>> Send(MessageRequest request)
         {
-            var (outcome, message) = await _messages.SendAsync(User.AccountId(), request);
-            return outcome switch
-            {
-                MessageOutcome.NoSuchRecipient => Problem("No member has that user name.", statusCode: StatusCodes.Status404NotFound),
-                MessageOutcome.ToSelf => Problem("You cannot message yourself.", statusCode: StatusCodes.Status400BadRequest),
-                _ => CreatedAtAction(nameof(Get), new { id = message!.Id }, message),
-            };
+            var result = await _messages.SendAsync(User.AccountId(), request);
+            return result.IsSuccess
+                ? CreatedAtAction(nameof(Get), new { id = result.Value.Id }, result.Value)
+                : this.Refuse(result);
         }
 
         [HttpPut("{id:int}/read")]
         public async Task<IActionResult> MarkRead(int id)
         {
-            return await _messages.MarkReadAsync(User.AccountId(), id) switch
-            {
-                MessageOutcome.NotFound => NotFound(),
-                MessageOutcome.NotMine => Forbid(),
-                _ => NoContent(),
-            };
+            var result = await _messages.MarkReadAsync(User.AccountId(), id);
+            return result.IsSuccess ? NoContent() : this.Refuse(result);
         }
     }
 }

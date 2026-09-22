@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using Ardalis.Result;
 using HomeMarket.Api.Interfaces;
 
 namespace HomeMarket.Api.Services
@@ -7,6 +8,7 @@ namespace HomeMarket.Api.Services
     // the image's own bytes call for, never the name the client sent.
     public class PhotoStore : IPhotoStore
     {
+        private const string NotAnImage = "That file is not a JPEG, PNG, GIF or WebP image.";
         public const long MaxBytes = 5 * 1024 * 1024;
 
         private static readonly Dictionary<string, byte[]> Signatures = new()
@@ -27,26 +29,31 @@ namespace HomeMarket.Api.Services
             Directory.CreateDirectory(_folder);
         }
 
-        public async Task<(PhotoOutcome Outcome, string FileName)> SaveAsync(IFormFile file)
+        public async Task<Result<string>> SaveAsync(IFormFile file)
         {
-            if (file.Length == 0 || file.Length > MaxBytes) return (PhotoOutcome.TooLarge, string.Empty);
+            if (file.Length == 0 || file.Length > MaxBytes) return Invalid("Photos must be 5 MB or less.");
 
             var header = new byte[4];
             await using (var probe = file.OpenReadStream())
             {
                 var read = await probe.ReadAsync(header);
-                if (read < header.Length) return (PhotoOutcome.NotAnImage, string.Empty);
+                if (read < header.Length) return Invalid(NotAnImage);
             }
 
             var extension = Signatures.FirstOrDefault(s => header.Take(s.Value.Length).SequenceEqual(s.Value)).Key;
-            if (extension is null) return (PhotoOutcome.NotAnImage, string.Empty);
+            if (extension is null) return Invalid(NotAnImage);
 
             var name = Convert.ToHexString(RandomNumberGenerator.GetBytes(16)).ToLowerInvariant() + extension;
             await using (var target = File.Create(Path.Combine(_folder, name)))
             {
                 await file.CopyToAsync(target);
             }
-            return (PhotoOutcome.Saved, name);
+            return Result<string>.Success(name);
+        }
+
+        private static Result<string> Invalid(string reason)
+        {
+            return Result<string>.Invalid(new ValidationError("photo", reason));
         }
 
         // Only a name this store produced, and that is still on disk.

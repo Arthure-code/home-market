@@ -123,14 +123,20 @@ id answers its sender and its recipient only: for anyone else it is a
 404, not a 403 that would confirm it exists. Only the recipient can
 mark it read, which opening it does.
 
-**Every refusal is a Problem Details document.** As the ASP.NET Core
-documentation recommends, `AddProblemDetails`, `UseStatusCodePages` and
-`UseExceptionHandler` are on, and a controller that refuses with a
-reason answers `Problem(detail, statusCode)`: a 400, 401, 402, 404 or
-409 always comes as RFC 9457 JSON with a `title`, a `status` and, when
-there is one, a `detail`; a request that fails validation comes as the
-`ValidationProblemDetails` with its `errors`. The front end reads the
-`detail` or the first error and shows it in a toast.
+**A service answers with a Result, a controller turns it into HTTP.**
+As in Microsoft's eShopOnWeb reference, what can be refused comes back
+as a `Result<T>` from Ardalis.Result: `Result.NotFound()`,
+`Result.Forbidden()` for someone else's listing, `Result.Invalid(new
+ValidationError(...))` for a photo the server never stored, a category
+not in the shop or one's own product in the cart, `Result.Conflict(...)`
+for a short stock, `Result.Error(reason)` for a refused card. One
+extension, `Refuse`, translates them in one place: 404, 403, 400 with
+the errors field by field, 409, and 402 for the card. Every one of
+those, as the ASP.NET Core documentation recommends, is a Problem
+Details document (`AddProblemDetails`, `UseStatusCodePages`,
+`UseExceptionHandler`): RFC 9457 JSON with a `title`, a `status` and a
+`detail`, or the `errors` of a `ValidationProblemDetails`. The front
+end reads the `detail` or the first error and shows it in a toast.
 
 **Accounts as in the other repositories.** Passwords hashed with
 `PasswordHasher`, the same 401 for a wrong name and a wrong password,
@@ -191,8 +197,8 @@ functional guard and a functional interceptor, `TestBed` with
 `HttpTestingController` and substituted services for the tests. On the
 API side: `[ApiController]` controllers returning `ActionResult<T>`,
 the options pattern for the JWT settings, `PasswordHasher`, JWT bearer,
-the built-in rate limiter, Problem Details for errors, EF Core with a
-migration applied at start, and controller tests written as Microsoft's
+the built-in rate limiter, `Result<T>` from services and Problem
+Details on the wire, EF Core with a migration applied at start, and controller tests written as Microsoft's
 "Unit test controller logic" page shows them: xUnit, Moq substitutes,
 `Assert.IsType` on the result, one behaviour per test named
 `Method_Condition_Result`.
@@ -244,9 +250,9 @@ Fifty-two xUnit tests on the five controllers, one behaviour each,
 named `Method_Condition_Result` and laid out as Given, When, Then. The
 services behind a controller are Moq substitutes and the data comes
 from AutoFixture; every test builds its own substitutes and its own
-controller, nothing is shared between tests, so a test states what the
-service will answer, calls the action as the account named by the
-token (or as a visitor) and checks the result: the catalogue for nobody and for a member with a
+controller, nothing is shared between tests, so a test states the
+`Result` the service will answer, calls the action as the account
+named by the token (or as a visitor) and checks the HTTP result: the catalogue for nobody and for a member with a
 search and a category, 404 for a missing product, 201 pointing at a new
 listing, 400 for a photo the server never stored or a category not in
 the shop, 403 on someone else's listing, 204 on a like, the uploaded
@@ -282,7 +288,7 @@ report.
 
 ## Stack
 
-ASP.NET Core 8 Web API with Problem Details, Entity Framework Core 8
+ASP.NET Core 8 Web API with Ardalis.Result and Problem Details, Entity Framework Core 8
 with SQLite and migrations, `PasswordHasher`, JWT bearer
 authentication, the built-in rate limiter, xUnit with Moq and
 AutoFixture. Angular 21 with standalone

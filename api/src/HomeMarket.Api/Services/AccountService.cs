@@ -1,3 +1,4 @@
+using Ardalis.Result;
 using HomeMarket.Api.Data;
 using HomeMarket.Api.Dtos;
 using HomeMarket.Api.Interfaces;
@@ -18,16 +19,16 @@ namespace HomeMarket.Api.Services
             _hasher = hasher;
         }
 
-        public async Task<RegisterOutcome> RegisterAsync(RegisterRequest request)
+        public async Task<Result> RegisterAsync(RegisterRequest request)
         {
             var userName = Normalize(request.UserName);
-            if (await _context.Accounts.AnyAsync(a => a.UserName == userName)) return RegisterOutcome.NameTaken;
+            if (await _context.Accounts.AnyAsync(a => a.UserName == userName)) return Result.Conflict("That user name is taken.");
 
             var account = new Account { UserName = userName, CreatedAt = DateTime.UtcNow };
             account.PasswordHash = _hasher.HashPassword(account, request.Password);
             _context.Accounts.Add(account);
             await _context.SaveChangesAsync();
-            return RegisterOutcome.Created;
+            return Result.Success();
         }
 
         // Null for an unknown name and for a wrong password alike; the

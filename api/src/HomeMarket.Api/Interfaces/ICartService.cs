@@ -1,22 +1,16 @@
+using Ardalis.Result;
 using HomeMarket.Api.Dtos;
 
 namespace HomeMarket.Api.Interfaces
 {
-    public enum CartOutcome
-    {
-        Done,
-        NotFound,
-        OwnProduct,
-        NotEnoughStock,
-    }
-
     // The cart of the account named by the token. Nothing of your own
-    // goes in it, and never more than the stock.
+    // goes in it (Invalid), nothing missing (NotFound), and never more
+    // than the stock (Conflict). Every change answers with the whole cart.
     public interface ICartService
     {
         Task<CartDto> GetAsync(int accountId);
-        Task<(CartOutcome Outcome, CartDto? Cart)> AddAsync(int accountId, int productId, int quantity);
-        Task<(CartOutcome Outcome, CartDto? Cart)> SetQuantityAsync(int accountId, int productId, int quantity);
-        Task<(CartOutcome Outcome, CartDto? Cart)> RemoveAsync(int accountId, int productId);
+        Task<Result<CartDto>> AddAsync(int accountId, int productId, int quantity);
+        Task<Result<CartDto>> SetQuantityAsync(int accountId, int productId, int quantity);
+        Task<Result<CartDto>> RemoveAsync(int accountId, int productId);
     }
 }
