@@ -8,16 +8,13 @@ namespace HomeMarket.Api.Controllers
 {
     // The catalogue is public; selling, changing and liking need a token,
     // and the account named by the token is the only one acted for. A
-    // refusal with a reason is a Problem Details answer (RFC 9457), as the
-    // ASP.NET Core documentation recommends; a bare status is one too,
-    // through the status code pages.
+    // refusal comes back from the service as a Result and leaves here as
+    // a Problem Details answer.
     [ApiController]
     [Route("api/products")]
     [Produces("application/json")]
     public class ProductsController : ControllerBase
     {
-        private const string BadPhotoMessage = "Upload the photo first, then save the product.";
-        private const string BadCategoryMessage = "Pick one of the shop's categories.";
         private readonly IProductService _products;
         private readonly IPhotoStore _photos;
 
@@ -64,54 +61,42 @@ namespace HomeMarket.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<ProductDto>> Create(ProductRequest request)
         {
-            var (outcome, product) = await _products.CreateAsync(User.AccountId(), request);
-            return outcome switch
-            {
-                ProductOutcome.BadPhoto => Problem(BadPhotoMessage, statusCode: StatusCodes.Status400BadRequest),
-                ProductOutcome.BadCategory => Problem(BadCategoryMessage, statusCode: StatusCodes.Status400BadRequest),
-                _ => CreatedAtAction(nameof(Get), new { id = product!.Id }, product),
-            };
+            var result = await _products.CreateAsync(User.AccountId(), request);
+            return result.IsSuccess
+                ? CreatedAtAction(nameof(Get), new { id = result.Value.Id }, result.Value)
+                : this.Refuse(result);
         }
 
         [Authorize]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<ProductDto>> Update(int id, ProductRequest request)
         {
-            var (outcome, product) = await _products.UpdateAsync(User.AccountId(), id, request);
-            return outcome switch
-            {
-                ProductOutcome.NotFound => NotFound(),
-                ProductOutcome.NotMine => Forbid(),
-                ProductOutcome.BadPhoto => Problem(BadPhotoMessage, statusCode: StatusCodes.Status400BadRequest),
-                ProductOutcome.BadCategory => Problem(BadCategoryMessage, statusCode: StatusCodes.Status400BadRequest),
-                _ => Ok(product),
-            };
+            var result = await _products.UpdateAsync(User.AccountId(), id, request);
+            return result.IsSuccess ? Ok(result.Value) : this.Refuse(result);
         }
 
         [Authorize]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
-            return await _products.DeleteAsync(User.AccountId(), id) switch
-            {
-                ProductOutcome.NotFound => NotFound(),
-                ProductOutcome.NotMine => Forbid(),
-                _ => NoContent(),
-            };
+            var result = await _products.DeleteAsync(User.AccountId(), id);
+            return result.IsSuccess ? NoContent() : this.Refuse(result);
         }
 
         [Authorize]
         [HttpPut("{id:int}/like")]
         public async Task<IActionResult> Like(int id)
         {
-            return await _products.SetLikeAsync(User.AccountId(), id, true) == ProductOutcome.NotFound ? NotFound() : NoContent();
+            var result = await _products.SetLikeAsync(User.AccountId(), id, true);
+            return result.IsSuccess ? NoContent() : this.Refuse(result);
         }
 
         [Authorize]
         [HttpDelete("{id:int}/like")]
         public async Task<IActionResult> Unlike(int id)
         {
-            return await _products.SetLikeAsync(User.AccountId(), id, false) == ProductOutcome.NotFound ? NotFound() : NoContent();
+            var result = await _products.SetLikeAsync(User.AccountId(), id, false);
+            return result.IsSuccess ? NoContent() : this.Refuse(result);
         }
 
         // The file is checked by its bytes and stored under a name the
@@ -121,13 +106,10 @@ namespace HomeMarket.Api.Controllers
         [RequestSizeLimit(Services.PhotoStore.MaxBytes + 4096)]
         public async Task<ActionResult<UploadedPhotoDto>> UploadPhoto(IFormFile photo)
         {
-            var (outcome, fileName) = await _photos.SaveAsync(photo);
-            return outcome switch
-            {
-                PhotoOutcome.NotAnImage => Problem("That file is not a JPEG, PNG, GIF or WebP image.", statusCode: StatusCodes.Status400BadRequest),
-                PhotoOutcome.TooLarge => Problem("Photos must be 5 MB or less.", statusCode: StatusCodes.Status400BadRequest),
-                _ => Ok(new UploadedPhotoDto { Photo = fileName, Url = _photos.UrlFor(fileName) }),
-            };
+            var result = await _photos.SaveAsync(photo);
+            return result.IsSuccess
+                ? Ok(new UploadedPhotoDto { Photo = result.Value, Url = _photos.UrlFor(result.Value) })
+                : this.Refuse(result);
         }
     }
 }

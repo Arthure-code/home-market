@@ -1,3 +1,4 @@
+using Ardalis.Result;
 using HomeMarket.Api.Data;
 using HomeMarket.Api.Dtos;
 using HomeMarket.Api.Interfaces;
@@ -22,20 +23,20 @@ namespace HomeMarket.Api.Services
         // checked line by line, the card is charged for the total, the
         // lines are copied with their price of the day, the stock goes
         // down and the cart is emptied. Nothing is written if the card is
-        // refused.
-        public async Task<(OrderOutcome Outcome, OrderDto? Order, string Detail)> PlaceAsync(int buyerId, CheckoutRequest request)
+        // refused; that refusal is an Error carrying the provider's reason.
+        public async Task<Result<OrderDto>> PlaceAsync(int buyerId, CheckoutRequest request)
         {
             var lines = await _context.CartLines
                 .Include(l => l.Product)
                 .Where(l => l.AccountId == buyerId)
                 .OrderBy(l => l.AddedAt)
                 .ToListAsync();
-            if (lines.Count == 0) return (OrderOutcome.EmptyCart, null, "Your cart is empty.");
+            if (lines.Count == 0) return Result<OrderDto>.Invalid(new ValidationError("cart", "Your cart is empty."));
 
             var shortLine = lines.FirstOrDefault(l => l.Quantity > l.Product!.Stock);
             if (shortLine is not null)
             {
-                return (OrderOutcome.NotEnoughStock, null, $"Only {shortLine.Product!.Stock} left of {shortLine.Product.Title}.");
+                return Result<OrderDto>.Conflict($"Only {shortLine.Product!.Stock} left of {shortLine.Product.Title}.");
             }
 
             var subtotal = lines.Sum(l => l.Product!.Price * l.Quantity);
@@ -47,7 +48,7 @@ namespace HomeMarket.Api.Services
                 request.CardHolderName,
                 request.Expiry,
                 request.SecurityCode));
-            if (!payment.Accepted) return (OrderOutcome.CardRefused, null, payment.Reason);
+            if (!payment.Accepted) return Result<OrderDto>.Error(payment.Reason);
 
             var order = new Order
             {
@@ -83,7 +84,7 @@ namespace HomeMarket.Api.Services
             _context.Orders.Add(order);
             _context.CartLines.RemoveRange(lines);
             await _context.SaveChangesAsync();
-            return (OrderOutcome.Done, await GetAsync(buyerId, order.Id), string.Empty);
+            return Result<OrderDto>.Success((await GetAsync(buyerId, order.Id))!);
         }
 
         public Task<IReadOnlyList<OrderDto>> MineAsync(int buyerId)
