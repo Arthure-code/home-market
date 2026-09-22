@@ -3,7 +3,7 @@
   <a class="btn btn-warning" routerLink="/messages/new" data-testid="new">New message</a>
 </div>
 
-<div class="btn-group mb-3" role="group" aria-label="Folder">
+<fieldset class="btn-group mb-3" aria-label="Folder">
   <button
     type="button"
     class="btn"
@@ -29,7 +29,7 @@
   >
     <i class="fa fa-paper-plane" aria-hidden="true"></i> Sent
   </button>
-</div>
+</fieldset>
 
 @if (loading()) {
   <div class="text-center py-5">
