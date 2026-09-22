@@ -1,5 +1,14 @@
 # home-market
 
+[![Build](https://github.com/Arthure-code/home-market/actions/workflows/build.yml/badge.svg)](https://github.com/Arthure-code/home-market/actions/workflows/build.yml)
+[![Quality gate](https://sonarcloud.io/api/project_badges/measure?project=Arthure-code_home-market&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Arthure-code_home-market)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Arthure-code_home-market&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Arthure-code_home-market)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Arthure-code_home-market&metric=bugs)](https://sonarcloud.io/summary/new_code?id=Arthure-code_home-market)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Arthure-code_home-market&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=Arthure-code_home-market)
+[![Security rating](https://sonarcloud.io/api/project_badges/measure?project=Arthure-code_home-market&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Arthure-code_home-market)
+[![Code smells](https://sonarcloud.io/api/project_badges/measure?project=Arthure-code_home-market&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=Arthure-code_home-market)
+[![Duplicated lines](https://sonarcloud.io/api/project_badges/measure?project=Arthure-code_home-market&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=Arthure-code_home-market)
+
 An online shop for everyday things: backpacks, a kettle, headphones, a
 desk fan, a phone, sneakers, twenty-eight products in eight categories,
 each with a photo, a price and a stock. Anyone can browse, search and
