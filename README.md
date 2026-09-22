@@ -242,23 +242,44 @@ From `api`:
 dotnet test
 ```
 
-Fifty-two xUnit tests on the six controllers, one behaviour each,
-named `Method_Condition_Result` and laid out as Given, When, Then. The
-services behind a controller are Moq substitutes and the data comes
-from AutoFixture; every test builds its own substitutes and its own
-controller, nothing is shared between tests, so a test states the
-`Result` the service will answer, calls the action as the account
-named by the token (or as a visitor) and checks the HTTP result: the catalogue for nobody and for a member with a
-search and a category, 404 for a missing product, 201 pointing at a new
-listing, 400 for a photo the server never stored or a category not in
-the shop, 403 on someone else's listing, 204 on a like, the uploaded
-photo by its name and address, the inbox and the sent folder, 404 for a
-message of somebody else, 403 when the sender marks it read, the cart
-with its totals, 404, 400 and 409 when a product is missing, mine or
-short, 201 for a paid order, 402 with the reason for a refused card, 400
-for an empty cart, 409 when the stock went meanwhile, and the sales of
-a seller. No database and no HTTP host: `tests/` next to `src/`, the
-project `HomeMarket.Api.Tests`.
+One hundred and thirty-eight xUnit tests, one behaviour each, named
+`Method_Condition_Result` and laid out as Given, When, Then, in
+`tests/` next to `src/`, the project `HomeMarket.Api.Tests`. Every
+test builds what it needs and nothing is shared between tests.
+
+Fifty-two are on the six controllers. The services behind a controller
+are Moq substitutes and the data comes from AutoFixture, so a test
+states the `Result` the service will answer, calls the action as the
+account named by the token (or as a visitor) and checks the HTTP
+result: the catalogue for nobody and for a member with a search and a
+category, 404 for a missing product, 201 pointing at a new listing, 400
+for a photo the server never stored or a category not in the shop, 403
+on someone else's listing, 204 on a like, the uploaded photo by its
+name and address, the inbox and the sent folder, 404 for a message of
+somebody else, 403 when the sender marks it read, the cart with its
+totals, 404, 400 and 409 when a product is missing, mine or short, 201
+for a paid order, 402 with the reason for a refused card, 400 for an
+empty cart, 409 when the stock went meanwhile, and the sales of a
+seller.
+
+Eighty-six are on the services, each against an SQLite database of its
+own, in memory, with the schema of the real one: the catalogue newest
+first with what each product is to the viewer, the search over title,
+brand and maker, the categories with their counts, a listing created,
+changed, refused as somebody else's or for a photo the server never
+stored, a like given twice and taken back; the cart that adds up to ten
+of a product and no further than its stock, its two taxes to the cent;
+the order that charges the total with taxes through the payment
+gateway, copies the lines at the price of the day, lowers the stock and
+empties the cart, or writes nothing when the card is refused; a message
+found by its two parties only, sent to a member but not to the store
+account or to oneself, marked read by its recipient once; a name
+registered lowercased with a hash and refused when taken, the same
+null for a wrong password and an unknown name; the simulated gateway
+on good and bad numbers, names, expiries and security codes; the two
+taxes and their rounding; a token that carries the id and the name and
+validates against its key; and the photo store that keeps only what
+its bytes call an image, under a name of its own.
 
 From `web`:
 
@@ -266,10 +287,13 @@ From `web`:
 npm test
 ```
 
-Eighty-eight Vitest tests through `TestBed`: the session service, the
+Ninety-nine Vitest tests through `TestBed`: the session service, the
 interceptor, the guard, the sign-in prompt, the sign-in and sign-up
-pages, the API messages and the stock label pipe; the product, cart and
-message services against `HttpTestingController`; the two bars for a
+pages, the API messages and the stock label pipe; the product, cart,
+order and message services against `HttpTestingController`; the
+catalogue page and its title; the photo uploader that takes a dropped
+or chosen image, refuses the rest and hands back the name the API
+chose; the two bars for a
 visitor and a member, with the search and the cart count; the card, its
 like and cart buttons for everyone and its edit button for the seller; the quick view
 that opens with a product and tells the list when it closes; the list
