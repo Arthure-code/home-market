@@ -1,3 +1,4 @@
+using Ardalis.Result;
 using HomeMarket.Api.Auth;
 using HomeMarket.Api.Dtos;
 using HomeMarket.Api.Interfaces;
@@ -41,17 +42,16 @@ namespace HomeMarket.Api.Controllers
             return order is null ? NotFound() : Ok(order);
         }
 
+        // A refused card is the service's Error, and here a 402 with the
+        // provider's reason; the other refusals translate as everywhere.
         [HttpPost]
         public async Task<ActionResult<OrderDto>> Place(CheckoutRequest request)
         {
-            var (outcome, order, detail) = await _orders.PlaceAsync(User.AccountId(), request);
-            return outcome switch
-            {
-                OrderOutcome.EmptyCart => Problem(detail, statusCode: StatusCodes.Status400BadRequest),
-                OrderOutcome.NotEnoughStock => Problem(detail, statusCode: StatusCodes.Status409Conflict),
-                OrderOutcome.CardRefused => Problem(detail, statusCode: StatusCodes.Status402PaymentRequired),
-                _ => CreatedAtAction(nameof(Get), new { id = order!.Id }, order),
-            };
+            var result = await _orders.PlaceAsync(User.AccountId(), request);
+            if (result.IsSuccess) return CreatedAtAction(nameof(Get), new { id = result.Value.Id }, result.Value);
+            return result.Status == ResultStatus.Error
+                ? Problem(string.Join(" ", result.Errors), statusCode: StatusCodes.Status402PaymentRequired)
+                : this.Refuse(result);
         }
     }
 }

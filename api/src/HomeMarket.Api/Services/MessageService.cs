@@ -1,3 +1,4 @@
+using Ardalis.Result;
 using HomeMarket.Api.Data;
 using HomeMarket.Api.Dtos;
 using HomeMarket.Api.Interfaces;
@@ -48,12 +49,12 @@ namespace HomeMarket.Api.Services
         // The recipient is looked up by name and must be able to sign in:
         // the store account, which cannot, cannot receive either. Writing
         // to oneself is refused.
-        public async Task<(MessageOutcome Outcome, MessageDetailDto? Message)> SendAsync(int senderId, MessageRequest request)
+        public async Task<Result<MessageDetailDto>> SendAsync(int senderId, MessageRequest request)
         {
             var to = request.To.Trim().ToLowerInvariant();
             var recipient = await _context.Accounts.SingleOrDefaultAsync(a => a.UserName == to);
-            if (recipient is null || recipient.PasswordHash.Length == 0) return (MessageOutcome.NoSuchRecipient, null);
-            if (recipient.Id == senderId) return (MessageOutcome.ToSelf, null);
+            if (recipient is null || recipient.PasswordHash.Length == 0) return Result<MessageDetailDto>.NotFound("No member has that user name.");
+            if (recipient.Id == senderId) return Result<MessageDetailDto>.Invalid(new ValidationError(nameof(request.To), "You cannot message yourself."));
 
             var message = new Message
             {
@@ -65,23 +66,23 @@ namespace HomeMarket.Api.Services
             };
             _context.Messages.Add(message);
             await _context.SaveChangesAsync();
-            return (MessageOutcome.Done, await GetAsync(senderId, message.Id));
+            return Result<MessageDetailDto>.Success((await GetAsync(senderId, message.Id))!);
         }
 
         // Only the recipient marks a message read; reading it again changes
         // nothing.
-        public async Task<MessageOutcome> MarkReadAsync(int readerId, int id)
+        public async Task<Result> MarkReadAsync(int readerId, int id)
         {
             var message = await _context.Messages.FindAsync(id);
-            if (message is null || (message.SenderId != readerId && message.RecipientId != readerId)) return MessageOutcome.NotFound;
-            if (message.RecipientId != readerId) return MessageOutcome.NotMine;
+            if (message is null || (message.SenderId != readerId && message.RecipientId != readerId)) return Result.NotFound();
+            if (message.RecipientId != readerId) return Result.Forbidden();
 
             if (message.ReadAt is null)
             {
                 message.ReadAt = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
             }
-            return MessageOutcome.Done;
+            return Result.Success();
         }
 
         private static async Task<IReadOnlyList<MessageDto>> Project(IQueryable<Message> messages, int readerId)

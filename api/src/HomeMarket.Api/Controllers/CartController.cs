@@ -8,7 +8,7 @@ namespace HomeMarket.Api.Controllers
 {
     // The cart of the account named by the token. Every change answers
     // with the whole cart, totals included, so the client never adds up;
-    // every refusal is a Problem Details answer, like everywhere else.
+    // every refusal comes from the service as a Result.
     [Authorize]
     [ApiController]
     [Route("api/cart")]
@@ -31,33 +31,22 @@ namespace HomeMarket.Api.Controllers
         [HttpPost("lines")]
         public async Task<ActionResult<CartDto>> Add(CartAddRequest request)
         {
-            var (outcome, cart) = await _cart.AddAsync(User.AccountId(), request.ProductId, request.Quantity);
-            return Answer(outcome, cart);
+            var result = await _cart.AddAsync(User.AccountId(), request.ProductId, request.Quantity);
+            return result.IsSuccess ? Ok(result.Value) : this.Refuse(result);
         }
 
         [HttpPut("lines/{productId:int}")]
         public async Task<ActionResult<CartDto>> SetQuantity(int productId, CartQuantityRequest request)
         {
-            var (outcome, cart) = await _cart.SetQuantityAsync(User.AccountId(), productId, request.Quantity);
-            return Answer(outcome, cart);
+            var result = await _cart.SetQuantityAsync(User.AccountId(), productId, request.Quantity);
+            return result.IsSuccess ? Ok(result.Value) : this.Refuse(result);
         }
 
         [HttpDelete("lines/{productId:int}")]
         public async Task<ActionResult<CartDto>> Remove(int productId)
         {
-            var (outcome, cart) = await _cart.RemoveAsync(User.AccountId(), productId);
-            return Answer(outcome, cart);
-        }
-
-        private ActionResult<CartDto> Answer(CartOutcome outcome, CartDto? cart)
-        {
-            return outcome switch
-            {
-                CartOutcome.NotFound => NotFound(),
-                CartOutcome.OwnProduct => Problem("That is your own listing.", statusCode: StatusCodes.Status400BadRequest),
-                CartOutcome.NotEnoughStock => Problem("There are not that many left in stock.", statusCode: StatusCodes.Status409Conflict),
-                _ => Ok(cart),
-            };
+            var result = await _cart.RemoveAsync(User.AccountId(), productId);
+            return result.IsSuccess ? Ok(result.Value) : this.Refuse(result);
         }
     }
 }
