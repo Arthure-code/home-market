@@ -1,7 +1,7 @@
-@let items = cart();
+@let items = cart;
 <h1 class="h3 mt-3 mb-4">Checkout</h1>
 
-@if (empty()) {
+@if (empty) {
   <p class="alert alert-info" data-testid="empty">
     Your cart is empty. <a routerLink="/products" class="alert-link">Browse the catalogue</a>.
   </p>
@@ -195,7 +195,7 @@
             <button
               type="submit"
               class="btn btn-warning w-100"
-              [disabled]="placing()"
+              [disabled]="placing"
               data-testid="place-order"
             >
               Place order

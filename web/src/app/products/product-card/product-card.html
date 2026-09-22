@@ -1,4 +1,4 @@
-@let item = product();
+@let item = product;
 <div class="card card-wrapper" [attr.data-testid]="'card-' + item.id">
   <a
     [routerLink]="['/products', item.id]"

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Message, MessageDetail, MessageDraft } from '../models/message';
 
@@ -11,7 +11,7 @@ export type Folder = 'inbox' | 'sent';
 // token and the API reads who I am from it.
 @Injectable({ providedIn: 'root' })
 export class MessageService {
-  private readonly http = inject(HttpClient);
+  constructor(private readonly http: HttpClient) {}
 
   folder(folder: Folder): Observable<Message[]> {
     return this.http.get<Message[]>(`${MESSAGES_URL}/${folder}`);

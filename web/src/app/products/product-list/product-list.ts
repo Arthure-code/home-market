@@ -1,12 +1,12 @@
-import { Component, effect, inject, input, signal } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { apiMessage } from '../../helpers/api-message';
-import { SignInPrompt } from '../../services/sign-in-prompt';
-import { CartService } from '../../services/cart.service';
 import { Product } from '../../models/product';
-import { ProductCard } from '../product-card/product-card';
+import { CartService } from '../../services/cart.service';
 import { ProductService } from '../../services/product.service';
+import { SignInPrompt } from '../../services/sign-in-prompt';
+import { ProductCard } from '../product-card/product-card';
 import { QuickView } from '../quick-view/quick-view';
 
 // The catalogue: every product on a grid of cards. The same grid serves
@@ -17,35 +17,43 @@ import { QuickView } from '../quick-view/quick-view';
   imports: [ProductCard, QuickView],
   templateUrl: './product-list.html',
 })
-export class ProductList {
-  private readonly service = inject(ProductService);
-  private readonly toastr = inject(ToastrService);
-  private readonly cart = inject(CartService);
-  private readonly router = inject(Router);
-  private readonly prompt = inject(SignInPrompt);
-
+export class ProductList implements OnInit, OnChanges {
   // Which list to show: the whole catalogue, my listings, or my likes.
-  readonly source = input<'all' | 'mine' | 'liked'>('all');
-  readonly query = input<string>();
-  readonly category = input<string>();
-  protected readonly products = signal<Product[]>([]);
-  protected readonly loading = signal(true);
+  @Input() source: 'all' | 'mine' | 'liked' = 'all';
+  @Input() query?: string;
+  @Input() category?: string;
+  products: Product[] = [];
+  loading = true;
   // The product open in the quick view, if any. It follows the list, so a
   // like given in the dialog shows on its card too.
-  protected readonly viewing = signal<Product | null>(null);
+  viewing: Product | null = null;
 
-  constructor() {
-    effect(() => this.load());
+  constructor(
+    private readonly service: ProductService,
+    private readonly cart: CartService,
+    private readonly prompt: SignInPrompt,
+    private readonly router: Router,
+    private readonly toastr: ToastrService,
+  ) {}
+
+  ngOnInit(): void {
+    this.load();
   }
 
-  protected toggleLike(product: Product): void {
+  // Loads again when the search or the category in the address changes;
+  // the first values are taken care of by ngOnInit.
+  ngOnChanges(changes: SimpleChanges): void {
+    if (Object.values(changes).some((change) => !change.firstChange)) this.load();
+  }
+
+  toggleLike(product: Product): void {
     if (!this.prompt.ensure()) return;
     const liked = !product.liked;
     this.service.setLike(product.id, liked).subscribe({
       next: () => {
         const changed = { ...product, liked, likes: product.likes + (liked ? 1 : -1) };
-        this.products.update((list) => list.map((p) => (p.id === product.id ? changed : p)));
-        if (this.viewing()?.id === product.id) this.viewing.set(changed);
+        this.products = this.products.map((p) => (p.id === product.id ? changed : p));
+        if (this.viewing?.id === product.id) this.viewing = changed;
         this.toastr.success(liked ? 'Added to your likes' : 'Removed from your likes');
       },
       error: (error: unknown) => this.toastr.error(apiMessage(error)),
@@ -53,7 +61,7 @@ export class ProductList {
   }
 
   // One of it goes in the cart, and the cart opens.
-  protected addToCart(product: Product): void {
+  addToCart(product: Product): void {
     if (!this.prompt.ensure()) return;
     this.cart.add(product.id).subscribe({
       next: () => {
@@ -66,18 +74,18 @@ export class ProductList {
 
   private load(): void {
     const calls = {
-      all: () => this.service.list({ q: this.query(), category: this.category() }),
+      all: () => this.service.list({ q: this.query, category: this.category }),
       mine: () => this.service.mine(),
       liked: () => this.service.liked(),
     };
-    this.loading.set(true);
-    calls[this.source()]().subscribe({
+    this.loading = true;
+    calls[this.source]().subscribe({
       next: (products) => {
-        this.products.set(products);
-        this.loading.set(false);
+        this.products = products;
+        this.loading = false;
       },
       error: (error: unknown) => {
-        this.loading.set(false);
+        this.loading = false;
         this.toastr.error(apiMessage(error));
       },
     });

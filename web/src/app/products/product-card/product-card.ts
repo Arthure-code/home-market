@@ -1,5 +1,5 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, input, output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Product } from '../../models/product';
 import { StockLabelPipe } from '../../pipes/stock-label-pipe';
@@ -14,8 +14,8 @@ import { StockLabelPipe } from '../../pipes/stock-label-pipe';
   styleUrl: './product-card.css',
 })
 export class ProductCard {
-  readonly product = input.required<Product>();
-  readonly toggleLike = output<Product>();
-  readonly addToCart = output<Product>();
-  readonly quickView = output<Product>();
+  @Input({ required: true }) product!: Product;
+  @Output() toggleLike = new EventEmitter<Product>();
+  @Output() addToCart = new EventEmitter<Product>();
+  @Output() quickView = new EventEmitter<Product>();
 }

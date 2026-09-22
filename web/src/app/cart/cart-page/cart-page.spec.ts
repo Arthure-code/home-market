@@ -1,8 +1,7 @@
-import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { CartPage } from './cart-page';
 import { Cart, EMPTY_CART } from '../../models/cart';
 import { CartService } from '../../services/cart.service';
@@ -39,7 +38,11 @@ const filled: Cart = {
 
 describe('CartPage', () => {
   let fixture: ComponentFixture<CartPage>;
-  let cart: ReturnType<typeof signal<Cart>>;
+  let service: {
+    cart: Cart;
+    setQuantity: (id: number, quantity: number) => Observable<Cart>;
+    remove: (id: number) => Observable<Cart>;
+  };
   let calls: string[];
   let toastr: { success: ReturnType<typeof vi.fn>; error: ReturnType<typeof vi.fn> };
 
@@ -53,28 +56,25 @@ describe('CartPage', () => {
   };
 
   beforeEach(async () => {
-    cart = signal<Cart>(filled);
     calls = [];
+    service = {
+      cart: filled,
+      setQuantity: (id: number, quantity: number) => {
+        calls.push(`set ${id} ${quantity}`);
+        return of(filled);
+      },
+      remove: (id: number) => {
+        calls.push(`remove ${id}`);
+        service.cart = EMPTY_CART;
+        return of(EMPTY_CART);
+      },
+    };
     toastr = { success: vi.fn(), error: vi.fn() };
     await TestBed.configureTestingModule({
       imports: [CartPage],
       providers: [
         provideRouter([]),
-        {
-          provide: CartService,
-          useValue: {
-            cart,
-            setQuantity: (id: number, quantity: number) => {
-              calls.push(`set ${id} ${quantity}`);
-              return of(filled);
-            },
-            remove: (id: number) => {
-              calls.push(`remove ${id}`);
-              cart.set(EMPTY_CART);
-              return of(EMPTY_CART);
-            },
-          },
-        },
+        { provide: CartService, useValue: service },
         { provide: ToastrService, useValue: toastr },
       ],
     }).compileComponents();

@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -13,26 +13,28 @@ import { SessionService } from '../services/session.service';
   templateUrl: './sign-up.html',
 })
 export class SignUp {
-  private readonly session = inject(SessionService);
-  private readonly router = inject(Router);
-  private readonly toastr = inject(ToastrService);
+  @Input() returnUrl?: string;
+  credentials: Credentials = { userName: '', password: '' };
+  confirmation = '';
+  busy = false;
 
-  readonly returnUrl = input<string>();
-  protected readonly credentials: Credentials = { userName: '', password: '' };
-  protected confirmation = '';
-  protected readonly busy = signal(false);
+  constructor(
+    private readonly session: SessionService,
+    private readonly router: Router,
+    private readonly toastr: ToastrService,
+  ) {}
 
-  protected signUp(): void {
+  signUp(): void {
     if (this.credentials.password !== this.confirmation) {
       this.toastr.error('The two passwords differ');
       return;
     }
-    this.busy.set(true);
+    this.busy = true;
     this.session.register(this.credentials).subscribe({
       next: () => this.signIn(),
       error: (error: unknown) => {
         this.toastr.error(apiMessage(error));
-        this.busy.set(false);
+        this.busy = false;
       },
     });
   }
@@ -41,7 +43,7 @@ export class SignUp {
     this.session.signIn(this.credentials).subscribe({
       next: () => {
         this.toastr.success(`Welcome, ${this.credentials.userName.trim()}`);
-        this.router.navigateByUrl(this.returnUrl() || '/products');
+        this.router.navigateByUrl(this.returnUrl || '/products');
       },
       error: () => {
         this.toastr.success('Account created, please sign in');

@@ -7,7 +7,7 @@ import { SessionService } from '../services/session.service';
 // back afterwards.
 export const authGuard: CanActivateFn = (_route, state) => {
   const session = inject(SessionService);
-  if (session.signedIn()) return true;
+  if (session.signedIn) return true;
 
   inject(ToastrService).info('Please sign in to continue');
   return inject(Router).createUrlTree(['/sign-in'], { queryParams: { returnUrl: state.url } });

@@ -1,5 +1,5 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { apiMessage } from '../../helpers/api-message';
@@ -13,26 +13,28 @@ import { OrderService } from '../../services/order.service';
   templateUrl: './order-list.html',
 })
 export class OrderList implements OnInit {
-  private readonly service = inject(OrderService);
-  private readonly toastr = inject(ToastrService);
+  orders: Order[] = [];
+  loading = true;
 
-  protected readonly orders = signal<Order[]>([]);
-  protected readonly loading = signal(true);
+  constructor(
+    private readonly service: OrderService,
+    private readonly toastr: ToastrService,
+  ) {}
 
   ngOnInit(): void {
     this.service.mine().subscribe({
       next: (orders) => {
-        this.orders.set(orders);
-        this.loading.set(false);
+        this.orders = orders;
+        this.loading = false;
       },
       error: (error: unknown) => {
         this.toastr.error(apiMessage(error));
-        this.loading.set(false);
+        this.loading = false;
       },
     });
   }
 
-  protected summary(order: Order): string {
+  summary(order: Order): string {
     const first = order.lines[0]?.title ?? '';
     const more = order.lines.length - 1;
     return more > 0 ? `${first} and ${more} more` : first;

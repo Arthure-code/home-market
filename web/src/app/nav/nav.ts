@@ -1,10 +1,10 @@
-import { Component, OnInit, effect, inject, signal } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { SessionService } from '../services/session.service';
-import { CartService } from '../services/cart.service';
 import { Category } from '../models/product';
+import { CartService } from '../services/cart.service';
 import { ProductService } from '../services/product.service';
+import { SessionService } from '../services/session.service';
 
 // The two bars at the top of every page. The first holds the brand, the
 // search box, the cart, and a Sign in link for a visitor or the messages
@@ -17,43 +17,35 @@ import { ProductService } from '../services/product.service';
   styleUrl: './nav.css',
 })
 export class Nav implements OnInit {
-  private readonly session = inject(SessionService);
-  private readonly products = inject(ProductService);
-  private readonly cart = inject(CartService);
-  private readonly router = inject(Router);
+  categories: Category[] = [];
+  query = '';
 
-  protected readonly signedIn = this.session.signedIn;
-  protected readonly userName = this.session.userName;
-  protected readonly cartCount = this.cart.count;
-  protected readonly categories = signal<Category[]>([]);
-  protected query = '';
+  constructor(
+    public readonly session: SessionService,
+    public readonly cart: CartService,
+    private readonly products: ProductService,
+    private readonly router: Router,
+  ) {}
 
-  constructor() {
-    // The cart is fetched when a member arrives or signs in, and dropped
-    // when they leave.
-    effect(() => {
-      if (this.signedIn()) {
-        this.cart.load().subscribe({ error: () => this.cart.clear() });
-      } else {
-        this.cart.clear();
-      }
-    });
-  }
-
+  // A member who comes back with a session still has a cart to show.
   ngOnInit(): void {
     this.products.categories().subscribe({
-      next: (categories) => this.categories.set(categories),
-      error: () => this.categories.set([]),
+      next: (categories) => (this.categories = categories),
+      error: () => (this.categories = []),
     });
+    if (this.session.signedIn) {
+      this.cart.load().subscribe({ error: () => this.cart.clear() });
+    }
   }
 
-  protected search(): void {
+  search(): void {
     const q = this.query.trim();
     this.router.navigate(['/products'], { queryParams: q ? { q } : {} });
   }
 
-  protected signOut(): void {
+  signOut(): void {
     this.session.signOut();
+    this.cart.clear();
     this.router.navigateByUrl('/');
   }
 }

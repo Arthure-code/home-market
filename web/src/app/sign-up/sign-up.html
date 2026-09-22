@@ -50,7 +50,7 @@
           <button
             type="submit"
             class="btn btn-warning w-100"
-            [disabled]="busy()"
+            [disabled]="busy"
             data-testid="sign-up"
           >
             Create your account
@@ -62,7 +62,7 @@
       <span class="text-secondary me-1">Already have an account?</span>
       <a
         routerLink="/sign-in"
-        [queryParams]="returnUrl() ? { returnUrl: returnUrl() } : {}"
+        [queryParams]="returnUrl ? { returnUrl: returnUrl } : {}"
         data-testid="sign-in-link"
         >Sign in</a
       >

@@ -1,7 +1,7 @@
-@let items = cart();
+@let items = cart;
 <h1 class="h3 mt-3 mb-4">Your cart</h1>
 
-@if (empty()) {
+@if (empty) {
   <div class="card">
     <div class="card-body text-center py-5">
       <i class="fa fa-shopping-cart fa-3x text-secondary mb-3" aria-hidden="true"></i>
@@ -46,7 +46,7 @@
                     <select
                       class="form-select form-select-sm w-auto"
                       [value]="line.quantity"
-                      [disabled]="busy()"
+                      [disabled]="busy"
                       (change)="setQuantity(line, +$any($event.target).value)"
                       data-testid="quantity"
                     >
@@ -59,7 +59,7 @@
                     type="button"
                     class="btn btn-link btn-sm p-0 link-danger"
                     (click)="remove(line)"
-                    [disabled]="busy()"
+                    [disabled]="busy"
                     data-testid="remove"
                   >
                     <i class="fa fa-trash" aria-hidden="true"></i> Remove

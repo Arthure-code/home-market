@@ -1,14 +1,14 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { Component, computed, effect, inject, input, signal } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { apiMessage } from '../../helpers/api-message';
-import { SignInPrompt } from '../../services/sign-in-prompt';
 import { MAX_QUANTITY } from '../../models/cart';
-import { CartService } from '../../services/cart.service';
 import { Product } from '../../models/product';
 import { StockLabelPipe } from '../../pipes/stock-label-pipe';
+import { CartService } from '../../services/cart.service';
 import { ProductService, canBeMessaged } from '../../services/product.service';
+import { SignInPrompt } from '../../services/sign-in-prompt';
 
 // One product on its own page, reached by its id, with its buy box. A
 // member can like it, write to its seller and put some in the cart; its
@@ -19,69 +19,75 @@ import { ProductService, canBeMessaged } from '../../services/product.service';
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.css',
 })
-export class ProductDetail {
-  private readonly service = inject(ProductService);
-  private readonly router = inject(Router);
-  private readonly toastr = inject(ToastrService);
-  private readonly cart = inject(CartService);
-  private readonly prompt = inject(SignInPrompt);
+export class ProductDetail implements OnInit {
+  @Input({ required: true }) id!: string;
+  product: Product | null = null;
+  missing = false;
+  quantity = 1;
+  adding = false;
+  readonly canBeMessaged = canBeMessaged;
 
-  readonly id = input.required<string>();
-  protected readonly product = signal<Product | null>(null);
-  protected readonly missing = signal(false);
-  protected readonly quantity = signal(1);
-  protected readonly adding = signal(false);
-  // One to ten, never more than the stock.
-  protected readonly quantities = computed(() => {
-    const most = Math.min(this.product()?.stock ?? 0, MAX_QUANTITY);
-    return Array.from({ length: most }, (_, i) => i + 1);
-  });
-  protected readonly canBeMessaged = canBeMessaged;
+  constructor(
+    private readonly service: ProductService,
+    private readonly cart: CartService,
+    private readonly prompt: SignInPrompt,
+    private readonly router: Router,
+    private readonly toastr: ToastrService,
+  ) {}
 
-  constructor() {
-    effect(() => this.load(Number(this.id())));
+  ngOnInit(): void {
+    this.service.get(Number(this.id)).subscribe({
+      next: (product) => (this.product = product),
+      error: () => (this.missing = true),
+    });
   }
 
-  protected toggleLike(): void {
-    const product = this.product();
+  // One to ten, never more than the stock.
+  get quantities(): number[] {
+    const most = Math.min(this.product?.stock ?? 0, MAX_QUANTITY);
+    return Array.from({ length: most }, (_, i) => i + 1);
+  }
+
+  toggleLike(): void {
+    const product = this.product;
     if (!product || !this.prompt.ensure()) return;
     const liked = !product.liked;
     this.service.setLike(product.id, liked).subscribe({
       next: () => {
-        this.product.set({ ...product, liked, likes: product.likes + (liked ? 1 : -1) });
+        this.product = { ...product, liked, likes: product.likes + (liked ? 1 : -1) };
         this.toastr.success(liked ? 'Added to your likes' : 'Removed from your likes');
       },
       error: (error: unknown) => this.toastr.error(apiMessage(error)),
     });
   }
 
-  protected addToCart(): void {
-    const product = this.product();
+  addToCart(): void {
+    const product = this.product;
     if (!product || !this.prompt.ensure()) return;
-    this.adding.set(true);
-    this.cart.add(product.id, this.quantity()).subscribe({
+    this.adding = true;
+    this.cart.add(product.id, this.quantity).subscribe({
       next: () => {
         this.toastr.success('Added to your cart');
         this.router.navigateByUrl('/cart');
       },
       error: (error: unknown) => {
         this.toastr.error(apiMessage(error));
-        this.adding.set(false);
+        this.adding = false;
       },
     });
   }
 
   // The Message button is a link for a member and a prompt for a visitor.
-  protected message(): void {
-    const product = this.product();
+  message(): void {
+    const product = this.product;
     if (!product || !this.prompt.ensure()) return;
     this.router.navigate(['/messages/new', product.seller], {
       queryParams: { subject: `About ${product.title}` },
     });
   }
 
-  protected remove(): void {
-    const product = this.product();
+  remove(): void {
+    const product = this.product;
     if (!product) return;
     this.service.delete(product.id).subscribe({
       next: () => {
@@ -89,13 +95,6 @@ export class ProductDetail {
         this.router.navigateByUrl('/my-products');
       },
       error: (error: unknown) => this.toastr.error(apiMessage(error)),
-    });
-  }
-
-  private load(id: number): void {
-    this.service.get(id).subscribe({
-      next: (product) => this.product.set(product),
-      error: () => this.missing.set(true),
     });
   }
 }

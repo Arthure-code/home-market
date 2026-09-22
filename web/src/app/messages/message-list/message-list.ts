@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { apiMessage } from '../../helpers/api-message';
@@ -14,36 +14,39 @@ import { Folder, MessageService } from '../../services/message.service';
   templateUrl: './message-list.html',
 })
 export class MessageList implements OnInit {
-  private readonly service = inject(MessageService);
-  private readonly toastr = inject(ToastrService);
+  folder: Folder = 'inbox';
+  messages: Message[] = [];
+  loading = true;
 
-  protected readonly folder = signal<Folder>('inbox');
-  protected readonly messages = signal<Message[]>([]);
-  protected readonly loading = signal(true);
-  protected readonly unread = computed(
-    () => this.messages().filter((m) => !m.mine && m.readAt === null).length,
-  );
+  constructor(
+    private readonly service: MessageService,
+    private readonly toastr: ToastrService,
+  ) {}
 
   ngOnInit(): void {
     this.show('inbox');
   }
 
-  protected show(folder: Folder): void {
-    this.folder.set(folder);
-    this.loading.set(true);
+  get unread(): number {
+    return this.messages.filter((m) => this.isNew(m)).length;
+  }
+
+  show(folder: Folder): void {
+    this.folder = folder;
+    this.loading = true;
     this.service.folder(folder).subscribe({
       next: (messages) => {
-        this.messages.set(messages);
-        this.loading.set(false);
+        this.messages = messages;
+        this.loading = false;
       },
       error: (error: unknown) => {
         this.toastr.error(apiMessage(error));
-        this.loading.set(false);
+        this.loading = false;
       },
     });
   }
 
-  protected isNew(message: Message): boolean {
+  isNew(message: Message): boolean {
     return !message.mine && message.readAt === null;
   }
 }

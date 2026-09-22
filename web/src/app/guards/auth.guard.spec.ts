@@ -21,7 +21,7 @@ describe('authGuard', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
-        { provide: SessionService, useValue: { signedIn: () => signedIn } },
+        { provide: SessionService, useValue: { signedIn } },
         { provide: ToastrService, useValue: toastr },
       ],
     });

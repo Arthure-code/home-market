@@ -25,7 +25,7 @@
       </form>
 
       <div class="d-flex align-items-center column-gap-3 ms-auto order-2 order-md-3">
-        @if (signedIn()) {
+        @if (session.signedIn) {
           <a
             class="nav-link text-light"
             routerLink="/messages"
@@ -43,7 +43,7 @@
               aria-expanded="false"
               data-testid="account"
             >
-              <span class="d-none d-lg-inline">Welcome, </span>{{ userName() }}
+              <span class="d-none d-lg-inline">Welcome, </span>{{ session.userName }}
             </a>
             <div class="dropdown-menu dropdown-menu-end">
               <a class="dropdown-item" routerLink="/my-products">My products</a>
@@ -61,15 +61,15 @@
               </button>
             </div>
           </div>
-          @if (cartCount() > 0) {
+          @if (cart.count > 0) {
             <a
               class="btn btn-warning rounded-pill cart-pill"
               routerLink="/cart"
-              [attr.aria-label]="'Cart, ' + cartCount() + (cartCount() === 1 ? ' item' : ' items')"
+              [attr.aria-label]="'Cart, ' + cart.count + (cart.count === 1 ? ' item' : ' items')"
               data-testid="cart-link"
             >
               <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-              <span data-testid="cart-count">{{ cartCount() }}</span>
+              <span data-testid="cart-count">{{ cart.count }}</span>
             </a>
           } @else {
             <a
@@ -119,7 +119,7 @@
             >All</a
           >
         </li>
-        @for (category of categories(); track category.name) {
+        @for (category of categories; track category.name) {
           <li class="nav-item">
             <a
               class="nav-link"
@@ -130,7 +130,7 @@
             >
           </li>
         }
-        @if (signedIn()) {
+        @if (session.signedIn) {
           <li class="nav-item ms-auto">
             <a class="nav-link fw-semibold" routerLink="/products/new" routerLinkActive="active"
               >Sell</a

@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ProductList } from '../product-list/product-list';
 
 // The catalogue page: everything on sale, or what a search or a category
@@ -9,11 +9,12 @@ import { ProductList } from '../product-list/product-list';
   templateUrl: './catalogue.html',
 })
 export class Catalogue {
-  readonly q = input<string>();
-  readonly category = input<string>();
-  protected readonly title = computed(() => {
-    if (this.category()) return this.category();
-    const q = this.q()?.trim();
+  @Input() q?: string;
+  @Input() category?: string;
+
+  get title(): string {
+    if (this.category) return this.category;
+    const q = this.q?.trim();
     return q ? `Results for "${q}"` : 'Catalogue';
-  });
+  }
 }

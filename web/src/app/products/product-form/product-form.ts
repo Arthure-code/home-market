@@ -1,4 +1,12 @@
-import { Component, OnInit, inject, input, linkedSignal, output, signal } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -15,37 +23,45 @@ import { ProductService } from '../../services/product.service';
   imports: [FormsModule, PhotoUploader, RouterLink],
   templateUrl: './product-form.html',
 })
-export class ProductForm implements OnInit {
-  private readonly service = inject(ProductService);
-  private readonly toastr = inject(ToastrService);
+export class ProductForm implements OnInit, OnChanges {
+  @Input({ required: true }) heading!: string;
+  @Input({ required: true }) submitLabel!: string;
+  @Input({ required: true }) draft!: ProductDraft;
+  @Input() photoUrl = '';
+  @Input() saving = false;
+  @Output() submitted = new EventEmitter<void>();
 
-  readonly heading = input.required<string>();
-  readonly submitLabel = input.required<string>();
-  readonly draft = input.required<ProductDraft>();
-  readonly photoUrl = input('');
-  readonly saving = input(false);
-  readonly submitted = output<void>();
+  categories: Category[] = [];
+  preview = '';
 
-  protected readonly categories = signal<Category[]>([]);
-  protected readonly preview = linkedSignal(() => this.photoUrl());
+  constructor(
+    private readonly service: ProductService,
+    private readonly toastr: ToastrService,
+  ) {}
 
   ngOnInit(): void {
     this.service.categories().subscribe({
-      next: (categories) => this.categories.set(categories),
+      next: (categories) => (this.categories = categories),
       error: (error: unknown) => this.toastr.error(apiMessage(error)),
     });
   }
 
-  protected submit(): void {
-    if (!this.draft().category) {
+  // The photo shown is the one the page hands over, until a new one is
+  // uploaded.
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['photoUrl']) this.preview = this.photoUrl;
+  }
+
+  submit(): void {
+    if (!this.draft.category) {
       this.toastr.error('Pick a category');
       return;
     }
     this.submitted.emit();
   }
 
-  protected photoUploaded(photo: UploadedPhoto): void {
-    this.draft().photo = photo.photo;
-    this.preview.set(photo.url);
+  photoUploaded(photo: UploadedPhoto): void {
+    this.draft.photo = photo.photo;
+    this.preview = photo.url;
   }
 }

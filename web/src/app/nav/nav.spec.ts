@@ -1,19 +1,18 @@
-import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Nav } from './nav';
 import { SessionService } from '../services/session.service';
-import { EMPTY_CART } from '../models/cart';
+import { Cart, EMPTY_CART } from '../models/cart';
 import { CartService } from '../services/cart.service';
 import { ProductService } from '../services/product.service';
 
 describe('Nav', () => {
   let fixture: ComponentFixture<Nav>;
-  let signedIn: ReturnType<typeof signal<boolean>>;
+  let session: { signedIn: boolean; userName: string; signOut: () => void };
   let cartCalls: string[];
-  let count: ReturnType<typeof signal<number>>;
+  let cart: { count: number; load: () => Observable<Cart>; clear: () => void };
 
   const root = () => fixture.nativeElement as HTMLElement;
   const show = async () => {
@@ -23,32 +22,26 @@ describe('Nav', () => {
   };
 
   beforeEach(async () => {
-    signedIn = signal(false);
+    session = { signedIn: false, userName: 'nadia', signOut: () => (session.signedIn = false) };
     cartCalls = [];
-    count = signal(0);
+    cart = {
+      count: 0,
+      load: () => {
+        cartCalls.push('load');
+        cart.count = 3;
+        return of(EMPTY_CART);
+      },
+      clear: () => {
+        cartCalls.push('clear');
+        cart.count = 0;
+      },
+    };
     await TestBed.configureTestingModule({
       imports: [Nav],
       providers: [
         provideRouter([]),
-        {
-          provide: SessionService,
-          useValue: { signedIn, userName: () => 'nadia', signOut: () => signedIn.set(false) },
-        },
-        {
-          provide: CartService,
-          useValue: {
-            count,
-            load: () => {
-              cartCalls.push('load');
-              count.set(3);
-              return of(EMPTY_CART);
-            },
-            clear: () => {
-              cartCalls.push('clear');
-              count.set(0);
-            },
-          },
-        },
+        { provide: SessionService, useValue: session },
+        { provide: CartService, useValue: cart },
         {
           provide: ProductService,
           useValue: {
@@ -79,11 +72,11 @@ describe('Nav', () => {
     );
     expect(links).toEqual(['All', 'Electronics', 'Kitchen']);
     expect(root().querySelector('.categories a[href="/products?category=Kitchen"]')).not.toBeNull();
-    expect(cartCalls).toEqual(['clear']);
+    expect(cartCalls).toEqual([]);
   });
 
   it('gives a member the account menu, the cart with its count, and Sell', async () => {
-    signedIn.set(true);
+    session.signedIn = true;
     await show();
 
     expect(root().querySelector('[data-testid="sign-in-link"]')).toBeNull();
@@ -102,9 +95,8 @@ describe('Nav', () => {
   });
 
   it('shows the cart as a plain icon while it is empty', async () => {
-    signedIn.set(true);
-    count.set(0);
-    vi.spyOn(TestBed.inject(CartService), 'load').mockReturnValue(of(EMPTY_CART));
+    session.signedIn = true;
+    cart.load = () => of(EMPTY_CART);
     await show();
 
     expect(root().querySelector('[data-testid="cart-link"]')?.classList.contains('cart-pill')).toBe(

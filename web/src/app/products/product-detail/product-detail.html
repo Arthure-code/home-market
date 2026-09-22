@@ -1,4 +1,4 @@
-@if (product(); as item) {
+@if (product; as item) {
   <p class="mb-2">
     <a routerLink="/products" class="link-secondary" data-testid="back"
       ><i class="fa fa-arrow-left" aria-hidden="true"></i> Back to catalogue</a
@@ -107,19 +107,19 @@
             <select
               id="quantity"
               class="form-select mb-3"
-              [value]="quantity()"
-              (change)="quantity.set(+$any($event.target).value)"
+              [value]="quantity"
+              (change)="quantity = +$any($event.target).value"
               data-testid="quantity"
             >
-              @for (n of quantities(); track n) {
-                <option [value]="n" [selected]="n === quantity()">{{ n }}</option>
+              @for (n of quantities; track n) {
+                <option [value]="n" [selected]="n === quantity">{{ n }}</option>
               }
             </select>
             <button
               type="button"
               class="btn btn-warning w-100"
               (click)="addToCart()"
-              [disabled]="adding()"
+              [disabled]="adding"
               data-testid="add-to-cart"
             >
               <i class="fa fa-shopping-cart" aria-hidden="true"></i> Add to cart
@@ -144,7 +144,7 @@
       </div>
     </div>
   </div>
-} @else if (missing()) {
+} @else if (missing) {
   <p class="alert alert-secondary" data-testid="missing">There is no product with that number.</p>
 } @else {
   <output class="text-secondary">Loading...</output>
