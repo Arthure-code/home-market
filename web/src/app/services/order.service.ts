@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Checkout, Order, Sale } from './order';
+import { Checkout, Order, Sale } from '../models/order';
 
 export const ORDERS_URL = 'http://localhost:5130/api/orders';
 

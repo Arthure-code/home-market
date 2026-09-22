@@ -5,10 +5,10 @@ import { Router, provideRouter } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of, throwError } from 'rxjs';
 import { Checkout } from './checkout';
-import { Cart, EMPTY_CART } from '../../cart/cart';
-import { CartService } from '../../cart/cart.service';
-import { Checkout as CheckoutDraft, Order } from '../order';
-import { OrderService } from '../order.service';
+import { Cart, EMPTY_CART } from '../../models/cart';
+import { CartService } from '../../services/cart.service';
+import { Checkout as CheckoutDraft, Order } from '../../models/order';
+import { OrderService } from '../../services/order.service';
 
 const oneFan: Cart = {
   lines: [

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { QuickView } from './quick-view';
-import { Product } from '../product';
+import { Product } from '../../models/product';
 
 const lamp: Product = {
   id: 11,

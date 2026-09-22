@@ -4,10 +4,10 @@ import { Router, provideRouter } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
 import { Nav } from './nav';
-import { SessionService } from '../auth/session.service';
-import { EMPTY_CART } from '../cart/cart';
-import { CartService } from '../cart/cart.service';
-import { ProductService } from '../products/product.service';
+import { SessionService } from '../services/session.service';
+import { EMPTY_CART } from '../models/cart';
+import { CartService } from '../services/cart.service';
+import { ProductService } from '../services/product.service';
 
 describe('Nav', () => {
   let fixture: ComponentFixture<Nav>;

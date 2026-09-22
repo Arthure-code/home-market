@@ -2,8 +2,8 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, effect, inject, input, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Order } from '../order';
-import { OrderService } from '../order.service';
+import { Order } from '../../models/order';
+import { OrderService } from '../../services/order.service';
 
 // One of my orders, reached by its number: the lines as they were sold,
 // the totals, the address and the card by its last four digits. The API

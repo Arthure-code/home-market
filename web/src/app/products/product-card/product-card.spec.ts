@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { ProductCard } from './product-card';
-import { Product } from '../product';
+import { Product } from '../../models/product';
 
 const mug: Product = {
   id: 23,

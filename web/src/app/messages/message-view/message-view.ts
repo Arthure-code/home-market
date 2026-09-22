@@ -2,8 +2,8 @@ import { DatePipe } from '@angular/common';
 import { Component, effect, inject, input, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { MessageDetail } from '../message';
-import { MessageService } from '../message.service';
+import { MessageDetail } from '../../models/message';
+import { MessageService } from '../../services/message.service';
 
 // One message, reached by its id. The API answers only its sender and
 // its recipient, so a message that is not mine reads as missing. Opening

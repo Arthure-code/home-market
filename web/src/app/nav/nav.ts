@@ -1,10 +1,10 @@
 import { Component, OnInit, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { SessionService } from '../auth/session.service';
-import { CartService } from '../cart/cart.service';
-import { Category } from '../products/product';
-import { ProductService } from '../products/product.service';
+import { SessionService } from '../services/session.service';
+import { CartService } from '../services/cart.service';
+import { Category } from '../models/product';
+import { ProductService } from '../services/product.service';
 
 // The two bars at the top of every page. The first holds the brand, the
 // search box, the cart, and a Sign in link for a visitor or the messages

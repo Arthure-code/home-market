@@ -1,8 +1,8 @@
 import { Component, inject, output, signal } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { apiMessage } from '../../auth/api-message';
-import { UploadedPhoto } from '../product';
-import { ProductService } from '../product.service';
+import { apiMessage } from '../helpers/api-message';
+import { UploadedPhoto } from '../models/product';
+import { ProductService } from '../services/product.service';
 
 // Drop or pick an image, send it, hand back the name the API gave it.
 @Component({

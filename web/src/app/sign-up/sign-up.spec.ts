@@ -4,8 +4,8 @@ import { Router, provideRouter } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of, throwError } from 'rxjs';
 import { SignUp } from './sign-up';
-import { Credentials, Session } from '../session';
-import { SessionService } from '../session.service';
+import { Credentials, Session } from '../models/session';
+import { SessionService } from '../services/session.service';
 
 describe('SignUp', () => {
   let fixture: ComponentFixture<SignUp>;

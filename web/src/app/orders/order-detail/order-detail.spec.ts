@@ -4,8 +4,8 @@ import { Router, provideRouter } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of, throwError } from 'rxjs';
 import { OrderDetail } from './order-detail';
-import { Order } from '../order';
-import { OrderService } from '../order.service';
+import { Order } from '../../models/order';
+import { OrderService } from '../../services/order.service';
 
 const order: Order = {
   id: 7,

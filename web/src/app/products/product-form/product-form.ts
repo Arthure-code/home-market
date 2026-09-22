@@ -1,26 +1,15 @@
-import { Component, OnInit, computed, effect, inject, input, signal } from '@angular/core';
+import { Component, OnInit, inject, input, linkedSignal, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { apiMessage } from '../../auth/api-message';
-import { PhotoUploader } from '../photo-uploader/photo-uploader';
-import { Category, ProductDraft, UploadedPhoto } from '../product';
-import { ProductService } from '../product.service';
+import { apiMessage } from '../../helpers/api-message';
+import { Category, ProductDraft, UploadedPhoto } from '../../models/product';
+import { PhotoUploader } from '../../photo-uploader/photo-uploader';
+import { ProductService } from '../../services/product.service';
 
-const EMPTY: ProductDraft = {
-  title: '',
-  brand: '',
-  maker: '',
-  description: '',
-  price: 0,
-  category: '',
-  stock: 1,
-  photo: '',
-};
-
-// One form for a new listing and for changing one of mine. With an id
-// in the address it loads the product; if the product is not mine the
-// API says so and the form goes back to the catalogue.
+// The fields of a listing, shared by Sell and Edit. It fills the draft
+// it is given, shows the photo and takes a new one; the page that owns
+// it decides what to do when it is submitted.
 @Component({
   selector: 'app-product-form',
   imports: [FormsModule, PhotoUploader, RouterLink],
@@ -28,22 +17,17 @@ const EMPTY: ProductDraft = {
 })
 export class ProductForm implements OnInit {
   private readonly service = inject(ProductService);
-  private readonly router = inject(Router);
   private readonly toastr = inject(ToastrService);
 
-  readonly id = input<string>();
-  protected readonly draft = signal<ProductDraft>({ ...EMPTY });
-  protected readonly photoUrl = signal('');
-  protected readonly saving = signal(false);
-  protected readonly editing = computed(() => this.id() !== undefined);
-  protected readonly categories = signal<Category[]>([]);
+  readonly heading = input.required<string>();
+  readonly submitLabel = input.required<string>();
+  readonly draft = input.required<ProductDraft>();
+  readonly photoUrl = input('');
+  readonly saving = input(false);
+  readonly submitted = output<void>();
 
-  constructor() {
-    effect(() => {
-      const id = this.id();
-      if (id !== undefined) this.load(Number(id));
-    });
-  }
+  protected readonly categories = signal<Category[]>([]);
+  protected readonly preview = linkedSignal(() => this.photoUrl());
 
   ngOnInit(): void {
     this.service.categories().subscribe({
@@ -52,60 +36,16 @@ export class ProductForm implements OnInit {
     });
   }
 
-  protected save(): void {
+  protected submit(): void {
     if (!this.draft().category) {
       this.toastr.error('Pick a category');
       return;
     }
-    this.saving.set(true);
-    const id = this.id();
-    const call =
-      id === undefined
-        ? this.service.create(this.draft())
-        : this.service.update(Number(id), this.draft());
-    call.subscribe({
-      next: (product) => {
-        this.toastr.success(id === undefined ? 'Product listed' : 'Product updated');
-        this.router.navigate(['/products', product.id]);
-      },
-      error: (error: unknown) => {
-        this.toastr.error(apiMessage(error));
-        this.saving.set(false);
-      },
-    });
+    this.submitted.emit();
   }
 
   protected photoUploaded(photo: UploadedPhoto): void {
-    this.draft.update((draft) => ({ ...draft, photo: photo.photo }));
-    this.photoUrl.set(photo.url);
-  }
-
-  private load(id: number): void {
-    this.service.get(id).subscribe({
-      next: (product) => {
-        if (!product.mine) {
-          this.toastr.error('You can only edit your own products');
-          this.router.navigate(['/products', id]);
-          return;
-        }
-        this.draft.set({
-          title: product.title,
-          brand: product.brand,
-          maker: product.maker,
-          description: product.description,
-          price: product.price,
-          category: product.category,
-          stock: product.stock,
-          photo: product.photoUrl.startsWith('https://')
-            ? product.photoUrl
-            : (product.photoUrl.split('/').pop() ?? ''),
-        });
-        this.photoUrl.set(product.photoUrl);
-      },
-      error: (error: unknown) => {
-        this.toastr.error(apiMessage(error));
-        this.router.navigateByUrl('/products');
-      },
-    });
+    this.draft().photo = photo.photo;
+    this.preview.set(photo.url);
   }
 }

@@ -2,7 +2,7 @@ import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
-import { SessionService } from './session.service';
+import { SessionService } from '../services/session.service';
 
 // Sends the token with every call and, when the API says it is no longer
 // good, ends the session and goes back to the sign-in page.

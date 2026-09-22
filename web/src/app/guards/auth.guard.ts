@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { SessionService } from './session.service';
+import { SessionService } from '../services/session.service';
 
 // Pages that need an account send a visitor to sign in, and bring them
 // back afterwards.

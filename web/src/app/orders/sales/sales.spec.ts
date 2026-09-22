@@ -3,8 +3,8 @@ import { provideRouter } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
 import { Sales } from './sales';
-import { Sale } from '../order';
-import { OrderService } from '../order.service';
+import { Sale } from '../../models/order';
+import { OrderService } from '../../services/order.service';
 
 const sales: Sale[] = [
   {

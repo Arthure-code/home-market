@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import { Credentials, Session } from './session';
+import { Credentials, Session } from '../models/session';
 
 export const ACCOUNTS_URL = 'http://localhost:5130/api/accounts';
 const STORAGE_KEY = 'home-market.session';

@@ -2,9 +2,9 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { apiMessage } from '../../auth/api-message';
-import { Order } from '../order';
-import { OrderService } from '../order.service';
+import { apiMessage } from '../../helpers/api-message';
+import { Order } from '../../models/order';
+import { OrderService } from '../../services/order.service';
 
 // Everything I bought, newest first.
 @Component({

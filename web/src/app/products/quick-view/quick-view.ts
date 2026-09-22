@@ -1,8 +1,8 @@
 import { CurrencyPipe } from '@angular/common';
 import { Component, ElementRef, effect, input, output, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Product } from '../product';
-import { StockLabelPipe } from '../stock-label-pipe';
+import { Product } from '../../models/product';
+import { StockLabelPipe } from '../../pipes/stock-label-pipe';
 
 // A look at one product without leaving the grid: the photo, the price,
 // the stock, the description, and the same like and cart buttons as the

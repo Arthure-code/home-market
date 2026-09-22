@@ -3,8 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of, throwError } from 'rxjs';
 import { PhotoUploader } from './photo-uploader';
-import { UploadedPhoto } from '../product';
-import { ProductService } from '../product.service';
+import { UploadedPhoto } from '../models/product';
+import { ProductService } from '../services/product.service';
 
 const image = new File(['bytes'], 'lamp.png', { type: 'image/png' });
 const text = new File(['hello'], 'notes.txt', { type: 'text/plain' });
