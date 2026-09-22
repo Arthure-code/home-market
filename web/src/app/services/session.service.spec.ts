@@ -30,9 +30,9 @@ describe('SessionService', () => {
   afterEach(() => http.verify());
 
   it('starts signed out with no token', () => {
-    expect(service.signedIn()).toBe(false);
+    expect(service.signedIn).toBe(false);
     expect(service.token()).toBeNull();
-    expect(service.userName()).toBe('');
+    expect(service.userName).toBe('');
   });
 
   it('posts the account to open', () => {
@@ -48,8 +48,8 @@ describe('SessionService', () => {
     service.signIn({ userName: 'nadia', password: 'correct horse battery' }).subscribe();
     http.expectOne(`${ACCOUNTS_URL}/login`).flush(session);
 
-    expect(service.signedIn()).toBe(true);
-    expect(service.userName()).toBe('nadia');
+    expect(service.signedIn).toBe(true);
+    expect(service.userName).toBe('nadia');
     expect(service.token()).toBe('signed.token.value');
     expect(JSON.parse(sessionStorage.getItem('home-market.session') ?? '{}')).toEqual(session);
   });
@@ -59,8 +59,8 @@ describe('SessionService', () => {
     TestBed.resetTestingModule();
     setUp();
 
-    expect(service.signedIn()).toBe(true);
-    expect(service.userName()).toBe('nadia');
+    expect(service.signedIn).toBe(true);
+    expect(service.userName).toBe('nadia');
   });
 
   it('drops a stored session that has expired', () => {
@@ -71,7 +71,7 @@ describe('SessionService', () => {
     TestBed.resetTestingModule();
     setUp();
 
-    expect(service.signedIn()).toBe(false);
+    expect(service.signedIn).toBe(false);
   });
 
   it('forgets everything on sign out', () => {
@@ -80,7 +80,7 @@ describe('SessionService', () => {
 
     service.signOut();
 
-    expect(service.signedIn()).toBe(false);
+    expect(service.signedIn).toBe(false);
     expect(sessionStorage.getItem('home-market.session')).toBeNull();
   });
 });

@@ -80,7 +80,8 @@ quantity, `DELETE` drops a line, and each call answers with the whole
 cart, subtotal, GST, QST and total included, so the client never adds
 up. Nothing of my own goes in, nothing missing, never more than the
 stock and never more than ten of a thing. The badge in the bar and the
-cart page read one signal that every answer replaces.
+cart page read the one cart the service holds, which every answer
+replaces.
 
 **Checkout in one transaction.** `POST /api/orders` takes the address
 (street, city, province, postal code, country) and the card (number,

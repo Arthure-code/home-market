@@ -7,23 +7,23 @@
   <button
     type="button"
     class="btn"
-    [class.btn-primary]="folder() === 'inbox'"
-    [class.btn-outline-primary]="folder() !== 'inbox'"
-    [attr.aria-pressed]="folder() === 'inbox'"
+    [class.btn-primary]="folder === 'inbox'"
+    [class.btn-outline-primary]="folder !== 'inbox'"
+    [attr.aria-pressed]="folder === 'inbox'"
     (click)="show('inbox')"
     data-testid="inbox"
   >
     <i class="fa fa-inbox" aria-hidden="true"></i> Inbox
-    @if (unread() > 0) {
-      <span class="badge text-bg-light ms-1" data-testid="unread">{{ unread() }}</span>
+    @if (unread > 0) {
+      <span class="badge text-bg-light ms-1" data-testid="unread">{{ unread }}</span>
     }
   </button>
   <button
     type="button"
     class="btn"
-    [class.btn-primary]="folder() === 'sent'"
-    [class.btn-outline-primary]="folder() !== 'sent'"
-    [attr.aria-pressed]="folder() === 'sent'"
+    [class.btn-primary]="folder === 'sent'"
+    [class.btn-outline-primary]="folder !== 'sent'"
+    [attr.aria-pressed]="folder === 'sent'"
     (click)="show('sent')"
     data-testid="sent"
   >
@@ -31,15 +31,15 @@
   </button>
 </fieldset>
 
-@if (loading()) {
+@if (loading) {
   <div class="text-center py-5">
     <output class="spinner-border text-primary"
       ><span class="visually-hidden">Loading...</span></output
     >
   </div>
-} @else if (messages().length === 0) {
+} @else if (messages.length === 0) {
   <p class="alert alert-info" data-testid="empty">
-    {{ folder() === 'inbox' ? 'Nothing in your inbox yet.' : 'You have not sent anything yet.' }}
+    {{ folder === 'inbox' ? 'Nothing in your inbox yet.' : 'You have not sent anything yet.' }}
   </p>
 } @else {
   <div class="table-responsive">
@@ -47,13 +47,13 @@
       <thead>
         <tr>
           <th scope="col">Subject</th>
-          <th scope="col">{{ folder() === 'inbox' ? 'From' : 'To' }}</th>
-          <th scope="col">{{ folder() === 'inbox' ? 'Received' : 'Sent' }}</th>
+          <th scope="col">{{ folder === 'inbox' ? 'From' : 'To' }}</th>
+          <th scope="col">{{ folder === 'inbox' ? 'Received' : 'Sent' }}</th>
           <th scope="col"><span class="visually-hidden">Open</span></th>
         </tr>
       </thead>
       <tbody>
-        @for (message of messages(); track message.id) {
+        @for (message of messages; track message.id) {
           <tr [class.fw-bold]="isNew(message)" [attr.data-testid]="'message-' + message.id">
             <td>
               {{ message.subject }}
@@ -61,7 +61,7 @@
                 <span class="badge text-bg-success ms-1">New</span>
               }
             </td>
-            <td>{{ folder() === 'inbox' ? message.from : message.to }}</td>
+            <td>{{ folder === 'inbox' ? message.from : message.to }}</td>
             <td>{{ message.sentAt | date: 'MMM d, y, h:mm a' }}</td>
             <td class="text-end">
               <a

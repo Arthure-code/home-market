@@ -16,7 +16,7 @@
   (change)="onFileSelected($event)"
   accept="image/*"
 />
-@if (file(); as chosen) {
+@if (file; as chosen) {
   <div class="p-3">
     <span data-testid="file-name">{{ chosen.name }}</span>
   </div>
@@ -25,13 +25,11 @@
       type="button"
       class="btn btn-warning me-1"
       (click)="upload()"
-      [disabled]="busy()"
+      [disabled]="busy"
       data-testid="upload"
     >
       Upload
     </button>
-    <button type="button" class="btn btn-danger" (click)="clear()" [disabled]="busy()">
-      Cancel
-    </button>
+    <button type="button" class="btn btn-danger" (click)="clear()" [disabled]="busy">Cancel</button>
   </div>
 }

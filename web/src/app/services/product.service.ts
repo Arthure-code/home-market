@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Category, Product, ProductDraft, ProductFilter, UploadedPhoto } from '../models/product';
 
@@ -15,7 +15,7 @@ export function canBeMessaged(seller: string): boolean {
 // token the interceptor attaches, when there is one.
 @Injectable({ providedIn: 'root' })
 export class ProductService {
-  private readonly http = inject(HttpClient);
+  constructor(private http: HttpClient) {}
 
   list(filter: ProductFilter = {}): Observable<Product[]> {
     let params = new HttpParams();

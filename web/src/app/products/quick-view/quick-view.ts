@@ -1,5 +1,13 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, ElementRef, effect, input, output, viewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Product } from '../../models/product';
 import { StockLabelPipe } from '../../pipes/stock-label-pipe';
@@ -13,32 +21,32 @@ import { StockLabelPipe } from '../../pipes/stock-label-pipe';
   templateUrl: './quick-view.html',
   styleUrl: './quick-view.css',
 })
-export class QuickView {
-  readonly product = input<Product | null>(null);
-  readonly closed = output<void>();
-  readonly toggleLike = output<Product>();
-  readonly addToCart = output<Product>();
+export class QuickView implements OnChanges {
+  @Input() product: Product | null = null;
+  @Output() closed = new EventEmitter<void>();
+  @Output() toggleLike = new EventEmitter<Product>();
+  @Output() addToCart = new EventEmitter<Product>();
 
-  private readonly dialog = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
+  @ViewChild('dialog', { static: true }) dialog!: ElementRef<HTMLDialogElement>;
 
-  constructor() {
-    effect(() => {
-      const dialog = this.dialog().nativeElement;
-      if (this.product()) {
-        if (!dialog.open) dialog.showModal();
-      } else if (dialog.open) {
-        dialog.close();
-      }
-    });
+  // The dialog opens when a product comes in and closes when it is
+  // taken away.
+  ngOnChanges(): void {
+    const dialog = this.dialog.nativeElement;
+    if (this.product) {
+      if (!dialog.open) dialog.showModal();
+    } else if (dialog.open) {
+      dialog.close();
+    }
   }
 
-  protected close(): void {
-    this.dialog().nativeElement.close();
+  close(): void {
+    this.dialog.nativeElement.close();
   }
 
   // Escape and a click outside close the dialog on their own (closedby);
   // the parent is told either way so it forgets the product.
-  protected onClosed(): void {
+  onClosed(): void {
     this.closed.emit();
   }
 }

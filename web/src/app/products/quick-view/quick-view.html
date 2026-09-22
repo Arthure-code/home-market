@@ -1,5 +1,5 @@
 <dialog #dialog class="quick-view" closedby="any" (close)="onClosed()">
-  @if (product(); as item) {
+  @if (product; as item) {
     <div class="card border-0" data-testid="quick-view-dialog">
       <div class="card-header d-flex justify-content-between align-items-start gap-3">
         <h2 class="h5 mb-0">{{ item.title }}</h2>

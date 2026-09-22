@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { apiMessage } from '../../helpers/api-message';
@@ -13,11 +13,7 @@ import { ProductForm } from '../product-form/product-form';
   templateUrl: './product-new.html',
 })
 export class ProductNew {
-  private readonly service = inject(ProductService);
-  private readonly router = inject(Router);
-  private readonly toastr = inject(ToastrService);
-
-  protected readonly draft: ProductDraft = {
+  draft: ProductDraft = {
     title: '',
     brand: '',
     maker: '',
@@ -27,10 +23,16 @@ export class ProductNew {
     stock: 1,
     photo: '',
   };
-  protected readonly saving = signal(false);
+  saving = false;
 
-  protected create(): void {
-    this.saving.set(true);
+  constructor(
+    private service: ProductService,
+    private router: Router,
+    private toastr: ToastrService,
+  ) {}
+
+  create(): void {
+    this.saving = true;
     this.service.create(this.draft).subscribe({
       next: (product) => {
         this.toastr.success('Product listed');
@@ -38,7 +40,7 @@ export class ProductNew {
       },
       error: (error: unknown) => {
         this.toastr.error(apiMessage(error));
-        this.saving.set(false);
+        this.saving = false;
       },
     });
   }

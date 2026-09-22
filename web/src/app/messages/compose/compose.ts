@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, signal } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -14,29 +14,30 @@ import { MessageService } from '../../services/message.service';
   imports: [FormsModule, RouterLink],
   templateUrl: './compose.html',
 })
-export class Compose {
-  private readonly service = inject(MessageService);
-  private readonly router = inject(Router);
-  private readonly toastr = inject(ToastrService);
+export class Compose implements OnInit {
+  @Input() to?: string;
+  @Input() subject?: string;
+  draft: MessageDraft = { to: '', subject: '', body: '' };
+  sending = false;
 
-  readonly to = input<string>();
-  readonly subject = input<string>();
-  protected readonly draft = signal<MessageDraft>({ to: '', subject: '', body: '' });
-  protected readonly sending = signal(false);
+  constructor(
+    private service: MessageService,
+    private router: Router,
+    private toastr: ToastrService,
+  ) {}
 
-  constructor() {
-    effect(() => {
-      this.draft.update((d) => ({ ...d, to: this.to() ?? '', subject: this.subject() ?? '' }));
-    });
+  ngOnInit(): void {
+    this.draft.to = this.to ?? '';
+    this.draft.subject = this.subject ?? '';
   }
 
-  protected send(): void {
-    const draft = this.draft();
+  send(): void {
+    const draft = this.draft;
     if (!draft.to.trim() || !draft.subject.trim() || !draft.body.trim()) {
       this.toastr.error('Please fill in the recipient, the subject and the message');
       return;
     }
-    this.sending.set(true);
+    this.sending = true;
     this.service.send(draft).subscribe({
       next: () => {
         this.toastr.success(`Message sent to ${draft.to.trim()}`);
@@ -44,7 +45,7 @@ export class Compose {
       },
       error: (error: unknown) => {
         this.toastr.error(apiMessage(error));
-        this.sending.set(false);
+        this.sending = false;
       },
     });
   }

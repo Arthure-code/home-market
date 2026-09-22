@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { Credentials, Session } from '../models/session';
 
@@ -10,14 +10,20 @@ const STORAGE_KEY = 'home-market.session';
 // dies with the tab. An expired token is dropped rather than sent.
 @Injectable({ providedIn: 'root' })
 export class SessionService {
-  private readonly http = inject(HttpClient);
-  private readonly session = signal<Session | null>(restore());
+  session: Session | null = restore();
 
-  readonly signedIn = computed(() => this.session() !== null);
-  readonly userName = computed(() => this.session()?.userName ?? '');
+  constructor(private http: HttpClient) {}
+
+  get signedIn(): boolean {
+    return this.session !== null;
+  }
+
+  get userName(): string {
+    return this.session?.userName ?? '';
+  }
 
   token(): string | null {
-    return this.session()?.token ?? null;
+    return this.session?.token ?? null;
   }
 
   register(credentials: Credentials): Observable<unknown> {
@@ -27,7 +33,7 @@ export class SessionService {
   signIn(credentials: Credentials): Observable<Session> {
     return this.http.post<Session>(`${ACCOUNTS_URL}/login`, credentials).pipe(
       tap((session) => {
-        this.session.set(session);
+        this.session = session;
         try {
           sessionStorage.setItem(STORAGE_KEY, JSON.stringify(session));
         } catch {
@@ -38,7 +44,7 @@ export class SessionService {
   }
 
   signOut(): void {
-    this.session.set(null);
+    this.session = null;
     try {
       sessionStorage.removeItem(STORAGE_KEY);
     } catch {

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Checkout, Order, Sale } from '../models/order';
 
@@ -9,7 +9,7 @@ export const ORDERS_URL = 'http://localhost:5130/api/orders';
 // mine back, and the lines others bought from me.
 @Injectable({ providedIn: 'root' })
 export class OrderService {
-  private readonly http = inject(HttpClient);
+  constructor(private http: HttpClient) {}
 
   place(checkout: Checkout): Observable<Order> {
     return this.http.post<Order>(ORDERS_URL, checkout);

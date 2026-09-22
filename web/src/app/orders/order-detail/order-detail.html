@@ -2,7 +2,7 @@
   <a routerLink="/orders" class="link-secondary">&larr; My orders</a>
 </p>
 
-@if (order(); as item) {
+@if (order; as item) {
   <div class="d-flex flex-wrap justify-content-between align-items-baseline mb-3">
     <h1 class="h3 mb-0">Order #{{ item.id }}</h1>
     <span class="text-secondary" data-testid="placed"

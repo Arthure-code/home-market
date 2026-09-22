@@ -1,19 +1,19 @@
 <div class="d-flex flex-wrap justify-content-between align-items-baseline mt-3 mb-4">
   <h1 class="h3 mb-0">My sales</h1>
-  @if (sales().length > 0) {
+  @if (sales.length > 0) {
     <span class="text-secondary" data-testid="revenue"
-      >{{ revenue() | currency: 'CAD' : 'symbol-narrow' }} before taxes</span
+      >{{ revenue | currency: 'CAD' : 'symbol-narrow' }} before taxes</span
     >
   }
 </div>
 
-@if (loading()) {
+@if (loading) {
   <div class="text-center py-5">
     <output class="spinner-border text-primary"
       ><span class="visually-hidden">Loading...</span></output
     >
   </div>
-} @else if (sales().length === 0) {
+} @else if (sales.length === 0) {
   <p class="alert alert-info" data-testid="empty">
     Nothing sold yet. <a routerLink="/products/new" class="alert-link">List a product</a>.
   </p>
@@ -31,7 +31,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (sale of sales(); track $index) {
+        @for (sale of sales; track $index) {
           <tr>
             <td class="text-nowrap">{{ sale.placedAt | date: 'MMM d, y' }}</td>
             <td>

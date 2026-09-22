@@ -1,9 +1,9 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { apiMessage } from '../../helpers/api-message';
-import { CartLine, MAX_QUANTITY } from '../../models/cart';
+import { Cart, CartLine, MAX_QUANTITY } from '../../models/cart';
 import { CartService } from '../../services/cart.service';
 
 // My cart: one line per product with its quantity to change or remove,
@@ -15,40 +15,48 @@ import { CartService } from '../../services/cart.service';
   styleUrl: './cart-page.css',
 })
 export class CartPage {
-  private readonly service = inject(CartService);
-  private readonly toastr = inject(ToastrService);
+  busy = false;
 
-  protected readonly cart = this.service.cart;
-  protected readonly busy = signal(false);
-  protected readonly empty = computed(() => this.cart().lines.length === 0);
+  constructor(
+    private service: CartService,
+    private toastr: ToastrService,
+  ) {}
+
+  get cart(): Cart {
+    return this.service.cart;
+  }
+
+  get empty(): boolean {
+    return this.cart.lines.length === 0;
+  }
 
   // One to ten, never more than the stock, and at least what is there.
-  protected quantities(line: CartLine): number[] {
+  quantities(line: CartLine): number[] {
     const most = Math.max(Math.min(line.stock, MAX_QUANTITY), line.quantity);
     return Array.from({ length: most }, (_, i) => i + 1);
   }
 
-  protected setQuantity(line: CartLine, quantity: number): void {
-    this.busy.set(true);
+  setQuantity(line: CartLine, quantity: number): void {
+    this.busy = true;
     this.service.setQuantity(line.productId, quantity).subscribe({
-      next: () => this.busy.set(false),
+      next: () => (this.busy = false),
       error: (error: unknown) => {
         this.toastr.error(apiMessage(error));
-        this.busy.set(false);
+        this.busy = false;
       },
     });
   }
 
-  protected remove(line: CartLine): void {
-    this.busy.set(true);
+  remove(line: CartLine): void {
+    this.busy = true;
     this.service.remove(line.productId).subscribe({
       next: () => {
         this.toastr.success(`${line.title} removed from your cart`);
-        this.busy.set(false);
+        this.busy = false;
       },
       error: (error: unknown) => {
         this.toastr.error(apiMessage(error));
-        this.busy.set(false);
+        this.busy = false;
       },
     });
   }

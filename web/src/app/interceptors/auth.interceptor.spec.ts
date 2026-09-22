@@ -67,7 +67,7 @@ describe('authInterceptor', () => {
     backend.expectOne('/api/memos').flush({}, { status: 401, statusText: 'Unauthorized' });
 
     expect(failed).toBe(true);
-    expect(session.signedIn()).toBe(false);
+    expect(session.signedIn).toBe(false);
     expect(navigate).toHaveBeenCalledWith(['/']);
   });
 

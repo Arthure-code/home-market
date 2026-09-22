@@ -1,5 +1,5 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { apiMessage } from '../../helpers/api-message';
@@ -14,25 +14,28 @@ import { OrderService } from '../../services/order.service';
   templateUrl: './sales.html',
 })
 export class Sales implements OnInit {
-  private readonly service = inject(OrderService);
-  private readonly toastr = inject(ToastrService);
+  sales: Sale[] = [];
+  loading = true;
 
-  protected readonly sales = signal<Sale[]>([]);
-  protected readonly loading = signal(true);
-  protected readonly revenue = computed(() =>
-    this.sales().reduce((sum, s) => sum + s.lineTotal, 0),
-  );
+  constructor(
+    private service: OrderService,
+    private toastr: ToastrService,
+  ) {}
 
   ngOnInit(): void {
     this.service.sales().subscribe({
       next: (sales) => {
-        this.sales.set(sales);
-        this.loading.set(false);
+        this.sales = sales;
+        this.loading = false;
       },
       error: (error: unknown) => {
         this.toastr.error(apiMessage(error));
-        this.loading.set(false);
+        this.loading = false;
       },
     });
+  }
+
+  get revenue(): number {
+    return this.sales.reduce((sum, s) => sum + s.lineTotal, 0);
   }
 }

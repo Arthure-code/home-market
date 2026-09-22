@@ -1,5 +1,4 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -32,7 +31,7 @@ const oneFan: Cart = {
 
 describe('Checkout', () => {
   let fixture: ComponentFixture<Checkout>;
-  let cart: ReturnType<typeof signal<Cart>>;
+  let cartService: { cart: Cart; clear: () => void };
   let answer: Observable<Order>;
   let placed: CheckoutDraft[];
   let cleared: number;
@@ -66,7 +65,7 @@ describe('Checkout', () => {
   };
 
   beforeEach(async () => {
-    cart = signal<Cart>(oneFan);
+    cartService = { cart: oneFan, clear: () => cleared++ };
     answer = of({ id: 7 } as Order);
     placed = [];
     cleared = 0;
@@ -75,7 +74,7 @@ describe('Checkout', () => {
       imports: [Checkout],
       providers: [
         provideRouter([]),
-        { provide: CartService, useValue: { cart, clear: () => cleared++ } },
+        { provide: CartService, useValue: cartService },
         {
           provide: OrderService,
           useValue: {
@@ -142,7 +141,7 @@ describe('Checkout', () => {
   });
 
   it('says so when the cart is empty', async () => {
-    cart.set(EMPTY_CART);
+    cartService.cart = EMPTY_CART;
     await show();
 
     expect(root().querySelector('[data-testid="empty"]')).not.toBeNull();

@@ -1,4 +1,4 @@
-@let item = draft();
+@let item = draft;
 <div class="row">
   <div class="col-12 d-flex justify-content-between align-items-center">
     <h1>New message</h1>
@@ -47,7 +47,7 @@
           </div>
         </div>
         <div class="card-footer">
-          <button type="submit" class="btn btn-success" [disabled]="sending()" data-testid="send">
+          <button type="submit" class="btn btn-success" [disabled]="sending" data-testid="send">
             <i class="fa fa-paper-plane" aria-hidden="true"></i> Send
           </button>
           <a routerLink="/messages" class="btn btn-link">Cancel</a>

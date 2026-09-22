@@ -1,4 +1,4 @@
-import { Component, inject, output, signal } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { apiMessage } from '../helpers/api-message';
 import { UploadedPhoto } from '../models/product';
@@ -12,46 +12,48 @@ import { ProductService } from '../services/product.service';
   styleUrl: './photo-uploader.css',
 })
 export class PhotoUploader {
-  private readonly service = inject(ProductService);
-  private readonly toastr = inject(ToastrService);
+  @Output() uploaded = new EventEmitter<UploadedPhoto>();
+  file: File | null = null;
+  busy = false;
 
-  readonly uploaded = output<UploadedPhoto>();
-  protected readonly file = signal<File | null>(null);
-  protected readonly busy = signal(false);
+  constructor(
+    private service: ProductService,
+    private toastr: ToastrService,
+  ) {}
 
-  protected onDragOver(event: DragEvent): void {
+  onDragOver(event: DragEvent): void {
     event.preventDefault();
   }
 
-  protected onDrop(event: DragEvent): void {
+  onDrop(event: DragEvent): void {
     event.preventDefault();
     this.pick(event.dataTransfer?.files?.[0]);
   }
 
-  protected onFileSelected(event: Event): void {
+  onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.pick(input.files?.[0]);
     input.value = '';
   }
 
-  protected clear(): void {
-    this.file.set(null);
+  clear(): void {
+    this.file = null;
   }
 
-  protected upload(): void {
-    const file = this.file();
+  upload(): void {
+    const file = this.file;
     if (!file) return;
-    this.busy.set(true);
+    this.busy = true;
     this.service.uploadPhoto(file).subscribe({
       next: (photo) => {
         this.toastr.success('Photo uploaded, save the product to keep it');
         this.uploaded.emit(photo);
         this.clear();
-        this.busy.set(false);
+        this.busy = false;
       },
       error: (error: unknown) => {
         this.toastr.error(apiMessage(error));
-        this.busy.set(false);
+        this.busy = false;
       },
     });
   }
@@ -62,6 +64,6 @@ export class PhotoUploader {
       this.toastr.error('Please choose an image file');
       return;
     }
-    this.file.set(file);
+    this.file = file;
   }
 }

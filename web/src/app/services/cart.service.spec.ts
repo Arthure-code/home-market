@@ -39,13 +39,13 @@ describe('CartService', () => {
   afterEach(() => http.verify());
 
   it('starts empty and holds what the API answers', () => {
-    expect(service.count()).toBe(0);
+    expect(service.count).toBe(0);
 
     service.load().subscribe();
     http.expectOne(CART_URL).flush(twoMugs);
 
-    expect(service.cart()).toEqual(twoMugs);
-    expect(service.count()).toBe(2);
+    expect(service.cart).toEqual(twoMugs);
+    expect(service.count).toBe(2);
   });
 
   it('adds, changes and removes lines, each answer replacing the cart', () => {
@@ -54,20 +54,20 @@ describe('CartService', () => {
     expect(added.request.method).toBe('POST');
     expect(added.request.body).toEqual({ productId: 23, quantity: 2 });
     added.flush(twoMugs);
-    expect(service.count()).toBe(2);
+    expect(service.count).toBe(2);
 
     service.setQuantity(23, 5).subscribe();
     const changed = http.expectOne(`${CART_URL}/lines/23`);
     expect(changed.request.method).toBe('PUT');
     expect(changed.request.body).toEqual({ quantity: 5 });
     changed.flush({ ...twoMugs, itemCount: 5 });
-    expect(service.count()).toBe(5);
+    expect(service.count).toBe(5);
 
     service.remove(23).subscribe();
     const removed = http.expectOne(`${CART_URL}/lines/23`);
     expect(removed.request.method).toBe('DELETE');
     removed.flush({ ...twoMugs, lines: [], itemCount: 0 });
-    expect(service.count()).toBe(0);
+    expect(service.count).toBe(0);
   });
 
   it('forgets everything when cleared', () => {
@@ -76,7 +76,7 @@ describe('CartService', () => {
 
     service.clear();
 
-    expect(service.cart().lines).toEqual([]);
-    expect(service.count()).toBe(0);
+    expect(service.cart.lines).toEqual([]);
+    expect(service.count).toBe(0);
   });
 });

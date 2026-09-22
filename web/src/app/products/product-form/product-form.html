@@ -1,7 +1,7 @@
-@let item = draft();
+@let item = draft;
 <div class="row">
   <div class="col-12 d-flex justify-content-between align-items-center">
-    <h1>{{ heading() }}</h1>
+    <h1>{{ heading }}</h1>
     <a routerLink="/my-products" class="link-secondary">My products</a>
   </div>
   <div class="col-lg-6">
@@ -44,7 +44,7 @@
               required
             >
               <option value="" disabled>Pick a category</option>
-              @for (category of categories(); track category.name) {
+              @for (category of categories; track category.name) {
                 <option [value]="category.name">{{ category.name }}</option>
               }
             </select>
@@ -101,10 +101,10 @@
           <button
             type="submit"
             class="btn btn-success col-12"
-            [disabled]="saving()"
+            [disabled]="saving"
             data-testid="save"
           >
-            {{ submitLabel() }}
+            {{ submitLabel }}
           </button>
         </div>
       </form>
@@ -114,9 +114,9 @@
     <div class="card">
       <div class="card-body">
         <h2 class="h3">Photo</h2>
-        @if (preview()) {
+        @if (preview) {
           <img
-            [src]="preview() + '?auto=format&fit=crop&w=600&h=400&q=70'"
+            [src]="preview + '?auto=format&fit=crop&w=600&h=400&q=70'"
             class="img-fluid rounded mb-3"
             alt="Current listing"
             data-testid="photo-preview"

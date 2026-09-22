@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { SessionService } from './session.service';
@@ -8,13 +8,15 @@ import { SessionService } from './session.service';
 // they were. Pages and buttons ask it before acting.
 @Injectable({ providedIn: 'root' })
 export class SignInPrompt {
-  private readonly session = inject(SessionService);
-  private readonly router = inject(Router);
-  private readonly toastr = inject(ToastrService);
+  constructor(
+    private session: SessionService,
+    private router: Router,
+    private toastr: ToastrService,
+  ) {}
 
   // True when the caller may go on; false after sending them to sign in.
   ensure(): boolean {
-    if (this.session.signedIn()) return true;
+    if (this.session.signedIn) return true;
     this.toastr.info('Please sign in to continue');
     this.router.navigate(['/sign-in'], { queryParams: { returnUrl: this.router.url } });
     return false;
