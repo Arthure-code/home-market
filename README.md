@@ -24,7 +24,7 @@ with Bootstrap, Font Awesome and ngx-toastr.
 
 ## Screenshots
 
-![The front page: a dark bar with HOME MARKET, a search box with a yellow button, a Sign in link and the cart; under it a grey strip of categories, All, Electronics, Home, Kitchen, Office, Accessories, Bags & travel, Personal care, Sports & outdoors; then Shop everyday things, a Sign up button and a grid of product cards six a row, each with its photo, its title, its price, In stock or Only 2 left, and three small buttons, quick view, like and cart](preview.png)
+![The front page: a dark bar with HOME MARKET, a search box with a yellow button, a Sign in link and the cart; under it a grey strip of categories, All, Electronics, Home, Kitchen, Office, Accessories, Bags & travel, Personal care, Sports & outdoors; then Shop everyday things and a grid of product cards six a row, each with its photo, its title, its price, In stock or Only 2 left, and three small buttons, quick view, like and cart](preview.png)
 
 ![The Sign in page: a card with User name, Password and a yellow Sign in button, under it New to HOME MARKET? Create your account, and a blue toast at the bottom right reading Please sign in to continue, because a visitor just clicked a like](preview-sign-in.png)
 
@@ -154,7 +154,8 @@ each linking to the other; there is no password recovery yet, it is
 the next step, behind an `IEmailSender` the way the payment sits behind
 `IPaymentGateway`.
 
-**Nobody is asked to sign in ahead of time.** A visitor sees the same
+**Nobody is asked to sign in ahead of time.** The front page is the
+catalogue, with no welcome and no call to sign up. A visitor sees the same
 buttons as a member: like, cart, Message on every card, in the quick
 view and on the product page. The first click on any of them says
 "Please sign in to continue", opens the sign-in page, and brings the
@@ -239,9 +240,9 @@ npm install
 npm start
 ```
 
-Open `http://localhost:4200/`, browse, create an account from Sign up,
-sign in from the Sign in link, or just click a like and let the shop
-walk you there.
+Open `http://localhost:4200/`, browse, sign in from the Sign in link
+(the sign-in page offers to create an account), or just click a like
+and let the shop walk you there.
 
 ## Tests
 
