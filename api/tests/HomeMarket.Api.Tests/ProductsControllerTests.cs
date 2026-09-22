@@ -20,9 +20,8 @@ namespace HomeMarket.Api.Tests
             var fixture = new Fixture();
             var catalogue = fixture.CreateMany<ProductDto>(3).ToList();
             var products = new Mock<IProductService>();
-            var photos = new Mock<IPhotoStore>();
             products.Setup(p => p.ListAsync(null, null, null)).ReturnsAsync(catalogue);
-            var controller = new ProductsController(products.Object, photos.Object) { ControllerContext = Caller.Visitor() };
+            var controller = new ProductsController(products.Object) { ControllerContext = Caller.Visitor() };
 
             // When
             var result = await controller.List(null, null);
@@ -39,9 +38,8 @@ namespace HomeMarket.Api.Tests
             var fixture = new Fixture();
             var found = fixture.CreateMany<ProductDto>(1).ToList();
             var products = new Mock<IProductService>();
-            var photos = new Mock<IPhotoStore>();
             products.Setup(p => p.ListAsync(Nadia, "kettle", "Kitchen")).ReturnsAsync(found);
-            var controller = new ProductsController(products.Object, photos.Object) { ControllerContext = Caller.Member(Nadia) };
+            var controller = new ProductsController(products.Object) { ControllerContext = Caller.Member(Nadia) };
 
             // When
             var result = await controller.List("kettle", "Kitchen");
@@ -58,9 +56,8 @@ namespace HomeMarket.Api.Tests
             var fixture = new Fixture();
             var categories = fixture.CreateMany<CategoryDto>(8).ToList();
             var products = new Mock<IProductService>();
-            var photos = new Mock<IPhotoStore>();
             products.Setup(p => p.CategoriesAsync()).ReturnsAsync(categories);
-            var controller = new ProductsController(products.Object, photos.Object) { ControllerContext = Caller.Visitor() };
+            var controller = new ProductsController(products.Object) { ControllerContext = Caller.Visitor() };
 
             // When
             var result = await controller.Categories();
@@ -75,9 +72,8 @@ namespace HomeMarket.Api.Tests
         {
             // Given
             var products = new Mock<IProductService>();
-            var photos = new Mock<IPhotoStore>();
             products.Setup(p => p.GetAsync(999, Nadia)).ReturnsAsync((ProductDto?)null);
-            var controller = new ProductsController(products.Object, photos.Object) { ControllerContext = Caller.Member(Nadia) };
+            var controller = new ProductsController(products.Object) { ControllerContext = Caller.Member(Nadia) };
 
             // When
             var result = await controller.Get(999);
@@ -93,9 +89,8 @@ namespace HomeMarket.Api.Tests
             var fixture = new Fixture();
             var product = fixture.Create<ProductDto>();
             var products = new Mock<IProductService>();
-            var photos = new Mock<IPhotoStore>();
             products.Setup(p => p.GetAsync(product.Id, Nadia)).ReturnsAsync(product);
-            var controller = new ProductsController(products.Object, photos.Object) { ControllerContext = Caller.Member(Nadia) };
+            var controller = new ProductsController(products.Object) { ControllerContext = Caller.Member(Nadia) };
 
             // When
             var result = await controller.Get(product.Id);
@@ -112,9 +107,8 @@ namespace HomeMarket.Api.Tests
             var fixture = new Fixture();
             var mine = fixture.CreateMany<ProductDto>(2).ToList();
             var products = new Mock<IProductService>();
-            var photos = new Mock<IPhotoStore>();
             products.Setup(p => p.MineAsync(Nadia)).ReturnsAsync(mine);
-            var controller = new ProductsController(products.Object, photos.Object) { ControllerContext = Caller.Member(Nadia) };
+            var controller = new ProductsController(products.Object) { ControllerContext = Caller.Member(Nadia) };
 
             // When
             var result = await controller.Mine();
@@ -131,9 +125,8 @@ namespace HomeMarket.Api.Tests
             var fixture = new Fixture();
             var liked = fixture.CreateMany<ProductDto>(2).ToList();
             var products = new Mock<IProductService>();
-            var photos = new Mock<IPhotoStore>();
             products.Setup(p => p.LikedAsync(Nadia)).ReturnsAsync(liked);
-            var controller = new ProductsController(products.Object, photos.Object) { ControllerContext = Caller.Member(Nadia) };
+            var controller = new ProductsController(products.Object) { ControllerContext = Caller.Member(Nadia) };
 
             // When
             var result = await controller.Liked();
@@ -151,9 +144,8 @@ namespace HomeMarket.Api.Tests
             var request = fixture.Create<ProductRequest>();
             var product = fixture.Create<ProductDto>();
             var products = new Mock<IProductService>();
-            var photos = new Mock<IPhotoStore>();
             products.Setup(p => p.CreateAsync(Nadia, request)).ReturnsAsync(Result<ProductDto>.Success(product));
-            var controller = new ProductsController(products.Object, photos.Object) { ControllerContext = Caller.Member(Nadia) };
+            var controller = new ProductsController(products.Object) { ControllerContext = Caller.Member(Nadia) };
 
             // When
             var result = await controller.Create(request);
@@ -172,9 +164,8 @@ namespace HomeMarket.Api.Tests
             var fixture = new Fixture();
             var request = fixture.Create<ProductRequest>();
             var products = new Mock<IProductService>();
-            var photos = new Mock<IPhotoStore>();
             products.Setup(p => p.CreateAsync(Nadia, request)).ReturnsAsync(Result<ProductDto>.Invalid(new ValidationError("Photo", "Upload the photo first, then save the product.")));
-            var controller = new ProductsController(products.Object, photos.Object) { ControllerContext = Caller.Member(Nadia) };
+            var controller = new ProductsController(products.Object) { ControllerContext = Caller.Member(Nadia) };
 
             // When
             var result = await controller.Create(request);
@@ -190,9 +181,8 @@ namespace HomeMarket.Api.Tests
             var fixture = new Fixture();
             var request = fixture.Create<ProductRequest>();
             var products = new Mock<IProductService>();
-            var photos = new Mock<IPhotoStore>();
             products.Setup(p => p.CreateAsync(Nadia, request)).ReturnsAsync(Result<ProductDto>.Invalid(new ValidationError("Category", "Pick one of the shop's categories.")));
-            var controller = new ProductsController(products.Object, photos.Object) { ControllerContext = Caller.Member(Nadia) };
+            var controller = new ProductsController(products.Object) { ControllerContext = Caller.Member(Nadia) };
 
             // When
             var result = await controller.Create(request);
@@ -209,9 +199,8 @@ namespace HomeMarket.Api.Tests
             var request = fixture.Create<ProductRequest>();
             var product = fixture.Create<ProductDto>();
             var products = new Mock<IProductService>();
-            var photos = new Mock<IPhotoStore>();
             products.Setup(p => p.UpdateAsync(Nadia, product.Id, request)).ReturnsAsync(Result<ProductDto>.Success(product));
-            var controller = new ProductsController(products.Object, photos.Object) { ControllerContext = Caller.Member(Nadia) };
+            var controller = new ProductsController(products.Object) { ControllerContext = Caller.Member(Nadia) };
 
             // When
             var result = await controller.Update(product.Id, request);
@@ -228,9 +217,8 @@ namespace HomeMarket.Api.Tests
             var fixture = new Fixture();
             var request = fixture.Create<ProductRequest>();
             var products = new Mock<IProductService>();
-            var photos = new Mock<IPhotoStore>();
             products.Setup(p => p.UpdateAsync(Nadia, 3, request)).ReturnsAsync(Result<ProductDto>.Forbidden());
-            var controller = new ProductsController(products.Object, photos.Object) { ControllerContext = Caller.Member(Nadia) };
+            var controller = new ProductsController(products.Object) { ControllerContext = Caller.Member(Nadia) };
 
             // When
             var result = await controller.Update(3, request);
@@ -246,9 +234,8 @@ namespace HomeMarket.Api.Tests
             var fixture = new Fixture();
             var request = fixture.Create<ProductRequest>();
             var products = new Mock<IProductService>();
-            var photos = new Mock<IPhotoStore>();
             products.Setup(p => p.UpdateAsync(Nadia, 999, request)).ReturnsAsync(Result<ProductDto>.NotFound());
-            var controller = new ProductsController(products.Object, photos.Object) { ControllerContext = Caller.Member(Nadia) };
+            var controller = new ProductsController(products.Object) { ControllerContext = Caller.Member(Nadia) };
 
             // When
             var result = await controller.Update(999, request);
@@ -262,9 +249,8 @@ namespace HomeMarket.Api.Tests
         {
             // Given
             var products = new Mock<IProductService>();
-            var photos = new Mock<IPhotoStore>();
             products.Setup(p => p.DeleteAsync(Nadia, 3)).ReturnsAsync(Result.Success());
-            var controller = new ProductsController(products.Object, photos.Object) { ControllerContext = Caller.Member(Nadia) };
+            var controller = new ProductsController(products.Object) { ControllerContext = Caller.Member(Nadia) };
 
             // When
             var result = await controller.Delete(3);
@@ -278,9 +264,8 @@ namespace HomeMarket.Api.Tests
         {
             // Given
             var products = new Mock<IProductService>();
-            var photos = new Mock<IPhotoStore>();
             products.Setup(p => p.DeleteAsync(Nadia, 3)).ReturnsAsync(Result.Forbidden());
-            var controller = new ProductsController(products.Object, photos.Object) { ControllerContext = Caller.Member(Nadia) };
+            var controller = new ProductsController(products.Object) { ControllerContext = Caller.Member(Nadia) };
 
             // When
             var result = await controller.Delete(3);
@@ -294,9 +279,8 @@ namespace HomeMarket.Api.Tests
         {
             // Given
             var products = new Mock<IProductService>();
-            var photos = new Mock<IPhotoStore>();
             products.Setup(p => p.SetLikeAsync(Nadia, 5, true)).ReturnsAsync(Result.Success());
-            var controller = new ProductsController(products.Object, photos.Object) { ControllerContext = Caller.Member(Nadia) };
+            var controller = new ProductsController(products.Object) { ControllerContext = Caller.Member(Nadia) };
 
             // When
             var result = await controller.Like(5);
@@ -311,9 +295,8 @@ namespace HomeMarket.Api.Tests
         {
             // Given
             var products = new Mock<IProductService>();
-            var photos = new Mock<IPhotoStore>();
             products.Setup(p => p.SetLikeAsync(Nadia, 999, true)).ReturnsAsync(Result.NotFound());
-            var controller = new ProductsController(products.Object, photos.Object) { ControllerContext = Caller.Member(Nadia) };
+            var controller = new ProductsController(products.Object) { ControllerContext = Caller.Member(Nadia) };
 
             // When
             var result = await controller.Like(999);
@@ -327,9 +310,8 @@ namespace HomeMarket.Api.Tests
         {
             // Given
             var products = new Mock<IProductService>();
-            var photos = new Mock<IPhotoStore>();
             products.Setup(p => p.SetLikeAsync(Nadia, 5, false)).ReturnsAsync(Result.Success());
-            var controller = new ProductsController(products.Object, photos.Object) { ControllerContext = Caller.Member(Nadia) };
+            var controller = new ProductsController(products.Object) { ControllerContext = Caller.Member(Nadia) };
 
             // When
             var result = await controller.Unlike(5);
@@ -337,61 +319,6 @@ namespace HomeMarket.Api.Tests
             // Then
             Assert.IsType<NoContentResult>(result);
             products.Verify(p => p.SetLikeAsync(Nadia, 5, false), Times.Once);
-        }
-
-        [Fact]
-        public async Task UploadPhoto_RealImage_ReturnsTheNameTheServerChoseAndItsUrl()
-        {
-            // Given
-            var file = new Mock<IFormFile>().Object;
-            var products = new Mock<IProductService>();
-            var photos = new Mock<IPhotoStore>();
-            photos.Setup(p => p.SaveAsync(file)).ReturnsAsync(Result<string>.Success("abc123.jpg"));
-            photos.Setup(p => p.UrlFor("abc123.jpg")).Returns("http://localhost:5130/images/abc123.jpg");
-            var controller = new ProductsController(products.Object, photos.Object) { ControllerContext = Caller.Member(Nadia) };
-
-            // When
-            var result = await controller.UploadPhoto(file);
-
-            // Then
-            var ok = Assert.IsType<OkObjectResult>(result.Result);
-            var uploaded = Assert.IsType<UploadedPhotoDto>(ok.Value);
-            Assert.Equal("abc123.jpg", uploaded.Photo);
-            Assert.Equal("http://localhost:5130/images/abc123.jpg", uploaded.Url);
-        }
-
-        [Fact]
-        public async Task UploadPhoto_FileThatIsNotAnImage_Returns400()
-        {
-            // Given
-            var file = new Mock<IFormFile>().Object;
-            var products = new Mock<IProductService>();
-            var photos = new Mock<IPhotoStore>();
-            photos.Setup(p => p.SaveAsync(file)).ReturnsAsync(Result<string>.Invalid(new ValidationError("photo", "That file is not a JPEG, PNG, GIF or WebP image.")));
-            var controller = new ProductsController(products.Object, photos.Object) { ControllerContext = Caller.Member(Nadia) };
-
-            // When
-            var result = await controller.UploadPhoto(file);
-
-            // Then
-            Refusal.Of(result.Result, StatusCodes.Status400BadRequest);
-        }
-
-        [Fact]
-        public async Task UploadPhoto_FileTooLarge_Returns400()
-        {
-            // Given
-            var file = new Mock<IFormFile>().Object;
-            var products = new Mock<IProductService>();
-            var photos = new Mock<IPhotoStore>();
-            photos.Setup(p => p.SaveAsync(file)).ReturnsAsync(Result<string>.Invalid(new ValidationError("photo", "Photos must be 5 MB or less.")));
-            var controller = new ProductsController(products.Object, photos.Object) { ControllerContext = Caller.Member(Nadia) };
-
-            // When
-            var result = await controller.UploadPhoto(file);
-
-            // Then
-            Refusal.Of(result.Result, StatusCodes.Status400BadRequest);
         }
     }
 }

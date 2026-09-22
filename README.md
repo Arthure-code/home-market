@@ -242,7 +242,7 @@ From `api`:
 dotnet test
 ```
 
-Fifty-two xUnit tests on the five controllers, one behaviour each,
+Fifty-two xUnit tests on the six controllers, one behaviour each,
 named `Method_Condition_Result` and laid out as Given, When, Then. The
 services behind a controller are Moq substitutes and the data comes
 from AutoFixture; every test builds its own substitutes and its own
