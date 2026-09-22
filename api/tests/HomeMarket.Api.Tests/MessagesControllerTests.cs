@@ -1,3 +1,4 @@
+using Ardalis.Result;
 using AutoFixture;
 using HomeMarket.Api.Controllers;
 using HomeMarket.Api.Dtos;
@@ -89,7 +90,7 @@ namespace HomeMarket.Api.Tests
             var request = fixture.Create<MessageRequest>();
             var message = fixture.Create<MessageDetailDto>();
             var messages = new Mock<IMessageService>();
-            messages.Setup(m => m.SendAsync(Omar, request)).ReturnsAsync((MessageOutcome.Done, message));
+            messages.Setup(m => m.SendAsync(Omar, request)).ReturnsAsync(Result<MessageDetailDto>.Success(message));
             var controller = new MessagesController(messages.Object) { ControllerContext = Caller.Member(Omar) };
 
             // When
@@ -109,7 +110,7 @@ namespace HomeMarket.Api.Tests
             var fixture = new Fixture();
             var request = fixture.Create<MessageRequest>();
             var messages = new Mock<IMessageService>();
-            messages.Setup(m => m.SendAsync(Omar, request)).ReturnsAsync((MessageOutcome.NoSuchRecipient, null));
+            messages.Setup(m => m.SendAsync(Omar, request)).ReturnsAsync(Result<MessageDetailDto>.NotFound("No member has that user name."));
             var controller = new MessagesController(messages.Object) { ControllerContext = Caller.Member(Omar) };
 
             // When
@@ -126,7 +127,7 @@ namespace HomeMarket.Api.Tests
             var fixture = new Fixture();
             var request = fixture.Create<MessageRequest>();
             var messages = new Mock<IMessageService>();
-            messages.Setup(m => m.SendAsync(Omar, request)).ReturnsAsync((MessageOutcome.ToSelf, null));
+            messages.Setup(m => m.SendAsync(Omar, request)).ReturnsAsync(Result<MessageDetailDto>.Invalid(new ValidationError("To", "You cannot message yourself.")));
             var controller = new MessagesController(messages.Object) { ControllerContext = Caller.Member(Omar) };
 
             // When
@@ -141,7 +142,7 @@ namespace HomeMarket.Api.Tests
         {
             // Given
             var messages = new Mock<IMessageService>();
-            messages.Setup(m => m.MarkReadAsync(Omar, 41)).ReturnsAsync(MessageOutcome.Done);
+            messages.Setup(m => m.MarkReadAsync(Omar, 41)).ReturnsAsync(Result.Success());
             var controller = new MessagesController(messages.Object) { ControllerContext = Caller.Member(Omar) };
 
             // When
@@ -157,7 +158,7 @@ namespace HomeMarket.Api.Tests
         {
             // Given
             var messages = new Mock<IMessageService>();
-            messages.Setup(m => m.MarkReadAsync(Omar, 41)).ReturnsAsync(MessageOutcome.NotMine);
+            messages.Setup(m => m.MarkReadAsync(Omar, 41)).ReturnsAsync(Result.Forbidden());
             var controller = new MessagesController(messages.Object) { ControllerContext = Caller.Member(Omar) };
 
             // When
@@ -172,7 +173,7 @@ namespace HomeMarket.Api.Tests
         {
             // Given
             var messages = new Mock<IMessageService>();
-            messages.Setup(m => m.MarkReadAsync(Omar, 41)).ReturnsAsync(MessageOutcome.NotFound);
+            messages.Setup(m => m.MarkReadAsync(Omar, 41)).ReturnsAsync(Result.NotFound());
             var controller = new MessagesController(messages.Object) { ControllerContext = Caller.Member(Omar) };
 
             // When
