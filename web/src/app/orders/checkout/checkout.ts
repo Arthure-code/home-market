@@ -33,10 +33,10 @@ export class Checkout {
   };
 
   constructor(
-    private cartService: CartService,
-    private orders: OrderService,
-    private router: Router,
-    private toastr: ToastrService,
+    private readonly cartService: CartService,
+    private readonly orders: OrderService,
+    private readonly router: Router,
+    private readonly toastr: ToastrService,
   ) {}
 
   get cart(): Cart {

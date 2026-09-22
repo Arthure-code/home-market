@@ -15,7 +15,7 @@ export function canBeMessaged(seller: string): boolean {
 // token the interceptor attaches, when there is one.
 @Injectable({ providedIn: 'root' })
 export class ProductService {
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   list(filter: ProductFilter = {}): Observable<Product[]> {
     let params = new HttpParams();

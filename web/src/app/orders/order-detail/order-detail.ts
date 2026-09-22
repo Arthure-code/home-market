@@ -18,9 +18,9 @@ export class OrderDetail implements OnInit {
   order: Order | null = null;
 
   constructor(
-    private service: OrderService,
-    private router: Router,
-    private toastr: ToastrService,
+    private readonly service: OrderService,
+    private readonly router: Router,
+    private readonly toastr: ToastrService,
   ) {}
 
   ngOnInit(): void {

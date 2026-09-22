@@ -9,7 +9,7 @@ export const ORDERS_URL = 'http://localhost:5130/api/orders';
 // mine back, and the lines others bought from me.
 @Injectable({ providedIn: 'root' })
 export class OrderService {
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   place(checkout: Checkout): Observable<Order> {
     return this.http.post<Order>(ORDERS_URL, checkout);

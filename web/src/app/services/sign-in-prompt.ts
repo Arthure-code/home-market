@@ -9,9 +9,9 @@ import { SessionService } from './session.service';
 @Injectable({ providedIn: 'root' })
 export class SignInPrompt {
   constructor(
-    private session: SessionService,
-    private router: Router,
-    private toastr: ToastrService,
+    private readonly session: SessionService,
+    private readonly router: Router,
+    private readonly toastr: ToastrService,
   ) {}
 
   // True when the caller may go on; false after sending them to sign in.

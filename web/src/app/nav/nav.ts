@@ -21,10 +21,10 @@ export class Nav implements OnInit {
   query = '';
 
   constructor(
-    public session: SessionService,
-    public cart: CartService,
-    private products: ProductService,
-    private router: Router,
+    public readonly session: SessionService,
+    public readonly cart: CartService,
+    private readonly products: ProductService,
+    private readonly router: Router,
   ) {}
 
   // A member who comes back with a session still has a cart to show.

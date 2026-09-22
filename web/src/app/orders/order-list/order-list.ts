@@ -17,8 +17,8 @@ export class OrderList implements OnInit {
   loading = true;
 
   constructor(
-    private service: OrderService,
-    private toastr: ToastrService,
+    private readonly service: OrderService,
+    private readonly toastr: ToastrService,
   ) {}
 
   ngOnInit(): void {

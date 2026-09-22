@@ -12,7 +12,7 @@ export const CART_URL = 'http://localhost:5130/api/cart';
 export class CartService {
   cart: Cart = EMPTY_CART;
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   get count(): number {
     return this.cart.itemCount;

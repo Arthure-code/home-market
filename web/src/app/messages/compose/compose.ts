@@ -21,9 +21,9 @@ export class Compose implements OnInit {
   sending = false;
 
   constructor(
-    private service: MessageService,
-    private router: Router,
-    private toastr: ToastrService,
+    private readonly service: MessageService,
+    private readonly router: Router,
+    private readonly toastr: ToastrService,
   ) {}
 
   ngOnInit(): void {

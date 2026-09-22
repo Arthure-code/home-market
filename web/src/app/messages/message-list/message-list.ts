@@ -19,8 +19,8 @@ export class MessageList implements OnInit {
   loading = true;
 
   constructor(
-    private service: MessageService,
-    private toastr: ToastrService,
+    private readonly service: MessageService,
+    private readonly toastr: ToastrService,
   ) {}
 
   ngOnInit(): void {

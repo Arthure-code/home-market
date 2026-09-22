@@ -18,8 +18,8 @@ export class CartPage {
   busy = false;
 
   constructor(
-    private service: CartService,
-    private toastr: ToastrService,
+    private readonly service: CartService,
+    private readonly toastr: ToastrService,
   ) {}
 
   get cart(): Cart {

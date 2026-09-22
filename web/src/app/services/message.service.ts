@@ -11,7 +11,7 @@ export type Folder = 'inbox' | 'sent';
 // token and the API reads who I am from it.
 @Injectable({ providedIn: 'root' })
 export class MessageService {
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   folder(folder: Folder): Observable<Message[]> {
     return this.http.get<Message[]>(`${MESSAGES_URL}/${folder}`);

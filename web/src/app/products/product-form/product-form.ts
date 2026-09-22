@@ -35,8 +35,8 @@ export class ProductForm implements OnInit, OnChanges {
   preview = '';
 
   constructor(
-    private service: ProductService,
-    private toastr: ToastrService,
+    private readonly service: ProductService,
+    private readonly toastr: ToastrService,
   ) {}
 
   ngOnInit(): void {

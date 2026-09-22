@@ -28,11 +28,11 @@ export class ProductDetail implements OnInit {
   readonly canBeMessaged = canBeMessaged;
 
   constructor(
-    private service: ProductService,
-    private cart: CartService,
-    private prompt: SignInPrompt,
-    private router: Router,
-    private toastr: ToastrService,
+    private readonly service: ProductService,
+    private readonly cart: CartService,
+    private readonly prompt: SignInPrompt,
+    private readonly router: Router,
+    private readonly toastr: ToastrService,
   ) {}
 
   ngOnInit(): void {

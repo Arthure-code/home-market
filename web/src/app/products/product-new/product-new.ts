@@ -26,9 +26,9 @@ export class ProductNew {
   saving = false;
 
   constructor(
-    private service: ProductService,
-    private router: Router,
-    private toastr: ToastrService,
+    private readonly service: ProductService,
+    private readonly router: Router,
+    private readonly toastr: ToastrService,
   ) {}
 
   create(): void {

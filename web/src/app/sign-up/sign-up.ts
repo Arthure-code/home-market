@@ -19,9 +19,9 @@ export class SignUp {
   busy = false;
 
   constructor(
-    private session: SessionService,
-    private router: Router,
-    private toastr: ToastrService,
+    private readonly session: SessionService,
+    private readonly router: Router,
+    private readonly toastr: ToastrService,
   ) {}
 
   signUp(): void {

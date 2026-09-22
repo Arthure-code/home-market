@@ -20,10 +20,10 @@ export class SignIn {
   busy = false;
 
   constructor(
-    private session: SessionService,
-    private cart: CartService,
-    private router: Router,
-    private toastr: ToastrService,
+    private readonly session: SessionService,
+    private readonly cart: CartService,
+    private readonly router: Router,
+    private readonly toastr: ToastrService,
   ) {}
 
   signIn(): void {

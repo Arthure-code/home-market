@@ -12,7 +12,7 @@ const STORAGE_KEY = 'home-market.session';
 export class SessionService {
   session: Session | null = restore();
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   get signedIn(): boolean {
     return this.session !== null;

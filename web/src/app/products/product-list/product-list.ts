@@ -29,11 +29,11 @@ export class ProductList implements OnInit, OnChanges {
   viewing: Product | null = null;
 
   constructor(
-    private service: ProductService,
-    private cart: CartService,
-    private prompt: SignInPrompt,
-    private router: Router,
-    private toastr: ToastrService,
+    private readonly service: ProductService,
+    private readonly cart: CartService,
+    private readonly prompt: SignInPrompt,
+    private readonly router: Router,
+    private readonly toastr: ToastrService,
   ) {}
 
   ngOnInit(): void {

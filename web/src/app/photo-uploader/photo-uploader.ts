@@ -17,8 +17,8 @@ export class PhotoUploader {
   busy = false;
 
   constructor(
-    private service: ProductService,
-    private toastr: ToastrService,
+    private readonly service: ProductService,
+    private readonly toastr: ToastrService,
   ) {}
 
   onDragOver(event: DragEvent): void {
