@@ -1,3 +1,4 @@
+using Ardalis.Result;
 using AutoFixture;
 using HomeMarket.Api.Controllers;
 using HomeMarket.Api.Dtos;
@@ -37,7 +38,7 @@ namespace HomeMarket.Api.Tests
             var fixture = new Fixture();
             var cart = fixture.Create<CartDto>();
             var carts = new Mock<ICartService>();
-            carts.Setup(c => c.AddAsync(Eve, 23, 2)).ReturnsAsync((CartOutcome.Done, cart));
+            carts.Setup(c => c.AddAsync(Eve, 23, 2)).ReturnsAsync(Result<CartDto>.Success(cart));
             var controller = new CartController(carts.Object) { ControllerContext = Caller.Member(Eve) };
 
             // When
@@ -53,7 +54,7 @@ namespace HomeMarket.Api.Tests
         {
             // Given
             var carts = new Mock<ICartService>();
-            carts.Setup(c => c.AddAsync(Eve, 999, 1)).ReturnsAsync((CartOutcome.NotFound, null));
+            carts.Setup(c => c.AddAsync(Eve, 999, 1)).ReturnsAsync(Result<CartDto>.NotFound());
             var controller = new CartController(carts.Object) { ControllerContext = Caller.Member(Eve) };
 
             // When
@@ -68,7 +69,7 @@ namespace HomeMarket.Api.Tests
         {
             // Given
             var carts = new Mock<ICartService>();
-            carts.Setup(c => c.AddAsync(Eve, 30, 1)).ReturnsAsync((CartOutcome.OwnProduct, null));
+            carts.Setup(c => c.AddAsync(Eve, 30, 1)).ReturnsAsync(Result<CartDto>.Invalid(new ValidationError("productId", "That is your own listing.")));
             var controller = new CartController(carts.Object) { ControllerContext = Caller.Member(Eve) };
 
             // When
@@ -83,7 +84,7 @@ namespace HomeMarket.Api.Tests
         {
             // Given
             var carts = new Mock<ICartService>();
-            carts.Setup(c => c.AddAsync(Eve, 29, 5)).ReturnsAsync((CartOutcome.NotEnoughStock, null));
+            carts.Setup(c => c.AddAsync(Eve, 29, 5)).ReturnsAsync(Result<CartDto>.Conflict("There are not that many left in stock."));
             var controller = new CartController(carts.Object) { ControllerContext = Caller.Member(Eve) };
 
             // When
@@ -100,7 +101,7 @@ namespace HomeMarket.Api.Tests
             var fixture = new Fixture();
             var cart = fixture.Create<CartDto>();
             var carts = new Mock<ICartService>();
-            carts.Setup(c => c.SetQuantityAsync(Eve, 23, 4)).ReturnsAsync((CartOutcome.Done, cart));
+            carts.Setup(c => c.SetQuantityAsync(Eve, 23, 4)).ReturnsAsync(Result<CartDto>.Success(cart));
             var controller = new CartController(carts.Object) { ControllerContext = Caller.Member(Eve) };
 
             // When
@@ -116,7 +117,7 @@ namespace HomeMarket.Api.Tests
         {
             // Given
             var carts = new Mock<ICartService>();
-            carts.Setup(c => c.SetQuantityAsync(Eve, 23, 9)).ReturnsAsync((CartOutcome.NotEnoughStock, null));
+            carts.Setup(c => c.SetQuantityAsync(Eve, 23, 9)).ReturnsAsync(Result<CartDto>.Conflict("There are not that many left in stock."));
             var controller = new CartController(carts.Object) { ControllerContext = Caller.Member(Eve) };
 
             // When
@@ -133,7 +134,7 @@ namespace HomeMarket.Api.Tests
             var fixture = new Fixture();
             var cart = fixture.Create<CartDto>();
             var carts = new Mock<ICartService>();
-            carts.Setup(c => c.RemoveAsync(Eve, 23)).ReturnsAsync((CartOutcome.Done, cart));
+            carts.Setup(c => c.RemoveAsync(Eve, 23)).ReturnsAsync(Result<CartDto>.Success(cart));
             var controller = new CartController(carts.Object) { ControllerContext = Caller.Member(Eve) };
 
             // When
@@ -150,7 +151,7 @@ namespace HomeMarket.Api.Tests
         {
             // Given
             var carts = new Mock<ICartService>();
-            carts.Setup(c => c.RemoveAsync(Eve, 23)).ReturnsAsync((CartOutcome.NotFound, null));
+            carts.Setup(c => c.RemoveAsync(Eve, 23)).ReturnsAsync(Result<CartDto>.NotFound());
             var controller = new CartController(carts.Object) { ControllerContext = Caller.Member(Eve) };
 
             // When

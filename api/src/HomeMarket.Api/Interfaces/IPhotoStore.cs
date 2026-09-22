@@ -1,16 +1,12 @@
+using Ardalis.Result;
+
 namespace HomeMarket.Api.Interfaces
 {
-    public enum PhotoOutcome
-    {
-        Saved,
-        NotAnImage,
-        TooLarge,
-    }
-
-    // Uploaded photos live on disk under a name the server chooses.
+    // Uploaded photos live on disk under a name the server chooses. A
+    // file that is not an image, or too large, is Invalid.
     public interface IPhotoStore
     {
-        Task<(PhotoOutcome Outcome, string FileName)> SaveAsync(IFormFile file);
+        Task<Result<string>> SaveAsync(IFormFile file);
         bool Exists(string fileName);
         string UrlFor(string photo);
     }

@@ -1,3 +1,4 @@
+using Ardalis.Result;
 using HomeMarket.Api.Data;
 using HomeMarket.Api.Dtos;
 using HomeMarket.Api.Interfaces;
@@ -64,55 +65,55 @@ namespace HomeMarket.Api.Services
         // The photo of a listing is empty, a file this API stored, or the
         // address the listing already had: never an address a client sends.
         // The category is one of the shop's.
-        public async Task<(ProductOutcome Outcome, ProductDto? Product)> CreateAsync(int sellerId, ProductRequest request)
+        public async Task<Result<ProductDto>> CreateAsync(int sellerId, ProductRequest request)
         {
             var now = DateTime.UtcNow;
             var product = new Product { SellerId = sellerId, CreatedAt = now };
-            var applied = Apply(product, request, now);
-            if (applied != ProductOutcome.Done) return (applied, null);
+            var invalid = Apply(product, request, now);
+            if (invalid is not null) return Result<ProductDto>.Invalid(invalid);
 
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
-            return (ProductOutcome.Done, await GetAsync(product.Id, sellerId));
+            return Result<ProductDto>.Success((await GetAsync(product.Id, sellerId))!);
         }
 
         // Only the seller changes or removes a listing. Someone else's
         // listing is reported as such, not as missing: it is public.
-        public async Task<(ProductOutcome Outcome, ProductDto? Product)> UpdateAsync(int sellerId, int id, ProductRequest request)
+        public async Task<Result<ProductDto>> UpdateAsync(int sellerId, int id, ProductRequest request)
         {
             var product = await _context.Products.FindAsync(id);
-            if (product is null) return (ProductOutcome.NotFound, null);
-            if (product.SellerId != sellerId) return (ProductOutcome.NotMine, null);
-            var applied = Apply(product, request, DateTime.UtcNow);
-            if (applied != ProductOutcome.Done) return (applied, null);
+            if (product is null) return Result<ProductDto>.NotFound();
+            if (product.SellerId != sellerId) return Result<ProductDto>.Forbidden();
+            var invalid = Apply(product, request, DateTime.UtcNow);
+            if (invalid is not null) return Result<ProductDto>.Invalid(invalid);
 
             await _context.SaveChangesAsync();
-            return (ProductOutcome.Done, await GetAsync(id, sellerId));
+            return Result<ProductDto>.Success((await GetAsync(id, sellerId))!);
         }
 
-        public async Task<ProductOutcome> DeleteAsync(int sellerId, int id)
+        public async Task<Result> DeleteAsync(int sellerId, int id)
         {
             var product = await _context.Products.FindAsync(id);
-            if (product is null) return ProductOutcome.NotFound;
-            if (product.SellerId != sellerId) return ProductOutcome.NotMine;
+            if (product is null) return Result.NotFound();
+            if (product.SellerId != sellerId) return Result.Forbidden();
 
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
-            return ProductOutcome.Done;
+            return Result.Success();
         }
 
         // Liking is idempotent: liking twice or unliking what was never
         // liked changes nothing and succeeds.
-        public async Task<ProductOutcome> SetLikeAsync(int viewerId, int id, bool liked)
+        public async Task<Result> SetLikeAsync(int viewerId, int id, bool liked)
         {
             var product = await _context.Products.Include(p => p.LikedBy).SingleOrDefaultAsync(p => p.Id == id);
-            if (product is null) return ProductOutcome.NotFound;
+            if (product is null) return Result.NotFound();
 
             var already = product.LikedBy.FirstOrDefault(a => a.Id == viewerId);
             if (liked && already is null)
             {
                 var viewer = await _context.Accounts.FindAsync(viewerId);
-                if (viewer is null) return ProductOutcome.NotFound;
+                if (viewer is null) return Result.NotFound();
                 product.LikedBy.Add(viewer);
             }
             else if (!liked && already is not null)
@@ -120,14 +121,22 @@ namespace HomeMarket.Api.Services
                 product.LikedBy.Remove(already);
             }
             await _context.SaveChangesAsync();
-            return ProductOutcome.Done;
+            return Result.Success();
         }
 
-        private ProductOutcome Apply(Product product, ProductRequest request, DateTime at)
+        // Null when the request went on the product; the validation error
+        // otherwise, and the product is left as it was.
+        private ValidationError? Apply(Product product, ProductRequest request, DateTime at)
         {
             var photo = request.Photo.Trim();
-            if (photo.Length > 0 && photo != product.Photo && !_photos.Exists(photo)) return ProductOutcome.BadPhoto;
-            if (!Category.Exists(request.Category)) return ProductOutcome.BadCategory;
+            if (photo.Length > 0 && photo != product.Photo && !_photos.Exists(photo))
+            {
+                return new ValidationError(nameof(request.Photo), "Upload the photo first, then save the product.");
+            }
+            if (!Category.Exists(request.Category))
+            {
+                return new ValidationError(nameof(request.Category), "Pick one of the shop's categories.");
+            }
 
             product.Title = request.Title.Trim();
             product.Brand = request.Brand.Trim();
@@ -138,7 +147,7 @@ namespace HomeMarket.Api.Services
             product.Stock = request.Stock;
             product.Photo = photo;
             product.UpdatedAt = at;
-            return ProductOutcome.Done;
+            return null;
         }
 
         private async Task<IReadOnlyList<ProductDto>> Project(IQueryable<Product> products, int? viewerId)

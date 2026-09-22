@@ -1,3 +1,4 @@
+using Ardalis.Result;
 using AutoFixture;
 using HomeMarket.Api.Controllers;
 using HomeMarket.Api.Dtos;
@@ -89,7 +90,7 @@ namespace HomeMarket.Api.Tests
             var checkout = fixture.Create<CheckoutRequest>();
             var order = fixture.Create<OrderDto>();
             var orders = new Mock<IOrderService>();
-            orders.Setup(o => o.PlaceAsync(Eve, checkout)).ReturnsAsync((OrderOutcome.Done, order, string.Empty));
+            orders.Setup(o => o.PlaceAsync(Eve, checkout)).ReturnsAsync(Result<OrderDto>.Success(order));
             var controller = new OrdersController(orders.Object) { ControllerContext = Caller.Member(Eve) };
 
             // When
@@ -109,7 +110,7 @@ namespace HomeMarket.Api.Tests
             var fixture = new Fixture();
             var checkout = fixture.Create<CheckoutRequest>();
             var orders = new Mock<IOrderService>();
-            orders.Setup(o => o.PlaceAsync(Eve, checkout)).ReturnsAsync((OrderOutcome.CardRefused, null, "Your card was declined."));
+            orders.Setup(o => o.PlaceAsync(Eve, checkout)).ReturnsAsync(Result<OrderDto>.Error("Your card was declined."));
             var controller = new OrdersController(orders.Object) { ControllerContext = Caller.Member(Eve) };
 
             // When
@@ -127,7 +128,7 @@ namespace HomeMarket.Api.Tests
             var fixture = new Fixture();
             var checkout = fixture.Create<CheckoutRequest>();
             var orders = new Mock<IOrderService>();
-            orders.Setup(o => o.PlaceAsync(Eve, checkout)).ReturnsAsync((OrderOutcome.EmptyCart, null, "Your cart is empty."));
+            orders.Setup(o => o.PlaceAsync(Eve, checkout)).ReturnsAsync(Result<OrderDto>.Invalid(new ValidationError("cart", "Your cart is empty.")));
             var controller = new OrdersController(orders.Object) { ControllerContext = Caller.Member(Eve) };
 
             // When
@@ -144,7 +145,7 @@ namespace HomeMarket.Api.Tests
             var fixture = new Fixture();
             var checkout = fixture.Create<CheckoutRequest>();
             var orders = new Mock<IOrderService>();
-            orders.Setup(o => o.PlaceAsync(Eve, checkout)).ReturnsAsync((OrderOutcome.NotEnoughStock, null, "Only 0 left of Clock."));
+            orders.Setup(o => o.PlaceAsync(Eve, checkout)).ReturnsAsync(Result<OrderDto>.Conflict("Only 0 left of Clock."));
             var controller = new OrdersController(orders.Object) { ControllerContext = Caller.Member(Eve) };
 
             // When
